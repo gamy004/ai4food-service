@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { PrismaService } from 'nestjs-prisma';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const appOptions = { cors: true };
+
+  const app = await NestFactory.create(AppModule, appOptions);
+
+  app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,16 +20,16 @@ async function bootstrap() {
     .setTitle('Example')
     .setDescription('The API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('example')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/docs', app, document);
 
-  const prisma = app.get(PrismaService);
-
-  await prisma.enableShutdownHooks(app);
+  // Starts listening for shutdown hooks
+  app.enableShutdownHooks();
 
   await app.listen(3001);
 }
