@@ -1,26 +1,52 @@
+import { EntityRepository, FilterQuery, FindOneOptions, FindOptions } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: EntityRepository<User>
+  ) { }
+
+  async create(createUserDto: CreateUserDto) {
+    const createdUser = this.userRepository.create(createUserDto);
+
+    await this.userRepository.persistAndFlush(createdUser);
+
+    return createdUser;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  findAll(options?: FindOptions<User>) {
+    return this.userRepository.findAll(options);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  find(where: FilterQuery<User>, options?: FindOptions<User>) {
+    return this.userRepository.find(where, options);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findId(id: string, options?: FindOneOptions<User>) {
+    return this.userRepository.findOne({ id }, options);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.userRepository.findOneOrFail(id);
+
+    updatedUser.assign(updateUserDto);
+
+    await this.userRepository.persistAndFlush(updatedUser);
+
+    return updatedUser;
+  }
+
+  async remove(id: string) {
+    const user = await this.userRepository.findOneOrFail({ id });
+
+    await this.userRepository.removeAndFlush(user);
+
+    return user;
   }
 }

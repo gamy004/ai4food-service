@@ -9,10 +9,14 @@ import mikroOrmConfig from './config/mikro-orm.config';
 
 @Module({
   imports: [
-    MikroOrmModule.forRoot(mikroOrmConfig),
+    MikroOrmModule.forRoot({
+      ...mikroOrmConfig,
+      entities: [],
+      entitiesTs: [],
+    }),
     UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

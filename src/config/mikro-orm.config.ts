@@ -10,11 +10,15 @@ const config: MikroOrmModuleOptions = {
     autoLoadEntities: true,
     metadataProvider: TsMorphMetadataProvider,
     loadStrategy: LoadStrategy.JOINED,
-    registerRequestContext: false,
+    // registerRequestContext: false,
     highlighter: new SqlHighlighter(),
     migrations: {
         path: 'dist/migrations',
         pathTs: 'src/migrations',
+    },
+    seeder: {
+        path: 'dist/seeders',
+        pathTs: 'src/seeders',
     },
     // scope: Scope.REQUEST
 };
