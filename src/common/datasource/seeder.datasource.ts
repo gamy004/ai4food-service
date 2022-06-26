@@ -16,8 +16,6 @@ import typeormConfig from "../../config/typeorm.config";
 
     await dataSource.initialize();
 
-    await dataSource.dropDatabase();
-
     await dataSource.runMigrations();
 
     await runSeeders(dataSource);

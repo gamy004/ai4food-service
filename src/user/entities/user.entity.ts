@@ -1,6 +1,7 @@
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
 
-import { Entity, Column } from "typeorm";
+import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
+import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -33,4 +34,7 @@ export class User extends BaseSoftDeletableEntity {
 
     @Column({ type: "enum", enum: UserRole })
     role = UserRole.USER;
+
+    @OneToMany(() => ImportTransaction, importTransaction => importTransaction.importedUser, { cascade: true })
+    importTransactions: ImportTransaction[];
 }

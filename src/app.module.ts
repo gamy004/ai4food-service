@@ -10,6 +10,7 @@ import typeormConfig from './config/typeorm.config';
 import databaseConfig from './config/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ImportTransactionModule } from './import-transaction/import-transaction.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       })
     }),
     UserModule,
+    ImportTransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
