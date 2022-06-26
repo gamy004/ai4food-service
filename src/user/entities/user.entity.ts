@@ -11,30 +11,26 @@ export enum UserTeam {
     ADMIN = 'admin',
     QA = 'qa',
     LAB = 'lab',
-    PRODUCTION = 'production',
-    WORKER = 'worker'
+    PRODUCTION = 'production'
 }
 
 @Entity()
 export class User extends BaseSoftDeletableEntity {
     @Column()
-    userName!: String;
+    userName!: string;
 
     @Column()
-    email!: String;
+    email!: string;
 
     @Column()
-    password!: String;
+    password!: string;
 
     @Column()
-    firstName!: String;
+    firstName!: string;
 
     @Column()
-    lastName!: String;
+    lastName!: string;
 
     @Column({ type: "enum", enum: UserRole })
     role = UserRole.USER;
-
-    @Column({ type: 'enum', enum: UserTeam, array: true })
-    teams = [];
 }

@@ -1,4 +1,5 @@
 import { DataSourceOptions } from "typeorm";
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const config: DataSourceOptions = {
     type: 'mysql',
@@ -10,12 +11,14 @@ const config: DataSourceOptions = {
     migrations: [
         'dist/migrations/*.js'
     ],
-    migrationsRun: false,
+    migrationsRun: true,
+    // migrationsTransactionMode: 'all',
     // migrations: {
     //     path: 'dist/migrations',
     //     pathTs: 'src/migrations',
     // },
-    synchronize: false
+    synchronize: false,
+    namingStrategy: new SnakeNamingStrategy()
     // scope: Scope.REQUEST
 };
 
