@@ -1,6 +1,8 @@
-import { EntityRepository, FilterQuery, FindOneOptions, FindOptions } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
+// import { EntityRepository, FilterQuery, FindOneOptions, FindOptions } from '@mikro-orm/core';
+
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -9,43 +11,49 @@ import { User } from './entities/user.entity';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: EntityRepository<User>
+    private readonly userRepository: Repository<User>
   ) { }
 
   async create(createUserDto: CreateUserDto) {
     const createdUser = this.userRepository.create(createUserDto);
 
-    await this.userRepository.persistAndFlush(createdUser);
+    await createdUser.save();
 
     return createdUser;
   }
 
-  findAll(options?: FindOptions<User>) {
-    return this.userRepository.findAll(options);
+  findAll(options?: FindManyOptions<User>) {
+    return this.userRepository.find(options);
   }
 
-  find(where: FilterQuery<User>, options?: FindOptions<User>) {
-    return this.userRepository.find(where, options);
+  find(where: FindOptionsWhere<User> | FindOptionsWhere<User>[]) {
+    return this.userRepository.findBy(where);
   }
 
-  findId(id: string, options?: FindOneOptions<User>) {
-    return this.userRepository.findOne({ id }, options);
+  findId(id: string) {
+    return this.userRepository.findOneBy({ id });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const updatedUser = await this.userRepository.findOneOrFail(id);
-
-    updatedUser.assign(updateUserDto);
-
-    await this.userRepository.persistAndFlush(updatedUser);
+  async update(where: FindOptionsWhere<User>, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.userRepository.update(where, updateUserDto);
 
     return updatedUser;
   }
 
-  async remove(id: string) {
-    const user = await this.userRepository.findOneOrFail({ id });
+  async updateId(id: string, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.userRepository.update({ id }, updateUserDto);
 
-    await this.userRepository.removeAndFlush(user);
+    return updatedUser;
+  }
+
+  async softRemove(where: FindOptionsWhere<User>) {
+    const user = await this.userRepository.softDelete(where);
+
+    return user;
+  }
+
+  async softRemoveId(id: string) {
+    const user = await this.userRepository.softDelete({ id });
 
     return user;
   }

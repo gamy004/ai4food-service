@@ -1,8 +1,6 @@
-import { v4 } from "uuid";
-import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
-// import { SoftDeletable } from 'mikro-orm-soft-delete';
-// import { BaseEntity } from '~/common/entities/base.entity';
-import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
+import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
+
+import { Entity, Column } from "typeorm";
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -18,25 +16,25 @@ export enum UserTeam {
 }
 
 @Entity()
-export class User extends BaseSoftDeletableEntity<User, "id"> {
-    @Property()
+export class User extends BaseSoftDeletableEntity {
+    @Column()
     userName!: String;
 
-    @Property()
+    @Column()
     email!: String;
 
-    @Property()
+    @Column()
     password!: String;
 
-    @Property()
+    @Column()
     firstName!: String;
 
-    @Property()
+    @Column()
     lastName!: String;
 
-    @Enum(() => UserRole)
+    @Column({ type: "enum", enum: UserRole })
     role = UserRole.USER;
 
-    @Enum({ items: () => UserTeam, array: true })
+    @Column({ type: 'enum', enum: UserTeam, array: true })
     teams = [];
 }
