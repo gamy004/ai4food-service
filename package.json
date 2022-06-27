@@ -21,6 +21,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
+    "schema:sync": "yarn build && typeorm-ts-node-commonjs schema:sync -d dist/common/datasource/typeorm.datasource.js",
     "migration:generate": "yarn build && typeorm-ts-node-commonjs migration:generate -d dist/common/datasource/typeorm.datasource.js",
     "migration:run": "yarn build && typeorm-ts-node-commonjs migration:run -d dist/common/datasource/typeorm.datasource.js",
     "migration:revert": "yarn build && typeorm-ts-node-commonjs migration:revert -d dist/common/datasource/typeorm.datasource.js",

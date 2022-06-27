@@ -1,10 +1,12 @@
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
+import { ProductSchedule } from "~/product-schedule/entities/product-schedule.entity";
 import { User } from "~/user/entities/user.entity";
 
 export enum ImportType {
-    PRODUCT_SCHEDULE = 'productSchedule',
-    CLEANING_PLAN = 'cleaningPlan',
+    PRODUCTION_SCHEDULE = 'production_schedule',
+    CLEANING_PLAN = 'cleaning_plan',
+    CLEANING_ROOM_HISTORY = 'cleaning_room_history'
 }
 
 @Entity()
@@ -15,6 +17,9 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
     @Column({ type: "enum", enum: ImportType, nullable: true })
     importType?: string;
 
-    @ManyToOne(() => User, (user) => user.importTransactions, { nullable: true })
+    @ManyToOne(() => User, entity => entity.importTransactions, { nullable: true })
     importedUser?: User;
+
+    @OneToMany(() => ProductSchedule, entity => entity.importTransaction, { cascade: true })
+    productSchedules: ProductSchedule[];
 }

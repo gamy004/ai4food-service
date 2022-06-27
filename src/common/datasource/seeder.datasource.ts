@@ -6,7 +6,7 @@ import typeormConfig from "../../config/typeorm.config";
     const options: DataSourceOptions & SeederOptions = {
         ...typeormConfig,
         migrationsRun: false,
-        seeds: ["dist/database/seeders/*.js"],
+        seeds: ["dist/database/seeders/ProductScheduleSeeder.js"],
         factories: ["dist/database/factories/*.js"]
     };
 

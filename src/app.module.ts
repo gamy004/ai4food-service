@@ -11,6 +11,8 @@ import databaseConfig from './config/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImportTransactionModule } from './import-transaction/import-transaction.module';
+import { ProductScheduleModule } from './product-schedule/product-schedule.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { ImportTransactionModule } from './import-transaction/import-transaction
     }),
     UserModule,
     ImportTransactionModule,
+    ProductScheduleModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

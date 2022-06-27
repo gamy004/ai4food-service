@@ -23,4 +23,20 @@ export class ImportTransactionService {
   remove(id: number) {
     return `This action removes a #${id} importTransaction`;
   }
+
+  /**
+   * Confirm the import transaction as success transaction
+   * @param id id of the import transaction
+   */
+  confirm(id: string) {
+
+  }
+
+  /**
+   * Abort the import transaction, all related data will be hard deleted
+   * @param id id of the import transaction
+   */
+  abort(id: string) {
+
+  }
 }
