@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { setSeederFactory } from 'typeorm-extension';
 import { Product } from '~/product/entities/product.entity';
 import { ProductSchedule } from '~/product-schedule/entities/product-schedule.entity';
@@ -5,6 +6,7 @@ import { ProductSchedule } from '~/product-schedule/entities/product-schedule.en
 export default setSeederFactory(ProductSchedule, (faker) => {
     const productSchedule = new ProductSchedule();
 
+    productSchedule.id = v4();
     productSchedule.productScheduleAmount = faker.datatype.number({ min: 1000, max: 2000 });
 
     productSchedule.productScheduleDate = faker.date.recent();
