@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { ImportTransaction, ImportType } from '~/import-transaction/entities/import-transaction.entity';
 import { ProductSchedule } from '~/product-schedule/entities/product-schedule.entity';
 import { Product } from '~/product/entities/product.entity';
+import { ProductScheduleImporter } from '~/product-schedule/product-schedule.importer';
 
 export default class ProductScheduleSeeder implements Seeder {
   public async run(
@@ -19,9 +20,6 @@ export default class ProductScheduleSeeder implements Seeder {
 
     let productSchedules = [];
 
-    const importTransaction = await importTransactionFactory.make({
-      importType: ImportType.PRODUCTION_SCHEDULE
-    });
 
     for (let index = 1; index <= 5; index++) {
       const product = await productFactory.save();
@@ -35,8 +33,19 @@ export default class ProductScheduleSeeder implements Seeder {
       }
     }
 
-    importTransaction.productSchedules = productSchedules;
+    const importTransaction = await importTransactionFactory.save({
+      importType: ImportType.PRODUCTION_SCHEDULE
+    });
 
-    await importTransactionRepository.save(importTransaction);
+    // importTransaction.productSchedules = productSchedules;
+
+    const productScheduleImporter = new ProductScheduleImporter(dataSource.getRepository(ProductSchedule));
+
+    await productScheduleImporter.import(
+      importTransaction,
+      productSchedules
+    );
+
+    // await importTransactionRepository.save(importTransaction);
   }
 }

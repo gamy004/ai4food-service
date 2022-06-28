@@ -1,6 +1,5 @@
 import { v4 } from "uuid";
 import { setSeederFactory } from 'typeorm-extension';
-import { Product } from '~/product/entities/product.entity';
 import { ProductSchedule } from '~/product-schedule/entities/product-schedule.entity';
 
 export default setSeederFactory(ProductSchedule, (faker) => {

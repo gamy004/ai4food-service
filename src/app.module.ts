@@ -13,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImportTransactionModule } from './import-transaction/import-transaction.module';
 import { ProductScheduleModule } from './product-schedule/product-schedule.module';
 import { ProductModule } from './product/product.module';
+import { DataCollectorModule } from './data-collector/data-collector.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ProductModule } from './product/product.module';
     ImportTransactionModule,
     ProductScheduleModule,
     ProductModule,
+    DataCollectorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
