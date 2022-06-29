@@ -1,11 +1,11 @@
-import { Repository } from "typeorm";
+import { CommonRepositoryInterface } from "~/common/interface/common.repository.interface";
 import { DataCollectorImporterInterface } from "~/data-collector/interface/data-collector-importer-interface";
 import { ImportTransaction, ImportType } from "~/import-transaction/entities/import-transaction.entity";
 
-// Policy!!!
+// Policy!!! (Application Layer)
 export abstract class DataCollectorImporter<Entity> implements DataCollectorImporterInterface<Entity> {
     constructor(
-        private readonly repository: Repository<Entity>
+        private readonly repository: CommonRepositoryInterface<Entity>
     ) { }
 
     abstract importType: ImportType;
@@ -15,11 +15,10 @@ export abstract class DataCollectorImporter<Entity> implements DataCollectorImpo
             throw new Error(`Importer accept only import transaction type ${this.importType}`);
         }
 
-        const entities = this.repository.create(records)
-            .map(entity => ({
-                ...entity,
-                importTransaction
-            }));
+        const entities = records.map(entity => ({
+            ...entity,
+            importTransaction
+        }));
 
         await this.repository.save(entities);
     }
