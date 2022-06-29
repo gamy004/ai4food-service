@@ -14,6 +14,7 @@ import { ImportTransactionModule } from './import-transaction/import-transaction
 import { ProductScheduleModule } from './product-schedule/product-schedule.module';
 import { ProductModule } from './product/product.module';
 import { DataCollectorModule } from './data-collector/data-collector.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DataCollectorModule } from './data-collector/data-collector.module';
     ProductScheduleModule,
     ProductModule,
     DataCollectorModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

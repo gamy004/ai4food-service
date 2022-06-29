@@ -34,6 +34,10 @@ export class UserService {
     return this.userRepository.findOneBy({ id });
   }
 
+  async findOne(userName: string) {
+    return this.userRepository.findOneBy({ userName });
+  }
+
   async update(where: FindOptionsWhere<User>, updateUserDto: UpdateUserDto) {
     const updatedUser = await this.userRepository.update(where, updateUserDto);
 
