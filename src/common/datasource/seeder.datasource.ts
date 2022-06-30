@@ -1,13 +1,13 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, SeederOptions } from 'typeorm-extension';
-import typeormConfig from "../../config/typeorm.config";
+import typeormConfig from "../../database/config/typeorm.config";
 
 (async () => {
     const options: DataSourceOptions & SeederOptions = {
         ...typeormConfig,
         migrationsRun: false,
-        seeds: ["dist/database/seeders/*.js"],
-        factories: ["dist/database/factories/*.js"]
+        seeds: ["dist/database/seeders/*.seeder.js"],
+        factories: ["dist/database/factories/*.factory.js"]
     };
 
     console.log("===========Start Seeding!!!===========");
