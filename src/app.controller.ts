@@ -8,7 +8,7 @@ import { LocalAuthGuard } from './auth/local-auth.guard';
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
+    // private readonly appService: AppService,
   ) { }
 
   @UseGuards(LocalAuthGuard)
@@ -17,8 +17,8 @@ export class AppController {
     return req.user;
   }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+  // @Get()
+  // getHello(): string {
+  //   return this.appService.getHello();
+  // }
 }

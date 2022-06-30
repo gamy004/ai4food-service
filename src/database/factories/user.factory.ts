@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
-import { User } from '~/user/entities/user.entity';
 
 import { setSeederFactory } from 'typeorm-extension';
+import { User } from "~/auth/entities/user.entity";
 
 export default setSeederFactory(User, (faker) => {
     const user = new User();
