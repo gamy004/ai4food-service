@@ -25,7 +25,8 @@
     "migration:generate": "yarn build && typeorm-ts-node-commonjs migration:generate -d dist/common/datasource/typeorm.datasource.js",
     "migration:run": "yarn build && typeorm-ts-node-commonjs migration:run -d dist/common/datasource/typeorm.datasource.js",
     "migration:revert": "yarn build && typeorm-ts-node-commonjs migration:revert -d dist/common/datasource/typeorm.datasource.js",
-    "seed": "yarn build && ts-node ./dist/common/datasource/seeder.datasource.js"
+    "seed": "yarn build && ts-node ./dist/common/datasource/seeder.datasource.js",
+    "jwt:secret": "node -e \"console.log(require('crypto').randomBytes(256).toString('base64'));\""
   },
   "dependencies": {
     "@mikro-orm/cli": "^5.2.1",
