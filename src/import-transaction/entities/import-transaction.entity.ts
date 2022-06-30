@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { User } from "~/auth/entities/user.entity";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { ProductSchedule } from "~/product-schedule/entities/product-schedule.entity";
-import { User } from "~/user/entities/user.entity";
 
 export enum ImportType {
     PRODUCTION_SCHEDULE = 'production_schedule',
