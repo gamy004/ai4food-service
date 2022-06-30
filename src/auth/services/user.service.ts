@@ -30,11 +30,11 @@ export class UserService {
     return this.userRepository.findBy(where);
   }
 
-  findId(id: string) {
+  findById(id: string) {
     return this.userRepository.findOneBy({ id });
   }
 
-  async findOne(userName: string) {
+  async findByUsername(userName: string) {
     return this.userRepository.findOneBy({ userName });
   }
 
