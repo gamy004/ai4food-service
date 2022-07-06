@@ -10,7 +10,7 @@ export class ProductScheduleController {
     private readonly productScheduleImporter: DataCollectorImporterInterface<ProductSchedule>
   ) { }
 
-  @Post()
+  @Post('import')
   importProductSchedule(@Body() importProductScheduleDto: ImportProductScheduleDto): Promise<void> {
     return this.productScheduleImporter.import(
       importProductScheduleDto.importTransaction,

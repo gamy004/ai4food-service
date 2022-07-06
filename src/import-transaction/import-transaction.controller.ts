@@ -2,33 +2,26 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ImportTransactionService } from './import-transaction.service';
 import { CreateImportTransactionDto } from './dto/create-import-transaction.dto';
 import { UpdateImportTransactionDto } from './dto/update-import-transaction.dto';
+import { ImportStatus } from './entities/import-transaction.entity';
 
 @Controller('import-transaction')
 export class ImportTransactionController {
-  constructor(private readonly importTransactionService: ImportTransactionService) {}
+  constructor(
+    private readonly importTransactionService: ImportTransactionService
+    ) {}
 
   @Post()
   create(@Body() createImportTransactionDto: CreateImportTransactionDto) {
     return this.importTransactionService.create(createImportTransactionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.importTransactionService.findAll();
+  @Patch(':id/complete')
+  complete(@Param('id') id: string) {
+    return this.importTransactionService.complete(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.importTransactionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateImportTransactionDto: UpdateImportTransactionDto) {
-    return this.importTransactionService.update(+id, updateImportTransactionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.importTransactionService.remove(+id);
+  @Patch(':id/cancel')
+  cancel(@Param('id') id: string) {
+    return this.importTransactionService.cancel(id);
   }
 }

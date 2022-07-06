@@ -6,7 +6,7 @@ export default setSeederFactory(ImportTransaction, (faker) => {
     const importTransaction = new ImportTransaction();
 
     importTransaction.id = v4();
-    importTransaction.transactionNumber = faker.unique(faker.finance.routingNumber);
+    // importTransaction.transactionNumber = faker.unique(faker.finance.routingNumber);
 
     return importTransaction;
 })

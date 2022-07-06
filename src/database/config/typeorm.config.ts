@@ -9,7 +9,7 @@ const config: DataSourceOptions = {
     logging: process.env.DATABASE_LOGGING !== undefined,
     entities: ['dist/**/entities/*.entity.js'], // path to our JS entities (dist), relative to `baseDir`,
     migrations: [
-        'dist/migrations/*.js'
+        'dist/database/migrations/*.js'
     ],
     migrationsRun: true,
     // migrationsTransactionMode: 'all',
