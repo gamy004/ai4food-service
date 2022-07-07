@@ -53,7 +53,7 @@ describe('DataCollectorImporter', () => {
 
     incorectImportTransaction.id = v4();
 
-    incorectImportTransaction.importType = ImportType.PRODUCTION_SCHEDULE;
+    incorectImportTransaction.importType = ImportType.PRODUCT_SCHEDULE;
 
     const mockEntity = new MockEntity();
 

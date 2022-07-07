@@ -12,9 +12,9 @@ import { ImportStatus, ImportTransaction } from './entities/import-transaction.e
 export class ImportTransactionService extends CrudService<ImportTransaction> {
   constructor(
     @InjectRepository(ImportTransaction)
-    importTransactionRepository: Repository<ImportTransaction>
+    repository: Repository<ImportTransaction>
   ) {
-    super(importTransactionRepository);
+    super(repository);
   }
 
   /**
@@ -32,7 +32,7 @@ export class ImportTransactionService extends CrudService<ImportTransaction> {
    * Cancel the import transaction by changing import status to `cancel`
    * @param id id of the import transaction
    */
-   async cancel(id: string): Promise<void> {
+  async cancel(id: string): Promise<void> {
     this.repository.update(
       { id },
       { importStatus: ImportStatus.Cancel }

@@ -34,7 +34,7 @@ export default class ProductScheduleSeeder implements Seeder {
     // }
 
     // const importTransaction = await importTransactionFactory.save({
-    //   importType: ImportType.PRODUCTION_SCHEDULE
+    //   importType: ImportType.PRODUCT_SCHEDULE
     // });
 
     // // importTransaction.productSchedules = productSchedules;

@@ -9,7 +9,7 @@ export enum ImportSource {
 }
 
 export enum ImportType {
-    PRODUCTION_SCHEDULE = 'production_schedule',
+    PRODUCT_SCHEDULE = 'product_schedule',
     CLEANING_PLAN = 'cleaning_plan',
     CLEANING_ROOM_HISTORY = 'cleaning_room_history'
 }
