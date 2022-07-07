@@ -1,4 +1,5 @@
 import { IsDate, IsInt, Min, ValidateNested, ValidatePromise } from "class-validator";
+import { ConnectProductDto } from "~/product/dto/connect-product.dto";
 import { Product } from "~/product/entities/product.entity";
 
 export class CreateProductScheduleDto {
@@ -16,5 +17,5 @@ export class CreateProductScheduleDto {
     productScheduleStartedAt: Date;
 
     @ValidateNested()
-    product: Product;
+    product: ConnectProductDto;
 }

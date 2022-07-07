@@ -6,7 +6,7 @@ import { ProductSchedule } from "./entities/product-schedule.entity";
 
 // Detail!!! (Application Layer)
 export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedule> {
-    importType: ImportType = ImportType.PRODUCTION_SCHEDULE;
+    importType: ImportType = ImportType.PRODUCT_SCHEDULE;
 
     constructor(
         @InjectRepository(ProductSchedule)
