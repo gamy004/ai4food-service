@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthController } from './controllers/auth.controller';
 import { UserService } from './services/user.service';
+import { UserExistsRule } from './validators/user-exists-validator';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UserService } from './services/user.service';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, UserService, LocalStrategy, JwtStrategy, UserExistsRule],
   exports: [AuthService],
   controllers: [AuthController]
 })

@@ -4,6 +4,7 @@ import { ProductController } from './product.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { CrudService } from '~/common/services/abstract.crud.service';
+import { ProductExistsRule } from './validators/product-exists-validator';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { CrudService } from '~/common/services/abstract.crud.service';
     //   provide: 'CrudService<Product>',
     //   useClass: ProductService
     // },
-    ProductService
+    ProductService,
+    ProductExistsRule
   ]
 })
 export class ProductModule { }

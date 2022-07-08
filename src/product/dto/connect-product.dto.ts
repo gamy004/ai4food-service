@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsUUID } from "class-validator";
+import { IsNotEmpty, IsUUID, Validate } from "class-validator";
+import { ProductExistsRule } from "../validators/product-exists-validator";
 
 export class ConnectProductDto {
     @IsUUID()
-    id?: string;
-
-    @IsNotEmpty()
-    productCode?: string;
+    @Validate(ProductExistsRule)
+    id: string;
 }

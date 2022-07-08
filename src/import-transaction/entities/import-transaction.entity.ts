@@ -31,10 +31,10 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
     @Column({ type: "enum", enum: ImportStatus, default: ImportStatus.Pending })
     importStatus: ImportStatus;
 
-    @Column({ type: "text" })
+    @Column({ type: "text", nullable: true })
     importedFileUrl?: string;
 
-    @Column({ type: "text" })
+    @Column({ type: "text", nullable: true })
     importedFileName?: string;
 
     @ManyToOne(() => User, entity => entity.importTransactions, { nullable: true })
