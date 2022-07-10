@@ -8,6 +8,8 @@ import { ProductScheduleModule } from './product-schedule/product-schedule.modul
 import { ProductModule } from './product/product.module';
 import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { AuthModule } from './auth/auth.module';
     DataCollectorModule,
     AuthModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService
+  ],
 })
 export class AppModule { }

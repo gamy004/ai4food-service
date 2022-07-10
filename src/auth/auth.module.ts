@@ -10,19 +10,20 @@ import { User } from './entities/user.entity';
 import { AuthController } from './controllers/auth.controller';
 import { UserService } from './services/user.service';
 import { UserExistsRule } from './validators/user-exists-validator';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User
     ]),
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy, UserExistsRule],
+  providers: [AuthService, UserService, LocalStrategy, JwtStrategy, UserExistsRule, RolesGuard],
   exports: [AuthService],
   controllers: [AuthController]
 })
