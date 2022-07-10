@@ -24,7 +24,7 @@ export abstract class CrudService<Entity> implements CrudServiceInterface<Entity
   }
 
   findOne(where: FindOptionsWhere<Entity>) {
-    return this.repository.findOneBy(where);
+    return this.repository.findOneByOrFail(where);
   }
 
   async update(where: FindOptionsWhere<Entity>, updateDto: QueryDeepPartialEntity<Entity>) {

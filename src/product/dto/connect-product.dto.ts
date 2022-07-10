@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID, Validate } from "class-validator";
+import { IsUUID, Validate } from "class-validator";
 import { ProductExistsRule } from "../validators/product-exists-validator";
 
 export class ConnectProductDto {

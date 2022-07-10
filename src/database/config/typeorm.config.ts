@@ -3,7 +3,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const config: DataSourceOptions = {
     type: 'mysql',
-    timezone: process.env.DATABASE_TIMEZONE || 'Z',
+    timezone: process.env.DATABASE_TIMEZONE,
     url: process.env.DATABASE_URL || 'mysql://root:rootPassword@mysql:3306/default',
     debug: process.env.DATABASE_DEBUG !== undefined,
     logging: process.env.DATABASE_LOGGING !== undefined,

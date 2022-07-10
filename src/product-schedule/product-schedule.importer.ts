@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { CommonRepositoryInterface } from "~/common/interface/common.repository.interface";
-import { DataCollectorImporter } from "~/data-collector/data-collector.importer";
+import { CheckOutput, DataCollectorImporter } from "~/data-collector/data-collector.importer";
 import { ImportType } from "~/import-transaction/entities/import-transaction.entity";
 import { ProductSchedule } from "./entities/product-schedule.entity";
 
@@ -13,5 +13,26 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
         productScheduleRepository: CommonRepositoryInterface<ProductSchedule>
     ) {
         super(productScheduleRepository);
+    }
+
+    async check(records: ProductSchedule[]): Promise<CheckOutput<ProductSchedule>> {
+        const existRecords = await this.repository.findBy(
+            records.map(
+                ({ productScheduleDate, productScheduleStartedAt, productScheduleEndedAt }) => {
+                    return {
+                        productScheduleDate,
+                        productScheduleStartedAt,
+                        productScheduleEndedAt
+                    };
+                }
+            )
+        );
+
+        console.log(1234, existRecords);
+
+        return {
+            // newRecords: [],
+            existRecords
+        };
     }
 }
