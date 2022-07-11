@@ -13,10 +13,15 @@ export class ImportProductScheduleDto {
 
     @IsNotEmpty()
     @ValidateNested({ each: true })
-    // @Validate(
-    //     UniqueFieldRecordRule,
-    //     ['productScheduleDate', 'productScheduleStartedAt', 'productScheduleEndedAt']
-    // )
+    @Validate(
+        UniqueFieldRecordRule,
+        [
+            'productScheduleDate',
+            'productScheduleStartedAt',
+            'productScheduleEndedAt',
+            'product.id'
+        ]
+    )
     @Type(() => CreateProductScheduleDto)
     records: CreateProductScheduleDto[];
 }

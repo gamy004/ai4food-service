@@ -1,4 +1,4 @@
-import { groupBy } from "lodash";
+import { get, groupBy } from "lodash";
 import { ValidatorConstraintInterface, ValidationArguments, ValidatorConstraint } from "class-validator";
 
 @ValidatorConstraint({ name: "UniqueFieldRecord", async: false })
@@ -12,7 +12,7 @@ export class UniqueFieldRecordRule implements ValidatorConstraintInterface {
             const groupedRecords = groupBy(records, (record) => {
                 return fields.reduce(
                     (acc, field) => {
-                        return `${acc}_${record[field]}`;
+                        return `${acc}_${get(record, field)}`;
                     }, ""
                 );
             });
