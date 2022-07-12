@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSwabDto } from './dto/create-swab.dto';
-import { UpdateSwabDto } from './dto/update-swab.dto';
+import { CreateSwabDto } from '../dto/create-swab.dto';
+import { UpdateSwabDto } from '../dto/update-swab.dto';
 
 @Injectable()
 export class SwabService {

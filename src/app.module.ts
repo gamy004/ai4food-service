@@ -30,7 +30,7 @@ import { SwabModule } from './swab/swab.module';
     ProductModule,
     DataCollectorModule,
     AuthModule,
-    SwabModule,
+    SwabModule
   ],
   providers: [
     AppService

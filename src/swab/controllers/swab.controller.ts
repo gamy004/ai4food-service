@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SwabService } from './swab.service';
-import { CreateSwabDto } from './dto/create-swab.dto';
-import { UpdateSwabDto } from './dto/update-swab.dto';
+import { SwabService } from '../services/swab.service';
+import { CreateSwabDto } from '../dto/create-swab.dto';
+import { UpdateSwabDto } from '../dto/update-swab.dto';
 
 @Controller('swab')
 export class SwabController {
-  constructor(private readonly swabService: SwabService) {}
+  constructor(private readonly swabService: SwabService) { }
 
   @Post()
   create(@Body() createSwabDto: CreateSwabDto) {
