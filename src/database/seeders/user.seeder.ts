@@ -1,6 +1,7 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { hash } from "bcrypt";
 import { DataSource } from 'typeorm';
-import { User, UserRole } from '~/auth/entities/user.entity';
+import { User, UserRole, UserTeam } from '~/auth/entities/user.entity';
 
 export default class UserSeeder implements Seeder {
   public async run(
@@ -15,25 +16,34 @@ export default class UserSeeder implements Seeder {
 
     let seedUsers = [];
 
-    for (let index = 1; index <= 5; index++) {
+    for (let index = 1; index <= 1; index++) {
+      const adminUserName = `admin${index}`;
+      const adminUserPassword = await hash(`${adminUserName}password`, 14);
 
-      const adminUser = await userFactory.make({
-        userName: `admin${index}`,
-        role: UserRole.ADMIN
+      const adminTeamUser = await userFactory.make({
+        userName: adminUserName,
+        password: adminUserPassword,
+        role: UserRole.ADMIN,
+        team: UserTeam.ADMIN
       });
 
-      const normalUser = await userFactory.make({
-        userName: `user${index}`,
-        role: UserRole.USER
+      const swabUserName = `swab${index}`;
+      const swabUserPassword = await hash(`${swabUserName}password`, 14);
+
+      const swabTeamUser = await userFactory.make({
+        userName: `swab${index}`,
+        password: swabUserPassword,
+        role: UserRole.USER,
+        team: UserTeam.SWAB
       });
 
       seedUsers = [
         ...seedUsers,
-        adminUser,
-        normalUser
+        adminTeamUser,
+        swabTeamUser
       ];
     }
 
-    await userRepository.save(seedUsers);
+    await userRepository.upsert(seedUsers, ['userName']);
   }
 }

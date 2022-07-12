@@ -7,6 +7,7 @@ export default setSeederFactory(Product, (faker) => {
 
     product.id = v4();
     product.productCode = faker.unique(faker.commerce.product);
+    product.alternateProductCode = faker.unique(faker.commerce.product);
     product.productName = faker.commerce.productName();
 
     return product;

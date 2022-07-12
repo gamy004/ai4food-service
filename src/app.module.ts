@@ -10,6 +10,7 @@ import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { SwabModule } from './swab/swab.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
     ProductModule,
     DataCollectorModule,
     AuthModule,
+    SwabModule,
   ],
   providers: [
     AppService

@@ -7,6 +7,9 @@ export class Product extends BaseSoftDeletableEntity {
     @Column({ length: 8, unique: true })
     productCode!: string;
 
+    @Column({ length: 8, unique: true })
+    alternateProductCode!: string;
+
     @Column()
     productName!: string;
 

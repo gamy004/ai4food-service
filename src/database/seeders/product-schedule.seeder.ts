@@ -11,49 +11,49 @@ export default class ProductScheduleSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager
   ): Promise<any> {
-    const importTransactionRepository = dataSource.getRepository(ImportTransaction);
+    // const importTransactionRepository = dataSource.getRepository(ImportTransaction);
 
-    // // ---------------------------------------------------
+    // // // ---------------------------------------------------
 
-    const importTransactionFactory = await factoryManager.get(ImportTransaction);
-    const userFactory = await factoryManager.get(User);
-    const productFactory = await factoryManager.get(Product);
-    const productScheduleFactory = await factoryManager.get(ProductSchedule);
+    // const importTransactionFactory = await factoryManager.get(ImportTransaction);
+    // const userFactory = await factoryManager.get(User);
+    // const productFactory = await factoryManager.get(Product);
+    // const productScheduleFactory = await factoryManager.get(ProductSchedule);
 
-    let productSchedules = [];
+    // let productSchedules = [];
 
 
-    for (let index = 1; index <= 5; index++) {
-      const product = await productFactory.save();
+    // for (let index = 1; index <= 5; index++) {
+    //   const product = await productFactory.save();
 
-      for (let index = 1; index <= 5; index++) {
-        const productSchedule = await productScheduleFactory.make({
-          product
-        });
+    //   for (let index = 1; index <= 5; index++) {
+    //     const productSchedule = await productScheduleFactory.make({
+    //       product
+    //     });
 
-        productSchedules.push(productSchedule);
-      }
-    }
+    //     productSchedules.push(productSchedule);
+    //   }
+    // }
 
-    const user = await userFactory.save({
-      userName: 'userProduction1',
-      role: UserRole.USER
-    });
+    // const user = await userFactory.save({
+    //   userName: 'userProduction1',
+    //   role: UserRole.USER
+    // });
 
-    const importTransaction = await importTransactionFactory.save({
-      importType: ImportType.PRODUCT_SCHEDULE,
-      importedUser: user
-    });
+    // const importTransaction = await importTransactionFactory.save({
+    //   importType: ImportType.PRODUCT_SCHEDULE,
+    //   importedUser: user
+    // });
 
-    importTransaction.productSchedules = productSchedules;
+    // importTransaction.productSchedules = productSchedules;
 
-    const productScheduleImporter = new ProductScheduleImporter(dataSource.getRepository(ProductSchedule));
+    // const productScheduleImporter = new ProductScheduleImporter(dataSource.getRepository(ProductSchedule));
 
-    await productScheduleImporter.import(
-      importTransaction,
-      productSchedules
-    );
+    // await productScheduleImporter.import(
+    //   importTransaction,
+    //   productSchedules
+    // );
 
-    await importTransactionRepository.update({ id: importTransaction.id }, { importStatus: ImportStatus.Success });
+    // await importTransactionRepository.update({ id: importTransaction.id }, { importStatus: ImportStatus.Success });
   }
 }

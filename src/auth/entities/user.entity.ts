@@ -11,6 +11,7 @@ export enum UserRole {
 export enum UserTeam {
     ADMIN = 'admin',
     QA = 'qa',
+    SWAB = 'swab',
     LAB = 'lab',
     PRODUCTION = 'production'
 }
@@ -34,6 +35,9 @@ export class User extends BaseSoftDeletableEntity {
 
     @Column({ type: "enum", enum: UserRole })
     role = UserRole.USER;
+
+    @Column({ type: "enum", enum: UserTeam })
+    team: UserTeam;
 
     @OneToMany(() => ImportTransaction, importTransaction => importTransaction.importedUser, { cascade: true })
     importTransactions: ImportTransaction[];
