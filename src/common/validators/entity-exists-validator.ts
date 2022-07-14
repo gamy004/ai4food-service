@@ -6,11 +6,11 @@ export abstract class EntityExistsRule<E> implements ValidatorConstraintInterfac
     protected readonly repository: CommonRepositoryInterface<E>
   ) { }
 
-  async validate(id: string) {
+  async validate(value: string) {
     let countEntity = 0;
 
     try {
-      countEntity = await this.repository.countBy({ id } as any);
+      countEntity = await this.repository.countBy({ id: value } as any);
     } catch (e) {
       console.log(e);
 
