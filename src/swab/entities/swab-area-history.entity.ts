@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { SwabAreaImage } from "./swab-area-image.entity";
+import { SwabArea } from "./swab-area.entity";
 import { SwabTest } from "./swab-test.entity";
 
 @Entity()
@@ -20,7 +21,10 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @Column({ type: 'integer' })
     swabAreaAtp?: number;
 
-    @OneToMany(() => SwabAreaImage, (entity) => entity.swabAreaHistory)
+    @ManyToOne(() => SwabArea, entity => entity.swabAreaHistories)
+    swabArea: SwabArea;
+
+    @OneToMany(() => SwabAreaImage, entity => entity.swabAreaHistory)
     swabAreaImages: SwabAreaImage[];
 
     @OneToOne(() => SwabTest, { cascade: ['insert', 'soft-remove'] })

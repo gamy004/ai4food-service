@@ -13,6 +13,6 @@ export class Product extends BaseSoftDeletableEntity {
     @Column()
     productName!: string;
 
-    @OneToMany(() => ProductSchedule, (entity) => entity.product)
+    @OneToMany(() => ProductSchedule, entity => entity.product)
     productSchedules: ProductSchedule[];
 }
