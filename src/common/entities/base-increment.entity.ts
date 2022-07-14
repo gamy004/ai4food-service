@@ -1,7 +1,7 @@
 import { BaseEntity as TypeOrmBaseEntity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export abstract class BaseEntity extends TypeOrmBaseEntity {
-    @PrimaryGeneratedColumn("uuid")
+export abstract class BaseIncrementEntity extends TypeOrmBaseEntity {
+    @PrimaryGeneratedColumn("increment", { type: "bigint" })
     id: string | number;
 
     @CreateDateColumn()
