@@ -1,4 +1,4 @@
-import { Column, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { FacilityItem } from "./facility-item.entity";
 
@@ -8,6 +8,7 @@ export enum FacilityType {
     TOOL = 'tool'
 }
 
+@Entity()
 export class Facility extends BaseSoftDeletableEntity {
     @Column({ unique: true })
     facilityName!: string;
@@ -15,6 +16,6 @@ export class Facility extends BaseSoftDeletableEntity {
     @Column({ type: "enum", enum: FacilityType })
     facilityType: FacilityType;
 
-    @OneToMany(() => FacilityItem, entity => entity.facility)
+    @OneToMany(() => FacilityItem, entity => entity.facility, { cascade: true })
     facilityItems: FacilityItem[];
 }
