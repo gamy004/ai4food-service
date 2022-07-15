@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { SwabModule } from './swab/swab.module';
+import { FacilityModule } from './facility/facility.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { SwabModule } from './swab/swab.module';
     ProductModule,
     DataCollectorModule,
     AuthModule,
-    SwabModule
+    SwabModule,
+    FacilityModule
   ],
   providers: [
     AppService
