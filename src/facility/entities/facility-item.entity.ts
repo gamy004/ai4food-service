@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
+import { SwabArea } from "~/swab/entities/swab-area.entity";
 import { Facility } from "./facility.entity";
 import { Room } from "./room.entity";
 import { Zone } from "./zone.entity";
@@ -17,4 +18,7 @@ export class FacilityItem extends BaseSoftDeletableEntity {
 
     @ManyToOne(() => Zone, entity => entity.facilityItems, { nullable: true, onDelete: 'SET NULL' })
     zone?: Zone;
+
+    @OneToMany(() => SwabArea, entity => entity.facilityItem)
+    swabAreas: SwabArea[];
 }

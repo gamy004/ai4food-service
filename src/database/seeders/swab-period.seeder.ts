@@ -11,40 +11,32 @@ export default class SwabPeriodSeeder implements Seeder {
 
         let swabPeriods = [
             {
-                swabPeriodName: "ก่อน Super Big Cleaning",
-                swabPeriodType: ""
+                swabPeriodName: "ก่อน Super Big Cleaning"
             },
             {
-                swabPeriodName: "หลัง Super Big Cleaning",
-                swabPeriodType: ""
+                swabPeriodName: "หลัง Super Big Cleaning"
             },
             {
-                swabPeriodName: "หลังประกอบเครื่อง",
-                swabPeriodType: ""
+                swabPeriodName: "หลังประกอบเครื่อง"
             },
             {
-                swabPeriodName: "ก่อนล้างระหว่างงาน",
-                swabPeriodType: ""
+                swabPeriodName: "ก่อนล้างระหว่างงาน"
             },
             {
-                swabPeriodName: "หลังล้างระหว่างงาน",
-                swabPeriodType: ""
+                swabPeriodName: "หลังล้างระหว่างงาน"
             },
             {
-                swabPeriodName: "เดินไลน์หลังพัก 4 ชม.",
-                swabPeriodType: ""
+                swabPeriodName: "เดินไลน์หลังพัก 4 ชม."
             },
             {
-                swabPeriodName: "ก่อนล้างท้ายกะ",
-                swabPeriodType: ""
+                swabPeriodName: "ก่อนล้างท้ายกะ"
             },
             {
-                swabPeriodName: "หลังล้างท้ายกะ",
-                swabPeriodType: ""
+                swabPeriodName: "หลังล้างท้ายกะ"
             },
 
         ];
 
-        await swabPeriodRepository.upsert(swabPeriods, ['swabPeriodName', 'swabPeriodType']);
+        await swabPeriodRepository.upsert(swabPeriods, ['swabPeriodName']);
     }
 }

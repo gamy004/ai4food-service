@@ -1,11 +1,13 @@
-import { Column, Entity } from "typeorm";
+
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
+import { SwabAreaHistory } from "./swab-area-history.entity";
 
 @Entity()
 export class SwabPeriod extends BaseSoftDeletableEntity {
-    @Column()
+    @Column({ unique: true })
     swabPeriodName!: string;
 
-    @Column()
-    swabPeriodType!: string;
+    @OneToMany(() => SwabAreaHistory, entity => entity.swabPeriod)
+    swabAreaHistories: SwabAreaHistory[];
 }

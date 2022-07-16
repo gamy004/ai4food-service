@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "type
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { SwabAreaImage } from "./swab-area-image.entity";
 import { SwabArea } from "./swab-area.entity";
+import { SwabPeriod } from "./swab-period.entity";
 import { SwabTest } from "./swab-test.entity";
 
 @Entity()
@@ -20,6 +21,9 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
 
     @Column({ type: 'integer' })
     swabAreaAtp?: number;
+
+    @ManyToOne(() => SwabPeriod, entity => entity.swabAreaHistories)
+    swabPeriod: SwabPeriod;
 
     @ManyToOne(() => SwabArea, entity => entity.swabAreaHistories)
     swabArea: SwabArea;
