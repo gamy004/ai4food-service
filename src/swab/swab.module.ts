@@ -6,12 +6,14 @@ import { SwabAreaHistoryService } from './services/swab-area-history.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SwabAreaHistory } from './entities/swab-area-history.entity';
 import { SwabAreaImage } from './entities/swab-area-image.entity';
+import { SwabPeriodController } from './controllers/swab-period.controller';
+import { SwabPeriodService } from './services/swab-period.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaImage])
   ],
-  controllers: [SwabController, SwabAreaHistoryController],
-  providers: [SwabService, SwabAreaHistoryService]
+  controllers: [SwabController, SwabAreaHistoryController, SwabPeriodController],
+  providers: [SwabService, SwabAreaHistoryService, SwabPeriodService]
 })
 export class SwabModule { }

@@ -8,8 +8,6 @@ import { ProductScheduleModule } from './product-schedule/product-schedule.modul
 import { ProductModule } from './product/product.module';
 import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/guards/roles.guard';
 import { SwabModule } from './swab/swab.module';
 import { FacilityModule } from './facility/facility.module';
 
@@ -32,7 +30,7 @@ import { FacilityModule } from './facility/facility.module';
     DataCollectorModule,
     AuthModule,
     SwabModule,
-    FacilityModule
+    FacilityModule,
   ],
   providers: [
     AppService
