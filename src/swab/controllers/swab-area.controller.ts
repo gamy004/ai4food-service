@@ -16,6 +16,11 @@ export class SwabAreaController {
     return this.swabAreaService.findAll();
   }
 
+  @Get('/main-area')
+  findAllMainArea() {
+    return this.swabAreaService.findAllMainArea();
+  }
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.swabAreaService.findOne(+id);

@@ -19,9 +19,4 @@ export class SwabController {
   querySwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
     return this.swabService.querySwabPlan(querySwabPlanDto);
   }
-
-  @Get('/main-area')
-  findAllMainArea() {
-    return this.swabAreaService.findAllMainArea();
-  }
 }
