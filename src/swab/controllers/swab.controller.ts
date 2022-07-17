@@ -6,8 +6,8 @@ import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 export class SwabController {
   constructor(private readonly swabService: SwabService) { }
   @Get('generate-swab-plan')
-  generateSwabPlan() {
-    return this.swabService.generateSwabPlan();
+  generateSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
+    return this.swabService.generateSwabPlan(querySwabPlanDto);
   }
 
   @Get("plan")
