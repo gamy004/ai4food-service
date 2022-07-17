@@ -15,14 +15,13 @@ import { SwabAreaService } from './services/swab-area.service';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaController } from './controllers/swab-area.controller';
 import { FacilityModule } from '~/facility/facility.module';
-import { SwabAreaService } from './services/swab-area.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaImage, SwabArea, SwabPeriod, SwabTest, FacilityItem]),
     FacilityModule
   ],
-  controllers: [SwabController, SwabAreaHistoryController, SwabPeriodController],
+  controllers: [SwabController, SwabAreaController, SwabAreaHistoryController, SwabPeriodController],
   providers: [SwabService, SwabAreaService, SwabAreaHistoryService, SwabPeriodService]
 })
 export class SwabModule { }
