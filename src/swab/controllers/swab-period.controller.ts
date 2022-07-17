@@ -12,10 +12,10 @@ export class SwabPeriodController {
   //   return this.swabPeriodService.create(createSwabPeriodDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.swabPeriodService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.swabPeriodService.findAll();
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
