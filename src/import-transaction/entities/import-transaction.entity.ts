@@ -37,6 +37,9 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
     @Column({ type: "text", nullable: true })
     importedFileName?: string;
 
+    @Column({ nullable: true })
+    importedUserId: string;
+
     @ManyToOne(() => User, entity => entity.importTransactions, { nullable: true })
     importedUser?: User;
 

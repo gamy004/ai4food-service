@@ -9,6 +9,9 @@ export class Room extends BaseSoftDeletableEntity {
     @Column()
     roomName!: string;
 
+    @Column({ nullable: true })
+    zoneId: string;
+
     @ManyToOne(() => Zone, entity => entity.rooms, { onDelete: "SET NULL" })
     zone: Zone;
 

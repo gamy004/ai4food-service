@@ -20,6 +20,9 @@ export class SwabArea extends BaseSoftDeletableEntity {
     @OneToMany(() => SwabAreaHistory, entity => entity.swabArea)
     swabAreaHistories: SwabAreaHistory[];
 
+    @Column({ nullable: true })
+    facilityItemId: string;
+
     @ManyToOne(() => FacilityItem, entity => entity.swabAreas, { nullable: true })
     facilityItem?: FacilityItem;
 }

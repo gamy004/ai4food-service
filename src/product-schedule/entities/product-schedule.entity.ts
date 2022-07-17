@@ -17,8 +17,14 @@ export class ProductSchedule extends BaseSoftDeletableEntity {
     @Column({ type: 'time' })
     productScheduleEndedAt!: Date;
 
+    @Column({ nullable: true })
+    productId: string;
+
     @ManyToOne(() => Product, entity => entity.productSchedules)
     product: Product;
+
+    @Column({ nullable: true })
+    importTransactionId: string;
 
     @ManyToOne(() => ImportTransaction, entity => entity.productSchedules)
     importTransaction: ImportTransaction;
