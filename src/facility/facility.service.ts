@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere } from 'typeorm';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { Facility } from './entities/facility.entity';
@@ -11,5 +12,9 @@ export class FacilityService extends CrudService<Facility> {
     repository: CommonRepositoryInterface<Facility>
   ) {
     super(repository);
+  }
+
+  find(where: FindOptionsWhere<Facility> | FindOptionsWhere<Facility>[]) {
+    return this.repository.findBy(where);
   }
 }
