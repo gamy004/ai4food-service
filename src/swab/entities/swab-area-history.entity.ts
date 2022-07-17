@@ -22,14 +22,23 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @Column({ type: 'integer' })
     swabAreaAtp?: number;
 
+    @Column({ nullable: true })
+    swabPeriodId: string;
+
     @ManyToOne(() => SwabPeriod, entity => entity.swabAreaHistories)
     swabPeriod: SwabPeriod;
+
+    @Column({ nullable: true })
+    swabAreaId: string;
 
     @ManyToOne(() => SwabArea, entity => entity.swabAreaHistories)
     swabArea: SwabArea;
 
     @OneToMany(() => SwabAreaImage, entity => entity.swabAreaHistory)
     swabAreaImages: SwabAreaImage[];
+
+    @Column({ nullable: true })
+    swabTestId: string;
 
     @OneToOne(() => SwabTest, { cascade: ['insert', 'soft-remove'] })
     @JoinColumn()

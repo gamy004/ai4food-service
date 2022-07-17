@@ -24,24 +24,4 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
-
-  @Roles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('ping-admin')
-  pingAdmin() {
-    return 'admin';
-  }
-
-  @Roles(UserRole.USER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('ping-user')
-  pingUser() {
-    return 'user';
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  me(@Request() req) {
-    return req.user;
-  }
 }

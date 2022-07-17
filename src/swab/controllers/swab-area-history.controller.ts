@@ -7,15 +7,15 @@ import { SwabAreaHistoryService } from '../services/swab-area-history.service';
 export class SwabAreaHistoryController {
   constructor(private readonly swabAreaHistoryService: SwabAreaHistoryService) { }
 
-  @Post()
-  create(@Body() createSwabAreaHistoryDto: CreateSwabAreaHistoryDto) {
-    return this.swabAreaHistoryService.create(createSwabAreaHistoryDto);
-  }
+  // @Post()
+  // create(@Body() createSwabAreaHistoryDto: CreateSwabAreaHistoryDto) {
+  //   return this.swabAreaHistoryService.create(createSwabAreaHistoryDto);
+  // }
 
-  @Get()
-  findAll() {
-    return this.swabAreaHistoryService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.swabAreaHistoryService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -27,8 +27,8 @@ export class SwabAreaHistoryController {
     return this.swabAreaHistoryService.update({ id }, updateSwabAreaHistoryDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.swabAreaHistoryService.remove({ id });
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.swabAreaHistoryService.remove({ id });
+  // }
 }

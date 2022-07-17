@@ -8,6 +8,9 @@ export class SwabArea extends BaseSoftDeletableEntity {
     @Column()
     swabAreaName!: string;
 
+    @Column({ nullable: true })
+    mainSwabAreaId?: string;
+
     @ManyToOne(() => SwabArea, entity => entity.subSwabAreas, { nullable: true })
     mainSwabArea?: SwabArea;
 

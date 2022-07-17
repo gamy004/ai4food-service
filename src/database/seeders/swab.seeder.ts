@@ -209,7 +209,7 @@ export default class SwabSeeder implements Seeder {
 
             console.log(swabAreas);
 
-            async function generateSwabAreaHistory(swabArea, numOfDate = 1) {
+            async function generateSwabAreaHistory(swabArea, numOfDate = 1, creteSwabTest = true) {
                 for (let subIndex = 0; subIndex < numOfDate; subIndex++) {
                     const currentDate = new Date();
 
@@ -229,18 +229,26 @@ export default class SwabSeeder implements Seeder {
                     for (let subIndex2 = 0; subIndex2 < createdSwabPeriods.length; subIndex2++) {
                         const swabPeriod = createdSwabPeriods[subIndex2];
 
-                        const swabTest = await swabTestFactory.make({
-                            listeriaMonoDetected: null,
-                            listeriaMonoValue: null
-                        });
-
-                        const swabAreaHistory = await swabAreaHistoryFactory.make({
+                        const historyData = {
                             swabAreaDate: currentDate,
                             swabAreaSwabedAt: null,
                             swabPeriod,
-                            swabTest,
+                            swabTest: null,
                             swabArea
-                        });
+                        };
+
+                        if (creteSwabTest) {
+                            const swabTest = await swabTestFactory.make({
+                                listeriaMonoDetected: null,
+                                listeriaMonoValue: null
+                            });
+
+                            historyData.swabTest = swabTest;
+                        }
+
+                        const swabAreaHistory = await swabAreaHistoryFactory.make(
+                            historyData
+                        );
 
                         swabAreaHistories.push(swabAreaHistory);
                     }
@@ -252,14 +260,16 @@ export default class SwabSeeder implements Seeder {
 
                 const { subSwabAreas = [] } = mainSwabArea;
 
+                const shouldMainAreaCreateLabTest = subSwabAreas.length === 0;
+
+                await generateSwabAreaHistory(mainSwabArea, NUMBER_OF_HISTORY_DAY, shouldMainAreaCreateLabTest);
+
                 if (subSwabAreas.length) {
                     for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
                         const subSwabArea = subSwabAreas[index3];
 
                         await generateSwabAreaHistory(subSwabArea, NUMBER_OF_HISTORY_DAY);
                     }
-                } else {
-                    await generateSwabAreaHistory(mainSwabArea, NUMBER_OF_HISTORY_DAY);
                 }
             }
         }

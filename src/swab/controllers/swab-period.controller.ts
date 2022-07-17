@@ -7,28 +7,28 @@ import { SwabPeriodService } from '../services/swab-period.service';
 export class SwabPeriodController {
   constructor(private readonly swabPeriodService: SwabPeriodService) { }
 
-  @Post()
-  create(@Body() createSwabPeriodDto: CreateSwabPeriodDto) {
-    return this.swabPeriodService.create(createSwabPeriodDto);
-  }
+  // @Post()
+  // create(@Body() createSwabPeriodDto: CreateSwabPeriodDto) {
+  //   return this.swabPeriodService.create(createSwabPeriodDto);
+  // }
 
   @Get()
   findAll() {
     return this.swabPeriodService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.swabPeriodService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.swabPeriodService.findOne({ id });
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSwabPeriodDto: UpdateSwabPeriodDto) {
-    return this.swabPeriodService.update(+id, updateSwabPeriodDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateSwabPeriodDto: UpdateSwabPeriodDto) {
+  //   return this.swabPeriodService.update({ id }, updateSwabPeriodDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.swabPeriodService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.swabPeriodService.remove({ id });
+  // }
 }
