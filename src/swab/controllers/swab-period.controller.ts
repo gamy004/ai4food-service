@@ -19,16 +19,16 @@ export class SwabPeriodController {
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
-  //   return this.swabPeriodService.findOne(+id);
+  //   return this.swabPeriodService.findOne({ id });
   // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateSwabPeriodDto: UpdateSwabPeriodDto) {
-  //   return this.swabPeriodService.update(+id, updateSwabPeriodDto);
+  //   return this.swabPeriodService.update({ id }, updateSwabPeriodDto);
   // }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
-  //   return this.swabPeriodService.remove(+id);
+  //   return this.swabPeriodService.remove({ id });
   // }
 }

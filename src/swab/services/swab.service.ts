@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { CreateSwabDto } from '../dto/create-swab.dto';
 import { UpdateSwabDto } from '../dto/update-swab.dto';
@@ -8,26 +7,93 @@ import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service'
 import { SwabAreaService } from './swab-area.service'
+import { Between, FindOptionsWhere, In, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
+import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
+import { SwabArea } from '../entities/swab-area.entity';
 
 @Injectable()
 export class SwabService {
   constructor(
     @InjectRepository(FacilityItem)
-    private swabPeriodService: SwabPeriodService,
     private swabAreaService: SwabAreaService,
-
+    protected readonly swabPeriodService: SwabPeriodService,
+    @InjectRepository(SwabAreaHistory)
+    protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
+    @InjectRepository(SwabArea)
+    protected readonly swabAreaRepository: Repository<SwabArea>
   ) { }
 
   create(createSwabDto: CreateSwabDto) {
     return 'This action adds a new swab';
   }
 
-  findAll() {
-    return `This action returns all swab`;
-  }
+  async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
+    const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} swab`;
+    const where: FindOptionsWhere<SwabAreaHistory> = {};
+
+    let fromDate, toDate;
+
+    if (fromDateString) {
+      fromDate = new Date(fromDateString);
+
+      fromDate.setMinutes(0, 0, 0);
+    }
+
+    if (toDateString) {
+      toDate = new Date(toDateString);
+
+      toDate.setDate(toDate.getDate() + 1);
+
+      toDate.setMinutes(0, 0, 0);
+    }
+
+    if (fromDate && toDate) {
+      where.swabAreaDate = Between(fromDate, toDate);
+    } else {
+      if (fromDate) {
+        where.swabAreaDate = MoreThanOrEqual(fromDate);
+      } else {
+        where.swabAreaDate = LessThan(fromDate);
+      }
+    }
+
+    const swabPeriods = await this.swabPeriodService.findAll();
+
+    const swabAreaHistories = await this.swabAreaHistoryRepository.find({
+      where,
+      relations: {
+        //   swabPeriod: true,
+        //   swabArea: true,
+        swabTest: true
+      },
+      select: {
+        swabAreaDate: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        swabTest: {
+          swabTestCode: true
+        }
+      }
+    });
+
+    let swabAreas = [];
+
+    if (swabAreaHistories.length) {
+      const swabAreaIds = swabAreaHistories.map(({ swabAreaId }) => swabAreaId);
+
+      if (swabAreaIds.length) {
+        swabAreas = await this.swabAreaRepository.findBy({
+          id: In(swabAreaIds)
+        });
+      }
+    }
+    return {
+      swabPeriods,
+      swabAreaHistories,
+      swabAreas
+    };
   }
 
   async generateSwabPlan() {
@@ -118,9 +184,5 @@ export class SwabService {
 
   update(id: number, updateSwabDto: UpdateSwabDto) {
     return `This action updates a #${id} swab`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} swab`;
   }
 }

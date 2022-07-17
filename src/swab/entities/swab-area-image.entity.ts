@@ -10,6 +10,9 @@ export class SwabAreaImage extends BaseSoftDeletableEntity {
     @Column({ type: 'text', nullable: true })
     swabAreaImageDescription?: string;
 
+    @Column({ nullable: true })
+    swabAreaHistoryId: string;
+
     @ManyToOne(() => SwabAreaHistory, entity => entity.swabAreaImages)
     swabAreaHistory: SwabAreaHistory;
 }
