@@ -1,3 +1,4 @@
+import { format } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSwabDto } from '../dto/create-swab.dto';
@@ -6,16 +7,19 @@ import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service'
 import { SwabAreaService } from './swab-area.service'
-import { Between, FindOptionsWhere, In, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
 import { SwabArea } from '../entities/swab-area.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Shift } from '~/common/enums/shift';
+import { FacilityItemService } from '~/facility/facility-item.service';
 
 @Injectable()
 export class SwabService {
   constructor(
+
+    protected readonly facilityItemService: FacilityItemService,
     protected readonly swabPeriodService: SwabPeriodService,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
@@ -42,6 +46,13 @@ export class SwabService {
       fromDate = new Date(fromDateString);
 
       fromDate.setMinutes(0, 0, 0);
+
+      fromDate = format(fromDate, "yyyy-MM-dd");
+      // console.log("Before:", fromDate);
+
+      // fromDate = utcToZonedTime(fromDate, 'Asia/Bangkok');
+
+      // console.log("After:", fromDate);
     }
 
     if (toDateString) {
@@ -50,52 +61,100 @@ export class SwabService {
       toDate.setDate(toDate.getDate() + 1);
 
       toDate.setMinutes(0, 0, 0);
+
+      toDate = format(toDate, "yyyy-MM-dd");
+
+      // toDate = utcToZonedTime(toDate, 'Asia/Bangkok');
     }
 
     if (fromDate && toDate) {
-      where.swabAreaDate = Between(fromDate, toDate);
+      where.swabAreaDate = Raw(field => `${field} >= '${fromDate}' and ${field} < '${toDate}'`);
     } else {
       if (fromDate) {
-        where.swabAreaDate = MoreThanOrEqual(fromDate);
-      } else {
-        where.swabAreaDate = LessThan(fromDate);
+        where.swabAreaDate = Raw(field => `${field} >= '${fromDate}'`);
+      }
+
+      if (toDate) {
+        where.swabAreaDate = Raw(field => `${field} < '${toDate}'`);
       }
     }
 
     const swabPeriods = await this.swabPeriodService.findAll();
 
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
-      where,
+      where: {
+        ...where,
+        swabTestId: Not(IsNull())
+      },
       relations: {
         //   swabPeriod: true,
         //   swabArea: true,
         swabTest: true
       },
       select: {
+        id: true,
         swabAreaDate: true,
         swabPeriodId: true,
         swabAreaId: true,
+        shift: true,
         swabTest: {
+          id: true,
           swabTestCode: true
+        }
+      },
+      order: {
+        swabTest: {
+          id: {
+            direction: 'asc'
+          }
         }
       }
     });
 
+    let facilityItems = [];
     let swabAreas = [];
 
     if (swabAreaHistories.length) {
-      const swabAreaIds = swabAreaHistories.map(({ swabAreaId }) => swabAreaId);
+      const swabAreaIds = [...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId))].filter(Boolean);
 
       if (swabAreaIds.length) {
         swabAreas = await this.swabAreaRepository.findBy({
           id: In(swabAreaIds)
         });
       }
+
+      if (swabAreas.length) {
+        let mainSwabAreas = [];
+
+        const facilityItemIds = [...new Set(swabAreas.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
+
+        if (facilityItemIds.length) {
+          facilityItems = await this.facilityItemService.find({
+            id: In(facilityItemIds)
+          });
+        }
+
+        const mainSwabAreaIds = [...new Set(swabAreas.map(({ mainSwabAreaId }) => mainSwabAreaId))].filter(Boolean);
+
+        if (mainSwabAreaIds.length) {
+          mainSwabAreas = await this.swabAreaRepository.findBy({
+            id: In(mainSwabAreaIds)
+          });
+        }
+
+        if (mainSwabAreas.length) {
+          swabAreas = [
+            ...swabAreas,
+            ...mainSwabAreas
+          ];
+        }
+      }
     }
     return {
       swabPeriods,
       swabAreaHistories,
-      swabAreas
+      swabAreas,
+      facilityItems
     };
   }
 
@@ -463,3 +522,4 @@ export class SwabService {
     return `This action updates a #${id} swab`;
   }
 }
+
