@@ -46,5 +46,5 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     swabTest: SwabTest;
 
     @Column({ type: "enum", enum: Shift, nullable: true })
-    shift!: Shift;
+    shift?: Shift;
 }

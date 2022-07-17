@@ -6,6 +6,7 @@ import { Facility } from './entities/facility.entity';
 import { FacilityItem } from './entities/facility-item.entity';
 import { Room } from './entities/room.entity';
 import { Zone } from './entities/zone.entity';
+import { FacilityItemService } from './facility-item.service';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Zone } from './entities/zone.entity';
     ])
   ],
   controllers: [FacilityController],
-  providers: [FacilityService]
+  providers: [FacilityService, FacilityItemService],
+  exports: [FacilityService, FacilityItemService]
 })
 export class FacilityModule { }
