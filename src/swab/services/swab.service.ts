@@ -1,4 +1,5 @@
 import { format } from 'date-fns-tz';
+import { differenceInDays } from 'date-fns'
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSwabDto } from '../dto/create-swab.dto';
@@ -167,6 +168,8 @@ export class SwabService {
       fromDate = new Date(fromDateString);
 
       fromDate.setMinutes(0, 0, 0);
+
+      fromDate = format(fromDate, "yyyy-MM-dd");
     }
 
     if (toDateString) {
@@ -175,9 +178,11 @@ export class SwabService {
       toDate.setDate(toDate.getDate() + 1);
 
       toDate.setMinutes(0, 0, 0);
+
+      toDate = format(toDate, "yyyy-MM-dd");
     }
 
-    const NUMBER_OF_HISTORY_DAY = Math.ceil((toDate - fromDate) / (1000 * 3600 * 24));
+    const NUMBER_OF_HISTORY_DAY = differenceInDays(new Date(toDate), new Date(fromDate));
 
     const bigCleaningSwabPeriodsTemplate = [
       { swabPeriodName: "ก่อน Super Big Cleaning" },
@@ -425,12 +430,14 @@ export class SwabService {
         };
 
         if (creteSwabTest) {
-          const swabTest = SwabTest.create({
+          const swabTestData = SwabTest.create({
             listeriaMonoDetected: null,
             listeriaMonoValue: null
           });
 
-          historyData.swabTest = swabTest;
+          // const swabTest = await this.swabTestRepository.save(swabTestData);
+
+          historyData.swabTest = swabTestData;
         }
 
         const swabAreaHistory = SwabAreaHistory.create(historyData);
@@ -438,16 +445,16 @@ export class SwabService {
         swabAreaHistories.push(swabAreaHistory);
       }
 
-      async function generateHistory(swabAreas, currentDate = new Date(), subIndex = 0) {
+      async function generateHistory(swabAreas, currentDate = new Date(), dateIndex = 0) {
 
-        currentDate.setDate(currentDate.getDate() + subIndex);
+        currentDate.setDate(currentDate.getDate() + dateIndex);
 
-        if (subIndex === 0) {
-          for (let subIndex2 = 0; subIndex2 < bigCleaningSwabPeriodsTemplate.length; subIndex2++) {
-            const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[subIndex2].swabPeriodName];
+        if (dateIndex === 0) {
+          for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
+            const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[index].swabPeriodName];
 
-            for (let index = 0; index < swabAreas.length; index++) {
-              const mainSwabArea = swabAreas[index];
+            for (let index2 = 0; index2 < swabAreas.length; index2++) {
+              const mainSwabArea = swabAreas[index2];
               const { subSwabAreas = [] } = mainSwabArea;
               const createSwabTest = subSwabAreas.length === 0;
 
@@ -460,14 +467,14 @@ export class SwabService {
               );
 
               if (subSwabAreas.length > 0) {
-                for (let index2 = 0; index2 < subSwabAreas.length; index2++) {
-                  const swabArea = subSwabAreas[index2];
+                for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
+                  const swabArea = subSwabAreas[index3];
                   await generateSwabAreaHistory(
                     currentDate,
                     swabArea,
                     bigCleaningSwabPeriod,
                     null,
-                    createSwabTest
+                    true
                   );
                 }
               }
@@ -475,12 +482,12 @@ export class SwabService {
           }
         };
 
-        for (let subIndex3 = 0; subIndex3 < generalSwabPeriodsTemplate.length; subIndex3++) {
-          const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[subIndex3].swabPeriodName];
-          for (let index = 0; index < Object.keys(Shift).length; index++) {
-            const shiftKey = Object.keys(Shift)[index];
-            for (let index2 = 0; index2 < swabAreas.length; index2++) {
-              const mainSwabArea = swabAreas[index2];
+        for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
+          const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
+          for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
+            const shiftKey = Object.keys(Shift)[index2];
+            for (let index3 = 0; index3 < swabAreas.length; index3++) {
+              const mainSwabArea = swabAreas[index3];
               const { subSwabAreas = [] } = mainSwabArea;
               const createSwabTest = subSwabAreas.length === 0;
 
@@ -493,14 +500,14 @@ export class SwabService {
               );
 
               if (subSwabAreas.length > 0) {
-                for (let index2 = 0; index2 < subSwabAreas.length; index2++) {
-                  const swabArea = subSwabAreas[index2];
+                for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
+                  const swabArea = subSwabAreas[index4];
                   await generateSwabAreaHistory(
                     currentDate,
                     swabArea,
                     swabPeriod,
                     null,
-                    createSwabTest
+                    true
                   );
                 }
               }
@@ -509,13 +516,12 @@ export class SwabService {
         }
       }
 
-      for (let subIndex = 0; subIndex < NUMBER_OF_HISTORY_DAY; subIndex++) {
+      for (let dateIndex = 0; dateIndex < NUMBER_OF_HISTORY_DAY; dateIndex++) {
         const currentDate = new Date(fromDate);
-        await generateHistory(swabAreas, currentDate, subIndex);
+        await generateHistory(swabAreas, currentDate, dateIndex);
       }
     }
-    return await this.swabAreaHistoryRepository.save(swabAreaHistories);
-
+    await this.swabAreaHistoryRepository.save(swabAreaHistories);
   }
 
   update(id: number, updateSwabDto: UpdateSwabDto) {
