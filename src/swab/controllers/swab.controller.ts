@@ -17,6 +17,11 @@ export class SwabController {
     return this.swabService.findAll();
   }
 
+  @Get('generate-swab-plan')
+  generateSwabPlan() {
+    return this.swabService.generateSwabPlan();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.swabService.findOne(+id);
