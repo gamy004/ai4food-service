@@ -1,23 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
-import { CrudService } from '~/common/services/abstract.crud.service';
 import { SwabArea } from '../entities/swab-area.entity';
+import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
+import { CrudService } from '~/common/services/abstract.crud.service';
+import { IsNull } from 'typeorm';
 
 @Injectable()
-export class SwabAreaService extends CrudService<SwabArea>{
+export class SwabAreaService extends CrudService<SwabArea> {
   constructor(
     @InjectRepository(SwabArea)
-    repository: Repository<SwabArea>
+    repository: CommonRepositoryInterface<SwabArea>
   ) {
-    super(repository);
+    super(repository)
   }
 
-  findAll(options?: FindManyOptions<SwabArea>) {
-    return this.repository.find(options);
-  }
-
-  find(where: FindOptionsWhere<SwabArea> | FindOptionsWhere<SwabArea>[]) {
-    return this.repository.findBy(where);
+  findAllMainArea(): Promise<SwabArea[]> {
+    return this.repository.findBy({ mainSwabAreaId: IsNull() });
   }
 }
+

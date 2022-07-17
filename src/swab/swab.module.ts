@@ -21,7 +21,7 @@ import { FacilityModule } from '~/facility/facility.module';
     TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaImage, SwabArea, SwabPeriod, SwabTest, FacilityItem]),
     FacilityModule
   ],
-  controllers: [SwabController, SwabAreaHistoryController, SwabPeriodController, SwabAreaController],
-  providers: [SwabService, SwabAreaHistoryService, SwabPeriodService, SwabAreaService]
+  controllers: [SwabController, SwabAreaController, SwabAreaHistoryController, SwabPeriodController],
+  providers: [SwabService, SwabAreaService, SwabAreaHistoryService, SwabPeriodService]
 })
 export class SwabModule { }
