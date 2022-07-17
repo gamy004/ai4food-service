@@ -31,105 +31,105 @@ export default class SwabSeeder implements Seeder {
         ]);
 
         const swapAreas = [
-            // {
-            //     facilityItemName: "ไลน์4 ขึ้นรูป2",
-            //     mainSwabAreas: [
-            //         {
-            //             swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "ชุดเติมข้าว" },
-            //                 { swabAreaName: "สายพานลำเลียง" },
-            //                 { swabAreaName: "แกนซุย" },
-            //                 { swabAreaName: "ชุด Hopper" },
-            //                 { swabAreaName: "Shutter" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
-            //         },
-            //         {
-            //             swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่องและช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "คานตู้ control หน้าเครื่อง Portion" },
-            //                 { swabAreaName: "Cover ด้านบนเครื่อง" },
-            //                 { swabAreaName: "ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว" }
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และโครงชุดแขนชัตเตอร์",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight" },
-            //                 { swabAreaName: "แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight" },
-            //                 { swabAreaName: "โครงชุดแขนชัตเตอร์" }
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "สายพานลำเลียงถาด",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "ตัวแผ่น" },
-            //                 { swabAreaName: "ตัวกั้น" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "รางสายไฟและรอยต่อโครงสร้างด้านใต้สายพาน",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "รางสายไฟ" },
-            //                 { swabAreaName: "รอยต่อโครงสร้างด้านใต้สายพาน" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และช่องข้างขาตั้งชุด Control",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "ขาตั้งเครื่อง" },
-            //                 { swabAreaName: "ใต้ฐานขาตั้งเครื่อง" },
-            //                 { swabAreaName: "ช่องข้างขาตั้งชุด Control" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "ด้านบนตู้ Control Infeed และสายไฟ",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "ด้านบนตู้ Control Infeed" },
-            //                 { swabAreaName: "สายไฟ" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "พื้นใต้เครื่อง Portion", subSwabAreas: []
-            //         },
-            //         {
-            //             swabAreaName: "รางระบายน้ำห้อง Processing 2",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "กลางราง" },
-            //                 { swabAreaName: "ขอบรางซ้าย" },
-            //                 { swabAreaName: "ขอบรางขวา" },
-            //                 { swabAreaName: "Main Hole" },
-            //             ]
-            //         },
-            //     ]
-            // },
-            // {
-            //     facilityItemName: "ตู้ Vac. โซนสุก No.1",
-            //     mainSwabAreas: [
-            //         {
-            //             swabAreaName: "พื้นและ Slope",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "พื้น" },
-            //                 { swabAreaName: "Slope" },
-            //             ]
-            //         },
-            //     ]
-            // },
-            // {
-            //     facilityItemName: "ตู้ Steam โซนสุก No.1",
-            //     mainSwabAreas: [
-            //         {
-            //             swabAreaName: "พื้นและ Slope",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "พื้น" },
-            //                 { swabAreaName: "Slope" },
-            //             ]
-            //         },
-            //     ]
-            // },
+            {
+                facilityItemName: "ไลน์4 ขึ้นรูป2",
+                mainSwabAreas: [
+                    {
+                        swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
+                        subSwabAreas: [
+                            { swabAreaName: "ชุดเติมข้าว" },
+                            { swabAreaName: "สายพานลำเลียง" },
+                            { swabAreaName: "แกนซุย" },
+                            { swabAreaName: "ชุด Hopper" },
+                            { swabAreaName: "Shutter" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่องและช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
+                        subSwabAreas: [
+                            { swabAreaName: "คานตู้ control หน้าเครื่อง Portion" },
+                            { swabAreaName: "Cover ด้านบนเครื่อง" },
+                            { swabAreaName: "ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว" }
+                        ]
+                    },
+                    {
+                        swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และโครงชุดแขนชัตเตอร์",
+                        subSwabAreas: [
+                            { swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight" },
+                            { swabAreaName: "แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight" },
+                            { swabAreaName: "โครงชุดแขนชัตเตอร์" }
+                        ]
+                    },
+                    {
+                        swabAreaName: "สายพานลำเลียงถาด",
+                        subSwabAreas: [
+                            { swabAreaName: "ตัวแผ่น" },
+                            { swabAreaName: "ตัวกั้น" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "รางสายไฟและรอยต่อโครงสร้างด้านใต้สายพาน",
+                        subSwabAreas: [
+                            { swabAreaName: "รางสายไฟ" },
+                            { swabAreaName: "รอยต่อโครงสร้างด้านใต้สายพาน" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และช่องข้างขาตั้งชุด Control",
+                        subSwabAreas: [
+                            { swabAreaName: "ขาตั้งเครื่อง" },
+                            { swabAreaName: "ใต้ฐานขาตั้งเครื่อง" },
+                            { swabAreaName: "ช่องข้างขาตั้งชุด Control" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "ด้านบนตู้ Control Infeed และสายไฟ",
+                        subSwabAreas: [
+                            { swabAreaName: "ด้านบนตู้ Control Infeed" },
+                            { swabAreaName: "สายไฟ" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "พื้นใต้เครื่อง Portion", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "รางระบายน้ำห้อง Processing 2",
+                        subSwabAreas: [
+                            { swabAreaName: "กลางราง" },
+                            { swabAreaName: "ขอบรางซ้าย" },
+                            { swabAreaName: "ขอบรางขวา" },
+                            { swabAreaName: "Main Hole" },
+                        ]
+                    },
+                ]
+            },
+            {
+                facilityItemName: "ตู้ Vac. โซนสุก No.1",
+                mainSwabAreas: [
+                    {
+                        swabAreaName: "พื้นและ Slope",
+                        subSwabAreas: [
+                            { swabAreaName: "พื้น" },
+                            { swabAreaName: "Slope" },
+                        ]
+                    },
+                ]
+            },
+            {
+                facilityItemName: "ตู้ Steam โซนสุก No.1",
+                mainSwabAreas: [
+                    {
+                        swabAreaName: "พื้นและ Slope",
+                        subSwabAreas: [
+                            { swabAreaName: "พื้น" },
+                            { swabAreaName: "Slope" },
+                        ]
+                    },
+                ]
+            },
             {
                 facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
                 mainSwabAreas: [
@@ -151,27 +151,27 @@ export default class SwabSeeder implements Seeder {
                     }
                 ]
             },
-            // {
-            //     facilityItemName: "เครื่องซุยข้าว Aiho No.2",
-            //     mainSwabAreas: [
-            //         {
-            //             swabAreaName: "แกนสายพาน",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "แกนกลาง" },
-            //                 { swabAreaName: "ก้านซุย" },
-            //             ]
-            //         },
-            //         {
-            //             swabAreaName: "สายพานและแผ่นเพลท",
-            //             subSwabAreas: [
-            //                 { swabAreaName: "สายพาน - กลาง" },
-            //                 { swabAreaName: "สายพาน - ขอบซ้าย" },
-            //                 { swabAreaName: "สายพาน - ขอบขวา" },
-            //                 { swabAreaName: "แผ่นเพลท" },
-            //             ]
-            //         },
-            //     ]
-            // },
+            {
+                facilityItemName: "เครื่องซุยข้าว Aiho No.2",
+                mainSwabAreas: [
+                    {
+                        swabAreaName: "แกนสายพาน",
+                        subSwabAreas: [
+                            { swabAreaName: "แกนกลาง" },
+                            { swabAreaName: "ก้านซุย" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "สายพานและแผ่นเพลท",
+                        subSwabAreas: [
+                            { swabAreaName: "สายพาน - กลาง" },
+                            { swabAreaName: "สายพาน - ขอบซ้าย" },
+                            { swabAreaName: "สายพาน - ขอบขวา" },
+                            { swabAreaName: "แผ่นเพลท" },
+                        ]
+                    },
+                ]
+            },
         ];
 
         const swabAreaHistoryRepository = dataSource.getRepository(SwabAreaHistory);
@@ -294,28 +294,6 @@ export default class SwabSeeder implements Seeder {
                 }
             }
         }
-
-
-        // // // // ---------------------------------------------------
-        // const facilityFactory = await factoryManager.get(Facility);
-
-        // const swabAreaFactory = await factoryManager.get(SwabArea);
-
-        // let swabAreaHistories = [];
-
-        // for (let areaIndex = 1; areaIndex <= 5; areaIndex++) {
-        //     const mainSwabArea = await swabAreaFactory.save({
-        //         swabAreaName: `main swab area ${areaIndex}`
-        //     });
-
-        //     const subSwabAreas = await swabAreaFactory.saveMany(5, {
-        //         mainSwabArea
-        //     });
-
-        //     subSwabAreas.forEach(async (subSwabArea) => {
-
-        //     });
-        // }
 
         await swabAreaHistoryRepository.save(swabAreaHistories);
     }
