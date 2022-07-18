@@ -174,13 +174,13 @@ export default class SwabSeeder implements Seeder {
             },
         ];
 
-        const swabAreaHistoryRepository = dataSource.getRepository(SwabAreaHistory);
+        // const swabAreaHistoryRepository = dataSource.getRepository(SwabAreaHistory);
         const swabAreaRepository = dataSource.getRepository(SwabArea);
         const facilityItemRepository = dataSource.getRepository(FacilityItem);
-        const swabAreaHistoryFactory = await factoryManager.get(SwabAreaHistory);
-        const swabTestFactory = await factoryManager.get(SwabTest);
+        // const swabAreaHistoryFactory = await factoryManager.get(SwabAreaHistory);
+        // const swabTestFactory = await factoryManager.get(SwabTest);
 
-        const swabAreaHistories = [];
+        // const swabAreaHistories = [];
 
         for (let index = 0; index < swapAreas.length; index++) {
             const { facilityItemName, mainSwabAreas = [] } = swapAreas[index];
@@ -210,91 +210,91 @@ export default class SwabSeeder implements Seeder {
 
             console.log(swabAreas);
 
-            async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
-                const historyData = {
-                    swabAreaDate,
-                    swabAreaSwabedAt: null,
-                    swabPeriod,
-                    swabTest: null,
-                    swabArea,
-                    shift
-                };
+            // async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
+            //     const historyData = {
+            //         swabAreaDate,
+            //         swabAreaSwabedAt: null,
+            //         swabPeriod,
+            //         swabTest: null,
+            //         swabArea,
+            //         shift
+            //     };
 
-                if (creteSwabTest) {
-                    const swabTest = await swabTestFactory.make({
-                        listeriaMonoDetected: null,
-                        listeriaMonoValue: null
-                    });
+            //     if (creteSwabTest) {
+            //         const swabTest = await swabTestFactory.make({
+            //             listeriaMonoDetected: null,
+            //             listeriaMonoValue: null
+            //         });
 
-                    historyData.swabTest = swabTest;
-                }
+            //         historyData.swabTest = swabTest;
+            //     }
 
-                const swabAreaHistory = await swabAreaHistoryFactory.make(historyData);
+            //     const swabAreaHistory = await swabAreaHistoryFactory.make(historyData);
 
-                swabAreaHistories.push(swabAreaHistory);
-            }
+            //     swabAreaHistories.push(swabAreaHistory);
+            // }
 
-            async function generateHistory(swabArea, numOfDate = 1, createSwabTest = true) {
-                for (let subIndex = 0; subIndex < numOfDate; subIndex++) {
-                    const currentDate = new Date();
+            // async function generateHistory(swabArea, numOfDate = 1, createSwabTest = true) {
+            //     for (let subIndex = 0; subIndex < numOfDate; subIndex++) {
+            //         const currentDate = new Date();
 
-                    currentDate.setDate(currentDate.getDate() + subIndex);
+            //         currentDate.setDate(currentDate.getDate() + subIndex);
 
-                    if (subIndex === 0) {
-                        for (let subIndex3 = 0; subIndex3 < bigCleaningSwabPeriods.length; subIndex3++) {
-                            const bigCleaningSwabPeriod = bigCleaningSwabPeriods[subIndex3];
+            //         if (subIndex === 0) {
+            //             for (let subIndex3 = 0; subIndex3 < bigCleaningSwabPeriods.length; subIndex3++) {
+            //                 const bigCleaningSwabPeriod = bigCleaningSwabPeriods[subIndex3];
 
-                            await generateSwabAreaHistory(
-                                currentDate,
-                                swabArea,
-                                bigCleaningSwabPeriod,
-                                null,
-                                createSwabTest
-                            );
-                        }
-                    };
+            //                 await generateSwabAreaHistory(
+            //                     currentDate,
+            //                     swabArea,
+            //                     bigCleaningSwabPeriod,
+            //                     null,
+            //                     createSwabTest
+            //                 );
+            //             }
+            //         };
 
-                    for (let subIndex2 = 0; subIndex2 < generalSwabPeriods.length; subIndex2++) {
-                        const swabPeriod = generalSwabPeriods[subIndex2];
+            //         for (let subIndex2 = 0; subIndex2 < generalSwabPeriods.length; subIndex2++) {
+            //             const swabPeriod = generalSwabPeriods[subIndex2];
 
-                        await generateSwabAreaHistory(
-                            currentDate,
-                            swabArea,
-                            swabPeriod,
-                            Shift.DAY,
-                            createSwabTest
-                        );
+            //             await generateSwabAreaHistory(
+            //                 currentDate,
+            //                 swabArea,
+            //                 swabPeriod,
+            //                 Shift.DAY,
+            //                 createSwabTest
+            //             );
 
-                        await generateSwabAreaHistory(
-                            currentDate,
-                            swabArea,
-                            swabPeriod,
-                            Shift.NIGHT,
-                            createSwabTest
-                        );
-                    }
-                }
-            }
+            //             await generateSwabAreaHistory(
+            //                 currentDate,
+            //                 swabArea,
+            //                 swabPeriod,
+            //                 Shift.NIGHT,
+            //                 createSwabTest
+            //             );
+            //         }
+            //     }
+            // }
 
-            for (let index2 = 0; index2 < swabAreas.length; index2++) {
-                const mainSwabArea = swabAreas[index2];
+            // for (let index2 = 0; index2 < swabAreas.length; index2++) {
+            //     const mainSwabArea = swabAreas[index2];
 
-                const { subSwabAreas = [] } = mainSwabArea;
+            //     const { subSwabAreas = [] } = mainSwabArea;
 
-                const creteSwabTest = subSwabAreas.length === 0;
+            //     const creteSwabTest = subSwabAreas.length === 0;
 
-                await generateHistory(mainSwabArea, NUMBER_OF_HISTORY_DAY, creteSwabTest);
+            //     await generateHistory(mainSwabArea, NUMBER_OF_HISTORY_DAY, creteSwabTest);
 
-                if (subSwabAreas.length) {
-                    for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
-                        const subSwabArea = subSwabAreas[index3];
+            //     if (subSwabAreas.length) {
+            //         for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
+            //             const subSwabArea = subSwabAreas[index3];
 
-                        await generateHistory(subSwabArea, NUMBER_OF_HISTORY_DAY);
-                    }
-                }
-            }
+            //             await generateHistory(subSwabArea, NUMBER_OF_HISTORY_DAY);
+            //         }
+            //     }
+            // }
         }
 
-        await swabAreaHistoryRepository.save(swabAreaHistories);
+        // await swabAreaHistoryRepository.save(swabAreaHistories);
     }
 }
