@@ -10,6 +10,6 @@ export class TimeOnlyRule implements ValidatorConstraintInterface {
     }
 
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} must be a time in format 'HH:MM'`;
+        return `${args.property} must be a time in format 'HH:mm'`;
     }
 }

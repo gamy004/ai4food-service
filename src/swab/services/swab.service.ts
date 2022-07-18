@@ -16,6 +16,45 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 
+function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
+  const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
+
+  const where: FindOptionsWhere<SwabAreaHistory> = {};
+
+  let fromDate, toDate;
+
+  if (fromDateString) {
+    fromDate = new Date(fromDateString);
+
+    fromDate.setMinutes(0, 0, 0);
+
+    fromDate = format(fromDate, "yyyy-MM-dd");
+  }
+
+  if (toDateString) {
+    toDate = new Date(toDateString);
+
+    toDate.setDate(toDate.getDate() + 1);
+
+    toDate.setMinutes(0, 0, 0);
+
+    toDate = format(toDate, "yyyy-MM-dd");
+  }
+
+  if (fromDate && toDate) {
+    where.swabAreaDate = Raw(field => `${field} >= '${fromDate}' and ${field} < '${toDate}'`);
+  } else {
+    if (fromDate) {
+      where.swabAreaDate = Raw(field => `${field} >= '${fromDate}'`);
+    }
+
+    if (toDate) {
+      where.swabAreaDate = Raw(field => `${field} < '${toDate}'`);
+    }
+  }
+
+  return where;
+}
 @Injectable()
 export class SwabService {
   constructor(
@@ -37,50 +76,16 @@ export class SwabService {
   }
 
   async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
-    const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
+    const where: FindOptionsWhere<SwabAreaHistory> = transformQuerySwabPlanDto(
+      querySwabPlanDto
+    );
 
-    const where: FindOptionsWhere<SwabAreaHistory> = {};
-
-    let fromDate, toDate;
-
-    if (fromDateString) {
-      fromDate = new Date(fromDateString);
-
-      fromDate.setMinutes(0, 0, 0);
-
-      fromDate = format(fromDate, "yyyy-MM-dd");
-      // console.log("Before:", fromDate);
-
-      // fromDate = utcToZonedTime(fromDate, 'Asia/Bangkok');
-
-      // console.log("After:", fromDate);
-    }
-
-    if (toDateString) {
-      toDate = new Date(toDateString);
-
-      toDate.setDate(toDate.getDate() + 1);
-
-      toDate.setMinutes(0, 0, 0);
-
-      toDate = format(toDate, "yyyy-MM-dd");
-
-      // toDate = utcToZonedTime(toDate, 'Asia/Bangkok');
-    }
-
-    if (fromDate && toDate) {
-      where.swabAreaDate = Raw(field => `${field} >= '${fromDate}' and ${field} < '${toDate}'`);
-    } else {
-      if (fromDate) {
-        where.swabAreaDate = Raw(field => `${field} >= '${fromDate}'`);
+    const swabPeriods = await this.swabPeriodService.findAll({
+      select: {
+        id: true,
+        swabPeriodName: true
       }
-
-      if (toDate) {
-        where.swabAreaDate = Raw(field => `${field} < '${toDate}'`);
-      }
-    }
-
-    const swabPeriods = await this.swabPeriodService.findAll();
+    });
 
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where: {
@@ -112,6 +117,8 @@ export class SwabService {
       }
     });
 
+    console.log(swabAreaHistories);
+
     let facilityItems = [];
     let swabAreas = [];
 
@@ -119,8 +126,16 @@ export class SwabService {
       const swabAreaIds = [...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId))].filter(Boolean);
 
       if (swabAreaIds.length) {
-        swabAreas = await this.swabAreaRepository.findBy({
-          id: In(swabAreaIds)
+        swabAreas = await this.swabAreaRepository.find({
+          where: {
+            id: In(swabAreaIds)
+          },
+          select: {
+            id: true,
+            swabAreaName: true,
+            mainSwabAreaId: true,
+            facilityItemId: true
+          }
         });
       }
 
@@ -130,8 +145,17 @@ export class SwabService {
         const facilityItemIds = [...new Set(swabAreas.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
 
         if (facilityItemIds.length) {
-          facilityItems = await this.facilityItemService.find({
-            id: In(facilityItemIds)
+          facilityItems = await this.facilityItemService.findAll({
+            where: {
+              id: In(facilityItemIds)
+            },
+            select: {
+              id: true,
+              facilityItemName: true,
+              facilityId: true,
+              roomId: true,
+              zoneId: true
+            }
           });
         }
 
@@ -175,14 +199,14 @@ export class SwabService {
     if (toDateString) {
       toDate = new Date(toDateString);
 
-      toDate.setDate(toDate.getDate() + 1);
-
       toDate.setMinutes(0, 0, 0);
 
       toDate = format(toDate, "yyyy-MM-dd");
     }
 
-    const NUMBER_OF_HISTORY_DAY = differenceInDays(new Date(toDate), new Date(fromDate));
+    const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
+      ? 1
+      : differenceInDays(new Date(toDate), new Date(fromDate));
 
     const bigCleaningSwabPeriodsTemplate = [
       { swabPeriodName: "ก่อน Super Big Cleaning" },
@@ -418,11 +442,11 @@ export class SwabService {
 
       async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
         const historyData = {
-          swabAreaDate,
+          swabAreaDate: format(swabAreaDate, "yyyy-MM-dd"),
           swabAreaSwabedAt: null,
-          swabAreaTemperature: 0,
-          swabAreaHumidity: 0,
-          swabAreaAtp: 0,
+          swabAreaTemperature: null,
+          swabAreaHumidity: null,
+          swabAreaAtp: null,
           swabPeriod,
           swabTest: null,
           swabArea,

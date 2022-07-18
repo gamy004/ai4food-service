@@ -5,8 +5,8 @@ export abstract class BaseIncrementEntity extends TypeOrmBaseEntity {
     id: string | number;
 
     @CreateDateColumn()
-    createdAt: Date = new Date();
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date = new Date();
+    updatedAt: Date;
 }

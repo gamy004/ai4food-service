@@ -10,6 +10,6 @@ export class DateOnlyRule implements ValidatorConstraintInterface {
     }
 
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} must be a date in format 'YYYY-MM-DD'`;
+        return `${args.property} must be a date in format 'yyyy-MM-dd'`;
     }
 }
