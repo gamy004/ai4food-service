@@ -618,7 +618,7 @@ export class SwabService {
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
   }
 
-  async queryCompletedSwabPlan(data) {
+  async queryLabSwabPlan(data) {
     // 
   }
 }
