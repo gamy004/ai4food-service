@@ -23,6 +23,9 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @Column({ type: 'integer', nullable: true })
     swabAreaAtp?: number;
 
+    @Column({ type: 'text', nullable: true })
+    swabAreaNote?: string;
+
     @Column({ nullable: true })
     swabPeriodId: string;
 

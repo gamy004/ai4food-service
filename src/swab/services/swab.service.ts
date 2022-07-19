@@ -263,21 +263,39 @@ export class SwabService {
       where,
       relations: {
         swabTest: true,
-        swabArea: true,
+        swabArea: {
+          facilityItem: true
+        },
+        swabPeriod: true,
         swabAreaHistoryImages: true
       },
       select: {
         id: true,
         swabAreaDate: true,
+        swabAreaSwabedAt: true,
         swabPeriodId: true,
         swabAreaId: true,
         shift: true,
         swabAreaTemperature: true,
         swabAreaHumidity: true,
+        swabAreaNote: true,
         swabTestId: true,
         swabTest: {
           id: true,
           swabTestCode: true,
+        },
+        swabArea: {
+          id: true,
+          swabAreaName: true,
+          facilityItemId: true,
+          facilityItem: {
+            id: true,
+            facilityItemName: true
+          }
+        },
+        swabPeriod: {
+          id: true,
+          swabPeriodName: true
         },
         swabAreaHistoryImages: {
           id: true,
