@@ -3,16 +3,16 @@ import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.en
 import { SwabAreaHistory } from "./swab-area-history.entity";
 
 @Entity()
-export class SwabAreaImage extends BaseSoftDeletableEntity {
+export class SwabAreaHistoryImage extends BaseSoftDeletableEntity {
     @Column({ type: 'text' })
-    swabAreaImageUrl!: string;
+    swabAreaHistoryImageUrl!: string;
 
     @Column({ type: 'text', nullable: true })
-    swabAreaImageDescription?: string;
+    swabAreaHistoryImageDescription?: string;
 
     @Column({ nullable: true })
     swabAreaHistoryId: string;
 
-    @ManyToOne(() => SwabAreaHistory, entity => entity.swabAreaImages)
+    @ManyToOne(() => SwabAreaHistory, entity => entity.swabAreaHistoryImages)
     swabAreaHistory: SwabAreaHistory;
 }

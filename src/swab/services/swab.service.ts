@@ -15,6 +15,7 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
+import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 
 function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
   const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
@@ -55,6 +56,7 @@ function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOpti
 
   return where;
 }
+
 @Injectable()
 export class SwabService {
   constructor(
@@ -65,8 +67,6 @@ export class SwabService {
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
     protected readonly swabAreaRepository: Repository<SwabArea>,
-    @InjectRepository(FacilityItem)
-    protected readonly facilityItemRepository: Repository<FacilityItem>,
     @InjectRepository(SwabTest)
     protected readonly swabTestRepository: Repository<SwabTest>
   ) { }
@@ -103,6 +103,7 @@ export class SwabService {
         swabPeriodId: true,
         swabAreaId: true,
         shift: true,
+        swabTestId: true,
         swabTest: {
           id: true,
           swabTestCode: true
@@ -116,8 +117,6 @@ export class SwabService {
         }
       }
     });
-
-    console.log(swabAreaHistories);
 
     let facilityItems = [];
     let swabAreas = [];
@@ -181,6 +180,83 @@ export class SwabService {
       swabAreas,
       facilityItems
     };
+  }
+
+  private async transformQueryUpdateSwabPlanDto(querySwabPlanDto: QueryUpdateSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>[]> {
+    let { swabAreaDate: swabAreaDateString, shift, facilityItemId, mainSwabAreaId, swabPeriodId } = querySwabPlanDto;
+
+    let swabAreaDate = new Date(swabAreaDateString);
+
+    swabAreaDate.setMinutes(0, 0, 0);
+
+    const swabPeriod = await this.swabPeriodService.findOne({ id: swabPeriodId });
+
+    if (!swabPeriod.dependsOnShift) {
+      shift = null;
+    }
+
+    const where: FindOptionsWhere<SwabAreaHistory>[] = [
+      {
+        swabAreaDate,
+        shift,
+        swabPeriodId,
+        swabArea: {
+          id: mainSwabAreaId,
+          facilityItemId: facilityItemId
+        }
+      },
+      {
+        swabAreaDate,
+        shift,
+        swabPeriodId,
+        swabArea: {
+          mainSwabAreaId,
+          facilityItemId: facilityItemId
+        }
+      },
+    ];
+
+    return where;
+  }
+
+  async queryUpdateSwabPlan(queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto): Promise<SwabAreaHistory[]> {
+    const where: FindOptionsWhere<SwabAreaHistory>[] = await this.transformQueryUpdateSwabPlanDto(
+      queryUpdateSwabPlanDto
+    );
+
+    return await this.swabAreaHistoryRepository.find({
+      where,
+      relations: {
+        swabTest: true,
+        swabArea: true,
+        swabAreaHistoryImages: true
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        shift: true,
+        swabAreaTemperature: true,
+        swabAreaHumidity: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+        swabAreaHistoryImages: {
+          id: true,
+          swabAreaHistoryImageUrl: true
+        }
+      },
+      order: {
+        swabTest: {
+          id: {
+            direction: 'asc'
+          }
+        }
+      }
+    });
   }
 
   async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {

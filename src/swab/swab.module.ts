@@ -5,23 +5,24 @@ import { SwabAreaHistoryController } from './controllers/swab-area-history.contr
 import { SwabAreaHistoryService } from './services/swab-area-history.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SwabAreaHistory } from './entities/swab-area-history.entity';
-import { SwabAreaImage } from './entities/swab-area-image.entity';
+import { SwabAreaHistoryImage } from './entities/swab-area-history-image.entity';
 import { SwabPeriodController } from './controllers/swab-period.controller';
 import { SwabPeriodService } from './services/swab-period.service';
 import { SwabArea } from './entities/swab-area.entity';
 import { SwabPeriod } from './entities/swab-period.entity';
 import { SwabTest } from './entities/swab-test.entity';
 import { SwabAreaService } from './services/swab-area.service';
-import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaController } from './controllers/swab-area.controller';
 import { FacilityModule } from '~/facility/facility.module';
+import { SwabAreaExistsRule } from './validators/swab-area-exists-validator';
+import { SwabPeriodExistsRule } from './validators/swab-period-exists-validator';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaImage, SwabArea, SwabPeriod, SwabTest, FacilityItem]),
+    TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaHistoryImage, SwabArea, SwabPeriod, SwabTest]),
     FacilityModule
   ],
   controllers: [SwabController, SwabAreaController, SwabAreaHistoryController, SwabPeriodController],
-  providers: [SwabService, SwabAreaService, SwabAreaHistoryService, SwabPeriodService]
+  providers: [SwabService, SwabAreaService, SwabAreaHistoryService, SwabPeriodService, SwabAreaExistsRule, SwabPeriodExistsRule]
 })
 export class SwabModule { }

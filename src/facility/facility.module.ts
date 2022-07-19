@@ -7,6 +7,7 @@ import { FacilityItem } from './entities/facility-item.entity';
 import { Room } from './entities/room.entity';
 import { Zone } from './entities/zone.entity';
 import { FacilityItemService } from './facility-item.service';
+import { FacilityItemExistsRule } from './validators/facility-item-exists-validator';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { FacilityItemService } from './facility-item.service';
     ])
   ],
   controllers: [FacilityController],
-  providers: [FacilityService, FacilityItemService],
-  exports: [FacilityService, FacilityItemService]
+  providers: [FacilityService, FacilityItemService, FacilityItemExistsRule],
+  exports: [FacilityService, FacilityItemService, FacilityItemExistsRule]
 })
 export class FacilityModule { }

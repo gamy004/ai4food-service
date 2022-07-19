@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { Shift } from "~/common/enums/shift";
-import { SwabAreaImage } from "./swab-area-image.entity";
+import { SwabAreaHistoryImage } from "./swab-area-history-image.entity";
 import { SwabArea } from "./swab-area.entity";
 import { SwabPeriod } from "./swab-period.entity";
 import { SwabTest } from "./swab-test.entity";
@@ -35,8 +35,8 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @ManyToOne(() => SwabArea, entity => entity.swabAreaHistories)
     swabArea: SwabArea;
 
-    @OneToMany(() => SwabAreaImage, entity => entity.swabAreaHistory)
-    swabAreaImages: SwabAreaImage[];
+    @OneToMany(() => SwabAreaHistoryImage, entity => entity.swabAreaHistory)
+    swabAreaHistoryImages: SwabAreaHistoryImage[];
 
     @Column({ nullable: true })
     swabTestId: number;

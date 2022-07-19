@@ -2,10 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FacilityService } from './facility.service';
 import { CreateFacilityDto } from './dto/create-facility.dto';
 import { UpdateFacilityDto } from './dto/update-facility.dto';
+import { FacilityItemService } from './facility-item.service';
+import { Not, IsNull } from 'typeorm';
 
 @Controller('facility')
 export class FacilityController {
-  constructor(private readonly facilityService: FacilityService) { }
+  constructor(
+    private readonly facilityService: FacilityService,
+    private readonly facilityItemService: FacilityItemService,
+  ) { }
 
   // @Post()
   // create(@Body() createFacilityDto: CreateFacilityDto) {
@@ -15,6 +20,22 @@ export class FacilityController {
   @Get()
   findAll() {
     return this.facilityService.findAll();
+  }
+
+  @Get('items')
+  findAllItems() {
+    return this.facilityItemService.findAll();
+  }
+
+  @Get('swab-items')
+  findAllSwabItems() {
+    return this.facilityItemService.findAll({
+      where: {
+        swabAreas: {
+          id: Not(IsNull())
+        }
+      }
+    });
   }
 
   // @Get(':id')

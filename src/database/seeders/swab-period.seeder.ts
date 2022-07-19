@@ -11,28 +11,36 @@ export default class SwabPeriodSeeder implements Seeder {
 
         let swabPeriods = [
             {
-                swabPeriodName: "ก่อน Super Big Cleaning"
+                swabPeriodName: "ก่อน Super Big Cleaning",
+                dependsOnShift: false
             },
             {
-                swabPeriodName: "หลัง Super Big Cleaning"
+                swabPeriodName: "หลัง Super Big Cleaning",
+                dependsOnShift: false
             },
             {
-                swabPeriodName: "หลังประกอบเครื่อง"
+                swabPeriodName: "หลังประกอบเครื่อง",
+                dependsOnShift: true
             },
             {
-                swabPeriodName: "ก่อนล้างระหว่างงาน"
+                swabPeriodName: "ก่อนล้างระหว่างงาน",
+                dependsOnShift: true
             },
             {
-                swabPeriodName: "หลังล้างระหว่างงาน"
+                swabPeriodName: "หลังล้างระหว่างงาน",
+                dependsOnShift: true
             },
             {
-                swabPeriodName: "เดินไลน์หลังพัก 4 ชม."
+                swabPeriodName: "เดินไลน์หลังพัก 4 ชม.",
+                dependsOnShift: true
             },
             {
-                swabPeriodName: "ก่อนล้างท้ายกะ"
+                swabPeriodName: "ก่อนล้างท้ายกะ",
+                dependsOnShift: true
             },
             {
-                swabPeriodName: "หลังล้างท้ายกะ"
+                swabPeriodName: "หลังล้างท้ายกะ",
+                dependsOnShift: true
             },
 
         ];
