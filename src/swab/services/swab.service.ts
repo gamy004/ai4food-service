@@ -6,13 +6,11 @@ import { CreateSwabDto } from '../dto/create-swab.dto';
 import { UpdateSwabDto } from '../dto/update-swab.dto';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
-import { SwabPeriodService } from './swab-period.service'
-import { SwabAreaService } from './swab-area.service'
+import { SwabPeriodService } from './swab-period.service';
 import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
 import { SwabArea } from '../entities/swab-area.entity';
-import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
@@ -70,10 +68,6 @@ export class SwabService {
     @InjectRepository(SwabTest)
     protected readonly swabTestRepository: Repository<SwabTest>
   ) { }
-
-  create(createSwabDto: CreateSwabDto) {
-    return 'This action adds a new swab';
-  }
 
   async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
     const where: FindOptionsWhere<SwabAreaHistory> = transformQuerySwabPlanDto(
@@ -624,8 +618,8 @@ export class SwabService {
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
   }
 
-  update(id: number, updateSwabDto: UpdateSwabDto) {
-    return `This action updates a #${id} swab`;
+  async queryCompletedSwabPlan(data) {
+    // 
   }
 }
 
