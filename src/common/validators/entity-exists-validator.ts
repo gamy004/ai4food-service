@@ -10,6 +10,8 @@ export abstract class EntityExistsRule<E> implements ValidatorConstraintInterfac
     let countEntity = 0;
 
     try {
+      console.log(value, this.repository);
+
       countEntity = await this.repository.countBy({ id: value } as any);
     } catch (e) {
       console.log(e);

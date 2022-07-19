@@ -14,6 +14,7 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 
 function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
   const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
@@ -248,6 +249,39 @@ export class SwabService {
           id: {
             direction: 'asc'
           }
+        }
+      }
+    });
+  }
+
+  async queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto): Promise<SwabAreaHistory> {
+    const where: FindOptionsWhere<SwabAreaHistory> = {
+      id: queryUpdateSwabPlanByIdDto.id
+    };
+
+    return this.swabAreaHistoryRepository.findOne({
+      where,
+      relations: {
+        swabTest: true,
+        swabArea: true,
+        swabAreaHistoryImages: true
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        shift: true,
+        swabAreaTemperature: true,
+        swabAreaHumidity: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+        swabAreaHistoryImages: {
+          id: true,
+          swabAreaHistoryImageUrl: true
         }
       }
     });

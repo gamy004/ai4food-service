@@ -16,13 +16,33 @@ import { SwabAreaController } from './controllers/swab-area.controller';
 import { FacilityModule } from '~/facility/facility.module';
 import { SwabAreaExistsRule } from './validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from './validators/swab-period-exists-validator';
+import { SwabAreaHistoryExistsRule } from './validators/swab-area-history-exists-validator';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SwabAreaHistory, SwabAreaHistoryImage, SwabArea, SwabPeriod, SwabTest]),
+    TypeOrmModule.forFeature([
+      SwabAreaHistory,
+      SwabAreaHistoryImage,
+      SwabArea,
+      SwabPeriod,
+      SwabTest
+    ]),
     FacilityModule
   ],
-  controllers: [SwabController, SwabAreaController, SwabAreaHistoryController, SwabPeriodController],
-  providers: [SwabService, SwabAreaService, SwabAreaHistoryService, SwabPeriodService, SwabAreaExistsRule, SwabPeriodExistsRule]
+  controllers: [
+    SwabController,
+    SwabAreaController,
+    SwabAreaHistoryController,
+    SwabPeriodController
+  ],
+  providers: [
+    SwabService,
+    SwabAreaService,
+    SwabAreaHistoryService,
+    SwabPeriodService,
+    SwabAreaExistsRule,
+    SwabPeriodExistsRule,
+    SwabAreaHistoryExistsRule
+  ]
 })
 export class SwabModule { }
