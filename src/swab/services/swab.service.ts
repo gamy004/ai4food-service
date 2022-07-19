@@ -6,7 +6,7 @@ import { CreateSwabDto } from '../dto/create-swab.dto';
 import { UpdateSwabDto } from '../dto/update-swab.dto';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
-import { SwabPeriodService } from './swab-period.service'
+import { SwabPeriodService } from './swab-period.service';
 import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
@@ -14,6 +14,7 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 
 function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
   const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
@@ -68,10 +69,6 @@ export class SwabService {
     @InjectRepository(SwabTest)
     protected readonly swabTestRepository: Repository<SwabTest>
   ) { }
-
-  create(createSwabDto: CreateSwabDto) {
-    return 'This action adds a new swab';
-  }
 
   async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
     const where: FindOptionsWhere<SwabAreaHistory> = transformQuerySwabPlanDto(
@@ -252,6 +249,39 @@ export class SwabService {
           id: {
             direction: 'asc'
           }
+        }
+      }
+    });
+  }
+
+  async queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto): Promise<SwabAreaHistory> {
+    const where: FindOptionsWhere<SwabAreaHistory> = {
+      id: queryUpdateSwabPlanByIdDto.id
+    };
+
+    return this.swabAreaHistoryRepository.findOne({
+      where,
+      relations: {
+        swabTest: true,
+        swabArea: true,
+        swabAreaHistoryImages: true
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        shift: true,
+        swabAreaTemperature: true,
+        swabAreaHumidity: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+        swabAreaHistoryImages: {
+          id: true,
+          swabAreaHistoryImageUrl: true
         }
       }
     });
@@ -623,8 +653,8 @@ export class SwabService {
     return await this.swabAreaHistoryRepository.save(swabAreaHistories);
   }
 
-  update(id: number, updateSwabDto: UpdateSwabDto) {
-    return `This action updates a #${id} swab`;
+  async queryLabSwabPlan(data) {
+    // 
   }
 }
 
