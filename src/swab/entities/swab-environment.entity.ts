@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany } from "typeorm";
-import { BaseSoftDeletableIncrementEntity } from "~/common/entities/base-softdeletable-increment.entity";
+import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { SwabAreaHistory } from "./swab-area-history.entity";
 
 @Entity()
-export class SwabEnvironment extends BaseSoftDeletableIncrementEntity {
+export class SwabEnvironment extends BaseSoftDeletableEntity {
 
     @Column({ unique: true })
     swabEnvironmentName!: string;

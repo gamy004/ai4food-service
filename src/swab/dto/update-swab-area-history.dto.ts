@@ -28,7 +28,7 @@ export class UpdateSwabAreaHistoryDto extends PartialType(CreateSwabAreaHistoryD
     @IsNotEmpty()
     swabTestId: number;
 
-    swabEnvironmentId: number;
+    swabEnvironmentId: string;
 
     @IsNotEmpty()
     swabEnvironment: SwabEnvironment;

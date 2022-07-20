@@ -28,6 +28,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
 
       swabAreaHistory.swabEnvironment = swabEnvironmentData;
     }
+
     return await this.repository.save({ id, ...swabAreaHistory });
   }
 }

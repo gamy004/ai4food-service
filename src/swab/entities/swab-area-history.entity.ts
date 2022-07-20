@@ -53,9 +53,9 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     shift?: Shift;
 
     @Column({ nullable: true })
-    swabEnvironmentId: number;
+    swabEnvironmentId: string;
 
-    @OneToOne(() => SwabEnvironment, { cascade: ['insert', 'soft-remove'] })
+    @OneToOne(() => SwabEnvironment, { cascade: ['insert', 'update', 'soft-remove'] })
     @JoinColumn()
     swabEnvironment: SwabEnvironment;
 }
