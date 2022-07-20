@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { format, utcToZonedTime } from 'date-fns-tz';
 import { differenceInDays } from 'date-fns'
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,13 @@ import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
+import { BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
+import { UpsertSwabEnvironmentDto } from '../dto/upsert-swab-environment.dto';
+import { SwabEnvironment } from '../entities/swab-environment.entity';
+import { UpsertSwabAreaHistoryImageDto } from '../dto/upsert-swab-area-history-image.dto';
+import { SwabAreaHistoryImage } from '../entities/swab-area-history-image.entity';
+
+const TIME_ZONE = 'Asia/Bangkok';
 
 function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
   const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
@@ -67,7 +74,12 @@ export class SwabService {
     @InjectRepository(SwabArea)
     protected readonly swabAreaRepository: Repository<SwabArea>,
     @InjectRepository(SwabTest)
-    protected readonly swabTestRepository: Repository<SwabTest>
+    protected readonly swabTestRepository: Repository<SwabTest>,
+    @InjectRepository(SwabEnvironment)
+    protected readonly swabEnvironmentRepository: Repository<SwabEnvironment>,
+    @InjectRepository(SwabAreaHistoryImage)
+    protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
+
   ) { }
 
   async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
@@ -241,7 +253,8 @@ export class SwabService {
         },
         swabAreaHistoryImages: {
           id: true,
-          swabAreaHistoryImageUrl: true
+          swabAreaHistoryImageUrl: true,
+          swabAreaHistoryId: true
         }
       },
       order: {
@@ -299,10 +312,74 @@ export class SwabService {
         },
         swabAreaHistoryImages: {
           id: true,
-          swabAreaHistoryImageUrl: true
+          swabAreaHistoryImageUrl: true,
+          swabAreaHistoryId: true
         }
       }
     });
+  }
+
+  async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto): Promise<void> {
+    const {
+      swabEnvironments: upsertSwabEnvironmentDto = [],
+      swabAreaHistoryImages: upsertSwabAreaHistoryImageDto = []
+    } = bodycommandUpdateSwabPlanByIdDto;
+
+    const swabAreaHistory = await this.swabAreaHistoryRepository.findOneBy({ id });
+
+    swabAreaHistory.swabAreaSwabedAt = utcToZonedTime(new Date(), TIME_ZONE);
+
+    let swabEnvironments = await Promise.all(
+      upsertSwabEnvironmentDto.map(async (upsertSwabEnvironmentData: UpsertSwabEnvironmentDto) => {
+        const {
+          id,
+          swabEnvironmentName
+        } = upsertSwabEnvironmentData;
+
+        let swabEnvironment: SwabEnvironment;
+
+        if (id) {
+          swabEnvironment = await this.swabEnvironmentRepository.findOneBy({ id });
+        } else {
+          swabEnvironment = await this.swabEnvironmentRepository.save({ swabEnvironmentName });
+        }
+
+        return swabEnvironment;
+      })
+    )
+
+    swabEnvironments = swabEnvironments.filter(Boolean);
+
+    if (swabEnvironments.length) {
+      swabAreaHistory.swabEnvironments = swabEnvironments;
+    }
+
+    let swabAreaHistoryImages = await Promise.all(
+      upsertSwabAreaHistoryImageDto.map(async (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => {
+        const {
+          id,
+          swabAreaHistoryImageUrl
+        } = upsertSwabAreaHistoryImageData;
+
+        let swabAreaHistoryImage: SwabAreaHistoryImage;
+
+        if (id) {
+          swabAreaHistoryImage = await this.swabAreaHistoryImageRepository.findOneBy({ id });
+        } else {
+          swabAreaHistoryImage = await this.swabAreaHistoryImageRepository.save({ swabAreaHistoryImageUrl });
+        }
+
+        return swabAreaHistoryImage;
+      })
+    )
+
+    swabAreaHistoryImages = swabAreaHistoryImages.filter(Boolean);
+
+    if (swabAreaHistoryImages.length) {
+      swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
+    }
+
+    await this.swabAreaHistoryRepository.save(swabAreaHistory);
   }
 
   async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { Column } from 'typeorm';
 import { Shift } from '~/common/enums/shift';
 import { SwabEnvironment } from '../entities/swab-environment.entity';
@@ -9,15 +9,18 @@ export class UpdateSwabAreaHistoryDto extends PartialType(CreateSwabAreaHistoryD
     @IsNotEmpty()
     swabAreaDate: Date;
 
-    @Column()
+    @IsNotEmpty()
     swabAreaSwabedAt: Date;
 
+    @IsOptional()
     @IsNotEmpty()
     swabAreaTemperature: number;
 
+    @IsOptional()
     @IsNotEmpty()
-    swabAreaHumidity: number;
+    swabAreaHumidity?: number;
 
+    @IsOptional()
     @IsNotEmpty()
     swabAreaAtp: number;
 
@@ -30,12 +33,12 @@ export class UpdateSwabAreaHistoryDto extends PartialType(CreateSwabAreaHistoryD
     @IsNotEmpty()
     swabTestId: number;
 
-    @Column()
+    @IsNotEmpty()
     swabEnvironmentId: string;
 
     @IsNotEmpty()
     swabEnvironment: SwabEnvironment;
 
-    @Column({ type: "enum", enum: Shift, nullable: true })
+    @IsEnum(Shift)
     shift: Shift;
 }

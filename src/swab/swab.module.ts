@@ -17,6 +17,9 @@ import { FacilityModule } from '~/facility/facility.module';
 import { SwabAreaExistsRule } from './validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from './validators/swab-period-exists-validator';
 import { SwabAreaHistoryExistsRule } from './validators/swab-area-history-exists-validator';
+import { SwabEnvironment } from './entities/swab-environment.entity';
+import { SwabEnvironmentExistsRule } from './validators/swab-environment-exists-validator';
+import { SwabAreaHistoryImageExistsRule } from './validators/swab-area-history-image-exists-validator';
 
 @Module({
   imports: [
@@ -25,7 +28,8 @@ import { SwabAreaHistoryExistsRule } from './validators/swab-area-history-exists
       SwabAreaHistoryImage,
       SwabArea,
       SwabPeriod,
-      SwabTest
+      SwabTest,
+      SwabEnvironment
     ]),
     FacilityModule
   ],
@@ -42,7 +46,9 @@ import { SwabAreaHistoryExistsRule } from './validators/swab-area-history-exists
     SwabPeriodService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
-    SwabAreaHistoryExistsRule
+    SwabAreaHistoryExistsRule,
+    SwabEnvironmentExistsRule,
+    SwabAreaHistoryImageExistsRule
   ]
 })
 export class SwabModule { }
