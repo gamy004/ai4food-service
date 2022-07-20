@@ -24,7 +24,7 @@ export class SwabAreaHistoryController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSwabAreaHistoryDto: UpdateSwabAreaHistoryDto) {
-    return this.swabAreaHistoryService.update({ id }, updateSwabAreaHistoryDto);
+    return this.swabAreaHistoryService.updateId(id, updateSwabAreaHistoryDto);
   }
 
   // @Delete(':id')

@@ -3,6 +3,7 @@ import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.en
 import { Shift } from "~/common/enums/shift";
 import { SwabAreaHistoryImage } from "./swab-area-history-image.entity";
 import { SwabArea } from "./swab-area.entity";
+import { SwabEnvironment } from "./swab-environment.entity";
 import { SwabPeriod } from "./swab-period.entity";
 import { SwabTest } from "./swab-test.entity";
 
@@ -50,4 +51,11 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
 
     @Column({ type: "enum", enum: Shift, nullable: true })
     shift?: Shift;
+
+    @Column({ nullable: true })
+    swabEnvironmentId: string;
+
+    @OneToOne(() => SwabEnvironment, { cascade: ['insert', 'update', 'soft-remove'] })
+    @JoinColumn()
+    swabEnvironment: SwabEnvironment;
 }
