@@ -7,13 +7,14 @@ import { UpdateSwabDto } from '../dto/update-swab.dto';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service';
-import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
+import { FindOperator, FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
 import { SwabArea } from '../entities/swab-area.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { UpsertSwabEnvironmentDto } from '../dto/upsert-swab-environment.dto';
@@ -752,8 +753,78 @@ export class SwabService {
     return;
   }
 
-  async queryLabSwabPlan(data) {
-    // 
-  }
-}
+ private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
+    let { swabAreaDate: swabAreaDateString, swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal} = queryLabSwabPlanDto;
 
+    let swabAreaDate = new Date(swabAreaDateString);
+    swabAreaDate.setMinutes(0, 0, 0);
+    const where: FindOptionsWhere<SwabAreaHistory>= {
+      swabAreaDate,
+      swabTest: {
+        swabTestCode: swabTestCode,
+      }
+    } 
+    return where;
+  }
+  
+  async queryLabSwabPlan(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<SwabAreaHistory[]> {
+    const where: FindOptionsWhere<SwabAreaHistory> = await this.transformLabSwabPlanDto(
+      queryLabSwabPlanDto
+    );
+
+    let { swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal} = queryLabSwabPlanDto;
+    const condition = { where: {
+      ...where,
+    }}
+
+    if (listeriaMonoDetectedVal!==undefined) {
+        if(listeriaMonoDetectedVal){
+          condition.where = {
+              ...condition.where,
+              swabTest:{
+                swabTestCode,
+                listeriaMonoDetected: true
+              }
+          }
+        }
+        else{
+          condition.where = {
+            ...condition.where,
+            swabTest:{
+              swabTestCode,
+              listeriaMonoDetected: IsNull()
+            }
+          }
+        }
+        
+    }
+
+    return await this.swabAreaHistoryRepository.find({
+      where: {
+        ...condition.where,
+      },
+      relations: {
+        swabTest: true,
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+          listeriaMonoDetected: true,
+          listeriaMonoValue: true,
+        }
+      },
+      order: {
+        swabTest: {
+          id: {
+            direction: 'asc'
+          }
+        }
+      }
+    });
+  }
+  
+}

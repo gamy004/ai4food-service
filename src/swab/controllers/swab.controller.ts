@@ -3,6 +3,7 @@ import { SwabService } from '../services/swab.service';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { SwabAreaService } from '../services/swab-area.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { BodyCommandUpdateSwabPlanByIdDto, ParamCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 
@@ -27,7 +28,11 @@ export class SwabController {
   queryUpdateSwabPlan(@Query() queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto) {
     return this.swabService.queryUpdateSwabPlan(queryUpdateSwabPlanDto);
   }
-
+  
+  @Get("lab-swab")
+  queryLabSwabPlan(@Query() queryLabSwabPlanDto: QueryLabSwabPlanDto) {
+    return this.swabService.queryLabSwabPlan(queryLabSwabPlanDto);
+  }
   @Get("update-plan/:id")
   queryUpdateSwabPlanById(@Param() queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto) {
     return this.swabService.queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto);
