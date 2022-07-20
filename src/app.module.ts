@@ -10,6 +10,7 @@ import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
 import { SwabModule } from './swab/swab.module';
 import { FacilityModule } from './facility/facility.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FacilityModule } from './facility/facility.module';
     AuthModule,
     SwabModule,
     FacilityModule,
+    AwsModule,
   ],
   providers: [
     AppService

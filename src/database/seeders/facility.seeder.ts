@@ -55,7 +55,7 @@ export default class FacilitySeeder implements Seeder {
             }
         ];
 
-        await zoneRepository.upsert(zones, ['zoneName']);
+        await zoneRepository.save(zones);
 
         const facilities = [
             {
@@ -248,9 +248,9 @@ export default class FacilitySeeder implements Seeder {
                         room: "Rice mixing & vacuum",
                     },
                     {
-                        // facilityItemName: "เครื่องซุยข้าว Aiho No.3",
-                        // zone: "สุก",
-                        // room: "Rice mixing & vacuum",
+                        facilityItemName: "เครื่องซุยข้าว Aiho No.3",
+                        zone: "สุก",
+                        room: "Rice mixing & vacuum",
                     },
                 ]
             },
@@ -319,14 +319,15 @@ export default class FacilitySeeder implements Seeder {
                         }
                     }
 
+                    console.log(facilityItemProp);
 
                     return facilityItemProp;
                 }
             ))
-            await facilityRepository.upsert({
+            await facilityRepository.save({
                 ...facilityProps,
                 facilityItems: savedFacilityItems
-            }, ['facilityName']);
+            });
         }
     }
 }

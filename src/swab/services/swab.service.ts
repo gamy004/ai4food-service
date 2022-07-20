@@ -383,16 +383,16 @@ export class SwabService {
       {
         facilityItemName: "ไลน์4 ขึ้นรูป2",
         mainSwabAreas: [
-          {
-            swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
-            subSwabAreas: [
-              { swabAreaName: "ชุดเติมข้าว" },
-              { swabAreaName: "สายพานลำเลียง" },
-              { swabAreaName: "แกนซุย" },
-              { swabAreaName: "ชุด Hopper" },
-              { swabAreaName: "Shutter" },
-            ]
-          },
+          // {
+          //   swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
+          //   subSwabAreas: [
+          //     { swabAreaName: "ชุดเติมข้าว" },
+          //     { swabAreaName: "สายพานลำเลียง" },
+          //     { swabAreaName: "แกนซุย" },
+          //     { swabAreaName: "ชุด Hopper" },
+          //     { swabAreaName: "Shutter" },
+          //   ]
+          // },
           {
             swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
           },
@@ -479,14 +479,14 @@ export class SwabService {
           },
         ]
       },
-      {
-        facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
-        mainSwabAreas: [
-          { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
-          { swabAreaName: "ขอบมุม", subSwabAreas: [] },
-          { swabAreaName: "ประแจ", subSwabAreas: [] },
-        ]
-      },
+      // {
+      //   facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
+      //   mainSwabAreas: [
+      //     { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
+      //     { swabAreaName: "ขอบมุม", subSwabAreas: [] },
+      //     { swabAreaName: "ประแจ", subSwabAreas: [] },
+      //   ]
+      // },
       {
         facilityItemName: "รถเข็นกะบะ โซนสุก",
         mainSwabAreas: [
@@ -500,27 +500,27 @@ export class SwabService {
           }
         ]
       },
-      {
-        facilityItemName: "เครื่องซุยข้าว Aiho No.2",
-        mainSwabAreas: [
-          {
-            swabAreaName: "แกนสายพาน",
-            subSwabAreas: [
-              { swabAreaName: "แกนกลาง" },
-              { swabAreaName: "ก้านซุย" },
-            ]
-          },
-          {
-            swabAreaName: "สายพานและแผ่นเพลท",
-            subSwabAreas: [
-              { swabAreaName: "สายพาน - กลาง" },
-              { swabAreaName: "สายพาน - ขอบซ้าย" },
-              { swabAreaName: "สายพาน - ขอบขวา" },
-              { swabAreaName: "แผ่นเพลท" },
-            ]
-          },
-        ]
-      },
+      // {
+      //   facilityItemName: "เครื่องซุยข้าว Aiho No.2",
+      //   mainSwabAreas: [
+      //     {
+      //       swabAreaName: "แกนสายพาน",
+      //       subSwabAreas: [
+      //         { swabAreaName: "แกนกลาง" },
+      //         { swabAreaName: "ก้านซุย" },
+      //       ]
+      //     },
+      //     {
+      //       swabAreaName: "สายพานและแผ่นเพลท",
+      //       subSwabAreas: [
+      //         { swabAreaName: "สายพาน - กลาง" },
+      //         { swabAreaName: "สายพาน - ขอบซ้าย" },
+      //         { swabAreaName: "สายพาน - ขอบขวา" },
+      //         { swabAreaName: "แผ่นเพลท" },
+      //       ]
+      //     },
+      //   ]
+      // },
     ];
 
     const swabAreaHistories = [];
@@ -628,10 +628,11 @@ export class SwabService {
           }
         }
       }
-      for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
-        const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
-        for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
-          const shiftKey = Object.keys(Shift)[index2];
+
+      for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
+        const shiftKey = Object.keys(Shift)[index2];
+        for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
+          const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
           for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
             const swabAreasGroupByFacilityItem = swabAreasAll[index3];
             for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
@@ -668,7 +669,10 @@ export class SwabService {
       const currentDate = new Date(fromDate);
       await generateHistory(swabAreas, currentDate, dateIndex);
     }
-    return await this.swabAreaHistoryRepository.save(swabAreaHistories);
+
+    await this.swabAreaHistoryRepository.save(swabAreaHistories);
+
+    return;
   }
 
   async queryLabSwabPlan(data) {
