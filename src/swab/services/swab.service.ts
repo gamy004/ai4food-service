@@ -15,6 +15,7 @@ import { Shift } from '~/common/enums/shift';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
+import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 
 function transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
   const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
@@ -254,6 +255,57 @@ export class SwabService {
     });
   }
 
+  async queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto): Promise<SwabAreaHistory> {
+    const where: FindOptionsWhere<SwabAreaHistory> = {
+      id: queryUpdateSwabPlanByIdDto.id
+    };
+
+    return this.swabAreaHistoryRepository.findOne({
+      where,
+      relations: {
+        swabTest: true,
+        swabArea: {
+          facilityItem: true
+        },
+        swabPeriod: true,
+        swabAreaHistoryImages: true
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabAreaSwabedAt: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        shift: true,
+        swabAreaTemperature: true,
+        swabAreaHumidity: true,
+        swabAreaNote: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+        swabArea: {
+          id: true,
+          swabAreaName: true,
+          facilityItemId: true,
+          facilityItem: {
+            id: true,
+            facilityItemName: true
+          }
+        },
+        swabPeriod: {
+          id: true,
+          swabPeriodName: true
+        },
+        swabAreaHistoryImages: {
+          id: true,
+          swabAreaHistoryImageUrl: true
+        }
+      }
+    });
+  }
+
   async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {
     const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
 
@@ -275,9 +327,11 @@ export class SwabService {
       toDate = format(toDate, "yyyy-MM-dd");
     }
 
-    const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
-      ? 1
-      : differenceInDays(new Date(toDate), new Date(fromDate));
+    // const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
+    //   ? 1
+    //   : differenceInDays(new Date(toDate), new Date(fromDate));
+
+    const NUMBER_OF_HISTORY_DAY: number = differenceInDays(new Date(toDate), new Date(fromDate))
 
     const bigCleaningSwabPeriodsTemplate = [
       { swabPeriodName: "ก่อน Super Big Cleaning" },
@@ -330,16 +384,16 @@ export class SwabService {
       {
         facilityItemName: "ไลน์4 ขึ้นรูป2",
         mainSwabAreas: [
-          {
-            swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
-            subSwabAreas: [
-              { swabAreaName: "ชุดเติมข้าว" },
-              { swabAreaName: "สายพานลำเลียง" },
-              { swabAreaName: "แกนซุย" },
-              { swabAreaName: "ชุด Hopper" },
-              { swabAreaName: "Shutter" },
-            ]
-          },
+          // {
+          //   swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
+          //   subSwabAreas: [
+          //     { swabAreaName: "ชุดเติมข้าว" },
+          //     { swabAreaName: "สายพานลำเลียง" },
+          //     { swabAreaName: "แกนซุย" },
+          //     { swabAreaName: "ชุด Hopper" },
+          //     { swabAreaName: "Shutter" },
+          //   ]
+          // },
           {
             swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
           },
@@ -426,14 +480,14 @@ export class SwabService {
           },
         ]
       },
-      {
-        facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
-        mainSwabAreas: [
-          { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
-          { swabAreaName: "ขอบมุม", subSwabAreas: [] },
-          { swabAreaName: "ประแจ", subSwabAreas: [] },
-        ]
-      },
+      // {
+      //   facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
+      //   mainSwabAreas: [
+      //     { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
+      //     { swabAreaName: "ขอบมุม", subSwabAreas: [] },
+      //     { swabAreaName: "ประแจ", subSwabAreas: [] },
+      //   ]
+      // },
       {
         facilityItemName: "รถเข็นกะบะ โซนสุก",
         mainSwabAreas: [
@@ -447,35 +501,36 @@ export class SwabService {
           }
         ]
       },
-      {
-        facilityItemName: "เครื่องซุยข้าว Aiho No.2",
-        mainSwabAreas: [
-          {
-            swabAreaName: "แกนสายพาน",
-            subSwabAreas: [
-              { swabAreaName: "แกนกลาง" },
-              { swabAreaName: "ก้านซุย" },
-            ]
-          },
-          {
-            swabAreaName: "สายพานและแผ่นเพลท",
-            subSwabAreas: [
-              { swabAreaName: "สายพาน - กลาง" },
-              { swabAreaName: "สายพาน - ขอบซ้าย" },
-              { swabAreaName: "สายพาน - ขอบขวา" },
-              { swabAreaName: "แผ่นเพลท" },
-            ]
-          },
-        ]
-      },
+      // {
+      //   facilityItemName: "เครื่องซุยข้าว Aiho No.2",
+      //   mainSwabAreas: [
+      //     {
+      //       swabAreaName: "แกนสายพาน",
+      //       subSwabAreas: [
+      //         { swabAreaName: "แกนกลาง" },
+      //         { swabAreaName: "ก้านซุย" },
+      //       ]
+      //     },
+      //     {
+      //       swabAreaName: "สายพานและแผ่นเพลท",
+      //       subSwabAreas: [
+      //         { swabAreaName: "สายพาน - กลาง" },
+      //         { swabAreaName: "สายพาน - ขอบซ้าย" },
+      //         { swabAreaName: "สายพาน - ขอบขวา" },
+      //         { swabAreaName: "แผ่นเพลท" },
+      //       ]
+      //     },
+      //   ]
+      // },
     ];
 
     const swabAreaHistories = [];
-    for (let index = 0; index < swabAreasTemplate.length; index++) {
+    const swabAreas = [];
 
+    for (let index = 0; index < swabAreasTemplate.length; index++) {
       const { mainSwabAreas = [] } = swabAreasTemplate[index];
 
-      const savedMainSwabAreas = await Promise.all(mainSwabAreas.map(
+      const fetchSwabAreas = await Promise.all(mainSwabAreas.map(
         async (mainSwabArea) => {
           const swabArea = await this.swabAreaRepository.find({
             where: { swabAreaName: mainSwabArea.swabAreaName },
@@ -508,60 +563,57 @@ export class SwabService {
           }
         }
       ));
+      swabAreas.push(fetchSwabAreas)
+    }
 
-      const swabAreas = savedMainSwabAreas
+    async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
+      const historyData = {
+        swabAreaDate: format(swabAreaDate, "yyyy-MM-dd"),
+        swabAreaSwabedAt: null,
+        swabAreaTemperature: null,
+        swabAreaHumidity: null,
+        swabAreaAtp: null,
+        swabPeriod,
+        swabTest: null,
+        swabArea,
+        shift
+      };
 
-      async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
-        const historyData = {
-          swabAreaDate: format(swabAreaDate, "yyyy-MM-dd"),
-          swabAreaSwabedAt: null,
-          swabAreaTemperature: null,
-          swabAreaHumidity: null,
-          swabAreaAtp: null,
-          swabPeriod,
-          swabTest: null,
-          swabArea,
-          shift
-        };
+      if (creteSwabTest) {
+        const swabTestData = SwabTest.create({
+          listeriaMonoDetected: null,
+          listeriaMonoValue: null
+        });
 
-        if (creteSwabTest) {
-          const swabTestData = SwabTest.create({
-            listeriaMonoDetected: null,
-            listeriaMonoValue: null
-          });
-
-          // const swabTest = await this.swabTestRepository.save(swabTestData);
-
-          historyData.swabTest = swabTestData;
-        }
-
-        const swabAreaHistory = SwabAreaHistory.create(historyData);
-
-        swabAreaHistories.push(swabAreaHistory);
+        historyData.swabTest = swabTestData;
       }
 
-      async function generateHistory(swabAreas, currentDate = new Date(), dateIndex = 0) {
+      const swabAreaHistory = SwabAreaHistory.create(historyData);
+      return swabAreaHistories.push(swabAreaHistory);
+    }
 
-        currentDate.setDate(currentDate.getDate() + dateIndex);
+    async function generateHistory(swabAreasAll, currentDate = new Date(), dateIndex) {
+      currentDate.setDate(currentDate.getDate() + dateIndex);
+      if (dateIndex === 0) {
+        for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
+          const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[index].swabPeriodName];
+          for (let index = 0; index < swabAreasAll.length; index++) {
+            const swabAreasGroupByFacilityItem = swabAreasAll[index];
 
-        if (dateIndex === 0) {
-          for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
-            const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[index].swabPeriodName];
-
-            for (let index2 = 0; index2 < swabAreas.length; index2++) {
-              const mainSwabArea = swabAreas[index2];
-              const { subSwabAreas = [] } = mainSwabArea;
-              const createSwabTest = subSwabAreas.length === 0;
+            for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
+              const swabAreas = swabAreasGroupByFacilityItem[index];
+              const { subSwabAreas = null } = swabAreas;
+              const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
               await generateSwabAreaHistory(
                 currentDate,
-                mainSwabArea,
+                swabAreas,
                 bigCleaningSwabPeriod,
                 null,
                 createSwabTest
               );
 
-              if (subSwabAreas.length > 0) {
+              if (subSwabAreas && subSwabAreas.length > 0) {
                 for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
                   const swabArea = subSwabAreas[index3];
                   await generateSwabAreaHistory(
@@ -575,33 +627,35 @@ export class SwabService {
               }
             }
           }
-        };
+        }
+      }
 
+      for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
+        const shiftKey = Object.keys(Shift)[index2];
         for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
           const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
-          for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
-            const shiftKey = Object.keys(Shift)[index2];
-            for (let index3 = 0; index3 < swabAreas.length; index3++) {
-              const mainSwabArea = swabAreas[index3];
-              const { subSwabAreas = [] } = mainSwabArea;
-              const createSwabTest = subSwabAreas.length === 0;
-
+          for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
+            const swabAreasGroupByFacilityItem = swabAreasAll[index3];
+            for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
+              const swabAreas = swabAreasGroupByFacilityItem[index];
+              const { subSwabAreas = null } = swabAreas;
+              const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
               await generateSwabAreaHistory(
                 currentDate,
-                mainSwabArea,
+                swabAreas,
                 swabPeriod,
                 Shift[shiftKey],
                 createSwabTest
               );
 
-              if (subSwabAreas.length > 0) {
+              if (subSwabAreas && subSwabAreas.length > 0) {
                 for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
                   const swabArea = subSwabAreas[index4];
                   await generateSwabAreaHistory(
                     currentDate,
                     swabArea,
                     swabPeriod,
-                    null,
+                    Shift[shiftKey],
                     true
                   );
                 }
@@ -610,13 +664,16 @@ export class SwabService {
           }
         }
       }
-
-      for (let dateIndex = 0; dateIndex < NUMBER_OF_HISTORY_DAY; dateIndex++) {
-        const currentDate = new Date(fromDate);
-        await generateHistory(swabAreas, currentDate, dateIndex);
-      }
     }
+
+    for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
+      const currentDate = new Date(fromDate);
+      await generateHistory(swabAreas, currentDate, dateIndex);
+    }
+
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
+
+    return;
   }
 
  private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
@@ -630,12 +687,6 @@ export class SwabService {
         swabTestCode: swabTestCode,
       }
     } 
-    // if(listeriaMonoDetectedVal){
-    //     where.swabTest = {
-    //       swabTestCode: swabTestCode,
-    //       listeriaMonoDetected: true
-    //     }
-    // }
     return where;
   }
   
