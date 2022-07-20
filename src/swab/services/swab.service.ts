@@ -605,17 +605,22 @@ export class SwabService {
     const swabAreas = [];
 
     for (let index = 0; index < swabAreasTemplate.length; index++) {
-      const { mainSwabAreas = [] } = swabAreasTemplate[index];
+      const { facilityItemName, mainSwabAreas = [] } = swabAreasTemplate[index];
 
       const fetchSwabAreas = await Promise.all(mainSwabAreas.map(
         async (mainSwabArea) => {
-          const swabArea = await this.swabAreaRepository.find({
-            where: { swabAreaName: mainSwabArea.swabAreaName },
+          const swabArea = await this.swabAreaRepository.findOne({
+            where: {
+              swabAreaName: mainSwabArea.swabAreaName,
+              facilityItem: {
+                facilityItemName
+              }
+            },
             relations: ['subSwabAreas']
           });
 
-          if (swabArea && swabArea[0]) {
-            const { subSwabAreas: subSwabAreasByApi } = swabArea[0]
+          if (swabArea) {
+            const { subSwabAreas: subSwabAreasByApi } = swabArea;
             const { subSwabAreas: subSwabAreasByTemplate } = mainSwabArea
 
             const subSwabAreaDatas = subSwabAreasByApi.reduce((acc, obj) => {
@@ -634,7 +639,7 @@ export class SwabService {
               subSwabAreas.push(element)
             }
             return {
-              ...swabArea[0],
+              ...swabArea,
               subSwabAreas: [...subSwabAreas]
             }
           }
@@ -666,11 +671,13 @@ export class SwabService {
       }
 
       const swabAreaHistory = SwabAreaHistory.create(historyData);
+
       return swabAreaHistories.push(swabAreaHistory);
     }
 
     async function generateHistory(swabAreasAll, currentDate = new Date(), dateIndex) {
       currentDate.setDate(currentDate.getDate() + dateIndex);
+
       if (dateIndex === 0) {
         for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
           const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[index].swabPeriodName];
@@ -709,14 +716,20 @@ export class SwabService {
 
       for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
         const shiftKey = Object.keys(Shift)[index2];
+
         for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
           const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
+
           for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
             const swabAreasGroupByFacilityItem = swabAreasAll[index3];
+
             for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
               const swabAreas = swabAreasGroupByFacilityItem[index];
+
               const { subSwabAreas = null } = swabAreas;
+
               const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+
               await generateSwabAreaHistory(
                 currentDate,
                 swabAreas,
@@ -728,6 +741,7 @@ export class SwabService {
               if (subSwabAreas && subSwabAreas.length > 0) {
                 for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
                   const swabArea = subSwabAreas[index4];
+
                   await generateSwabAreaHistory(
                     currentDate,
                     swabArea,
@@ -745,6 +759,7 @@ export class SwabService {
 
     for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
       const currentDate = new Date(fromDate);
+
       await generateHistory(swabAreas, currentDate, dateIndex);
     }
 
@@ -753,50 +768,52 @@ export class SwabService {
     return;
   }
 
- private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate: swabAreaDateString, swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal} = queryLabSwabPlanDto;
+  private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
+    let { swabAreaDate: swabAreaDateString, swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal } = queryLabSwabPlanDto;
 
     let swabAreaDate = new Date(swabAreaDateString);
     swabAreaDate.setMinutes(0, 0, 0);
-    const where: FindOptionsWhere<SwabAreaHistory>= {
+    const where: FindOptionsWhere<SwabAreaHistory> = {
       swabAreaDate,
       swabTest: {
         swabTestCode: swabTestCode,
       }
-    } 
+    }
     return where;
   }
-  
+
   async queryLabSwabPlan(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<SwabAreaHistory[]> {
     const where: FindOptionsWhere<SwabAreaHistory> = await this.transformLabSwabPlanDto(
       queryLabSwabPlanDto
     );
 
-    let { swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal} = queryLabSwabPlanDto;
-    const condition = { where: {
-      ...where,
-    }}
+    let { swabTestCode, listeriaMonoDetected: listeriaMonoDetectedVal } = queryLabSwabPlanDto;
+    const condition = {
+      where: {
+        ...where,
+      }
+    }
 
-    if (listeriaMonoDetectedVal!==undefined) {
-        if(listeriaMonoDetectedVal){
-          condition.where = {
-              ...condition.where,
-              swabTest:{
-                swabTestCode,
-                listeriaMonoDetected: true
-              }
+    if (listeriaMonoDetectedVal !== undefined) {
+      if (listeriaMonoDetectedVal) {
+        condition.where = {
+          ...condition.where,
+          swabTest: {
+            swabTestCode,
+            listeriaMonoDetected: true
           }
         }
-        else{
-          condition.where = {
-            ...condition.where,
-            swabTest:{
-              swabTestCode,
-              listeriaMonoDetected: IsNull()
-            }
+      }
+      else {
+        condition.where = {
+          ...condition.where,
+          swabTest: {
+            swabTestCode,
+            listeriaMonoDetected: IsNull()
           }
         }
-        
+      }
+
     }
 
     return await this.swabAreaHistoryRepository.find({
@@ -826,5 +843,5 @@ export class SwabService {
       }
     });
   }
-  
+
 }
