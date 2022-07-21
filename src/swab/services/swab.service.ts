@@ -242,6 +242,7 @@ export class SwabService {
       select: {
         id: true,
         swabAreaDate: true,
+        swabAreaSwabedAt: true,
         swabPeriodId: true,
         swabAreaId: true,
         shift: true,
@@ -322,6 +323,8 @@ export class SwabService {
 
   async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto): Promise<void> {
     const {
+      swabAreaTemperature,
+      swabAreaHumidity,
       swabEnvironments: upsertSwabEnvironmentDto = [],
       swabAreaHistoryImages: upsertSwabAreaHistoryImageDto = []
     } = bodycommandUpdateSwabPlanByIdDto;
@@ -329,6 +332,14 @@ export class SwabService {
     const swabAreaHistory = await this.swabAreaHistoryRepository.findOneBy({ id });
 
     swabAreaHistory.swabAreaSwabedAt = utcToZonedTime(new Date(), TIME_ZONE);
+
+    if (swabAreaTemperature) {
+      swabAreaHistory.swabAreaTemperature = swabAreaTemperature;
+    }
+
+    if (swabAreaHumidity) {
+      swabAreaHistory.swabAreaHumidity = swabAreaHumidity;
+    }
 
     let swabEnvironments = await Promise.all(
       upsertSwabEnvironmentDto.map(async (upsertSwabEnvironmentData: UpsertSwabEnvironmentDto) => {
@@ -342,7 +353,7 @@ export class SwabService {
         if (id) {
           swabEnvironment = await this.swabEnvironmentRepository.findOneBy({ id });
         } else {
-          swabEnvironment = await this.swabEnvironmentRepository.save({ swabEnvironmentName });
+          swabEnvironment = await this.swabEnvironmentRepository.create({ swabEnvironmentName });
         }
 
         return swabEnvironment;
@@ -367,7 +378,7 @@ export class SwabService {
         if (id) {
           swabAreaHistoryImage = await this.swabAreaHistoryImageRepository.findOneBy({ id });
         } else {
-          swabAreaHistoryImage = await this.swabAreaHistoryImageRepository.save({ swabAreaHistoryImageUrl });
+          swabAreaHistoryImage = this.swabAreaHistoryImageRepository.create({ swabAreaHistoryImageUrl })
         }
 
         return swabAreaHistoryImage;

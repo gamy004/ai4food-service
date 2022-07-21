@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { SwabService } from '../services/swab.service';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { SwabAreaService } from '../services/swab-area.service';
@@ -28,7 +28,7 @@ export class SwabController {
   queryUpdateSwabPlan(@Query() queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto) {
     return this.swabService.queryUpdateSwabPlan(queryUpdateSwabPlanDto);
   }
-  
+
   @Get("lab-swab")
   queryLabSwabPlan(@Query() queryLabSwabPlanDto: QueryLabSwabPlanDto) {
     return this.swabService.queryLabSwabPlan(queryLabSwabPlanDto);
@@ -38,7 +38,7 @@ export class SwabController {
     return this.swabService.queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto);
   }
 
-  @Patch("update-plan/:id")
+  @Put("update-plan/:id")
   commandUpdateSwabPlanById(
     @Param() paramCommandUpdateSwabPlanByIdDto: ParamCommandUpdateSwabPlanByIdDto,
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto

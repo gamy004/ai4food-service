@@ -29,6 +29,6 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     swabEnvironments: UpsertSwabEnvironmentDto[];
 
     @ValidateNested({ each: true })
-    @Type(() => UpsertSwabEnvironmentDto)
+    @Type(() => UpsertSwabAreaHistoryImageDto)
     swabAreaHistoryImages: UpsertSwabAreaHistoryImageDto[];
 }
