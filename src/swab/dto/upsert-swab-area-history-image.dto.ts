@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsUUID, Validate } from "class-validator";
+import { IsNotEmpty, IsOptional, IsUrl, IsUUID, Validate } from "class-validator";
 import { SwabAreaHistoryImageExistsRule } from "../validators/swab-area-history-image-exists-validator";
 
 export class UpsertSwabAreaHistoryImageDto {
@@ -7,8 +7,10 @@ export class UpsertSwabAreaHistoryImageDto {
     @Validate(SwabAreaHistoryImageExistsRule)
     id?: string;
 
+    @IsOptional()
     @IsNotEmpty()
-    swabAreaHistoryImageUrl: string;
+    @IsUrl()
+    swabAreaHistoryImageUrl?: string;
 
     @IsOptional()
     @IsNotEmpty()

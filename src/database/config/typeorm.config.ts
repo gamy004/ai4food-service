@@ -12,6 +12,7 @@ const config: DataSourceOptions = {
         'dist/database/migrations/*.js'
     ],
     migrationsRun: true,
+    supportBigNumbers: true,
     // migrationsTransactionMode: 'all',
     // migrations: {
     //     path: 'dist/migrations',

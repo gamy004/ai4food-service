@@ -24,6 +24,10 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     @Max(100)
     swabAreaHumidity?: number;
 
+    @IsOptional()
+    @IsNotEmpty()
+    swabAreaNote?: string;
+
     @ValidateNested({ each: true })
     @Type(() => UpsertSwabEnvironmentDto)
     swabEnvironments: UpsertSwabEnvironmentDto[];

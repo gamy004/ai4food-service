@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { SwabService } from '../services/swab.service';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { SwabAreaService } from '../services/swab-area.service';
@@ -39,13 +39,23 @@ export class SwabController {
   }
 
   @Put("update-plan/:id")
-  commandUpdateSwabPlanById(
+  async commandUpdateSwabPlanById(
     @Param() paramCommandUpdateSwabPlanByIdDto: ParamCommandUpdateSwabPlanByIdDto,
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto
   ) {
-    return this.swabService.commandUpdateSwabPlanById(
-      paramCommandUpdateSwabPlanByIdDto.id,
-      bodycommandUpdateSwabPlanByIdDto
-    );
+
+    try {
+      await this.swabService.commandUpdateSwabPlanById(
+        paramCommandUpdateSwabPlanByIdDto.id,
+        bodycommandUpdateSwabPlanByIdDto
+      );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return {
+      ok: true,
+      message: 'update swab plan success'
+    };
   }
 }

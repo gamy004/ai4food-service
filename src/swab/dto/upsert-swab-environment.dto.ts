@@ -7,6 +7,7 @@ export class UpsertSwabEnvironmentDto {
     @Validate(SwabEnvironmentExistsRule)
     id?: string;
 
+    @IsOptional()
     @IsNotEmpty()
-    swabEnvironmentName: string;
+    swabEnvironmentName?: string;
 }

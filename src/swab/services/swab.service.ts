@@ -232,7 +232,7 @@ export class SwabService {
       queryUpdateSwabPlanDto
     );
 
-    return await this.swabAreaHistoryRepository.find({
+    const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where,
       relations: {
         swabTest: true,
@@ -267,6 +267,8 @@ export class SwabService {
         }
       }
     });
+
+    return swabAreaHistories;
   }
 
   async queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto): Promise<SwabAreaHistory> {
@@ -274,7 +276,7 @@ export class SwabService {
       id: queryUpdateSwabPlanByIdDto.id
     };
 
-    return this.swabAreaHistoryRepository.findOne({
+    const swabAreaHistory = await this.swabAreaHistoryRepository.findOne({
       where,
       relations: {
         swabTest: true,
@@ -293,6 +295,7 @@ export class SwabService {
         shift: true,
         swabAreaTemperature: true,
         swabAreaHumidity: true,
+        swabAreaAtp: true,
         swabAreaNote: true,
         swabTestId: true,
         swabTest: {
@@ -319,12 +322,17 @@ export class SwabService {
         }
       }
     });
+
+    console.log(swabAreaHistory);
+
+    return swabAreaHistory;
   }
 
   async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto): Promise<void> {
     const {
       swabAreaTemperature,
       swabAreaHumidity,
+      swabAreaNote,
       swabEnvironments: upsertSwabEnvironmentDto = [],
       swabAreaHistoryImages: upsertSwabAreaHistoryImageDto = []
     } = bodycommandUpdateSwabPlanByIdDto;
@@ -341,54 +349,28 @@ export class SwabService {
       swabAreaHistory.swabAreaHumidity = swabAreaHumidity;
     }
 
-    let swabEnvironments = await Promise.all(
-      upsertSwabEnvironmentDto.map(async (upsertSwabEnvironmentData: UpsertSwabEnvironmentDto) => {
-        const {
-          id,
-          swabEnvironmentName
-        } = upsertSwabEnvironmentData;
+    if (swabAreaNote) {
+      swabAreaHistory.swabAreaNote = swabAreaNote;
+    }
 
-        let swabEnvironment: SwabEnvironment;
-
-        if (id) {
-          swabEnvironment = await this.swabEnvironmentRepository.findOneBy({ id });
-        } else {
-          swabEnvironment = await this.swabEnvironmentRepository.create({ swabEnvironmentName });
-        }
-
-        return swabEnvironment;
-      })
+    let swabEnvironments = upsertSwabEnvironmentDto.map(
+      (upsertSwabEnvironmentData: UpsertSwabEnvironmentDto) => this.swabEnvironmentRepository.create(upsertSwabEnvironmentData)
     )
-
-    swabEnvironments = swabEnvironments.filter(Boolean);
 
     if (swabEnvironments.length) {
       swabAreaHistory.swabEnvironments = swabEnvironments;
     }
 
-    let swabAreaHistoryImages = await Promise.all(
-      upsertSwabAreaHistoryImageDto.map(async (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => {
-        const {
-          id,
-          swabAreaHistoryImageUrl
-        } = upsertSwabAreaHistoryImageData;
-
-        let swabAreaHistoryImage: SwabAreaHistoryImage;
-
-        if (id) {
-          swabAreaHistoryImage = await this.swabAreaHistoryImageRepository.findOneBy({ id });
-        } else {
-          swabAreaHistoryImage = this.swabAreaHistoryImageRepository.create({ swabAreaHistoryImageUrl })
-        }
-
-        return swabAreaHistoryImage;
-      })
+    let swabAreaHistoryImages = upsertSwabAreaHistoryImageDto.map(
+      (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => this.swabAreaHistoryImageRepository.create(upsertSwabAreaHistoryImageData)
     )
-
-    swabAreaHistoryImages = swabAreaHistoryImages.filter(Boolean);
 
     if (swabAreaHistoryImages.length) {
       swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
+    }
+
+    if (swabEnvironments.length) {
+      swabAreaHistory.swabEnvironments = swabEnvironments;
     }
 
     await this.swabAreaHistoryRepository.save(swabAreaHistory);
