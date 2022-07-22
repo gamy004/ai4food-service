@@ -18,22 +18,4 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
   ) {
     super(repository);
   }
-
-  async updateId(id: string, updateSwabAreaHistoryDto: UpdateSwabAreaHistoryDto) {
-    const { swabEnvironment } = updateSwabAreaHistoryDto
-    const swabAreaHistory = updateSwabAreaHistoryDto
-
-    if (swabEnvironment && !swabEnvironment.id) {
-      const { swabEnvironmentName } = swabEnvironment
-      const swabEnvironmentData = SwabEnvironment.create({
-        swabEnvironmentName
-      });
-
-      swabAreaHistory.swabEnvironment = swabEnvironmentData;
-    }
-
-    swabAreaHistory.swabAreaSwabedAt = utcToZonedTime(new Date(), TIME_ZONE);
-
-    return await this.repository.save({ id, ...swabAreaHistory });
-  }
 }

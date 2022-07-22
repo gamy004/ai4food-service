@@ -330,6 +330,7 @@ export class SwabService {
 
   async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto): Promise<void> {
     const {
+      swabAreaSwabedAt,
       swabAreaTemperature,
       swabAreaHumidity,
       swabAreaNote,
@@ -339,7 +340,9 @@ export class SwabService {
 
     const swabAreaHistory = await this.swabAreaHistoryRepository.findOneBy({ id });
 
-    swabAreaHistory.swabAreaSwabedAt = utcToZonedTime(new Date(), TIME_ZONE);
+    console.log(swabAreaHistory);
+
+    swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
 
     if (swabAreaTemperature) {
       swabAreaHistory.swabAreaTemperature = swabAreaTemperature;

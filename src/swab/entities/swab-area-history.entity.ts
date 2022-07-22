@@ -13,7 +13,7 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     swabAreaDate!: Date;
 
     @Column({ type: 'time', nullable: true })
-    swabAreaSwabedAt?: Date;
+    swabAreaSwabedAt?: string;
 
     @Column({ type: 'decimal', precision: 3, scale: 1, nullable: true })
     swabAreaTemperature?: number;

@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsUUID, Max, Min, Validate, ValidateNested } from "class-validator";
+import { TimeOnlyRule } from "~/common/validators/time-only-validator";
 import { SwabAreaHistoryExistsRule } from "../validators/swab-area-history-exists-validator";
 import { UpsertSwabAreaHistoryImageDto } from "./upsert-swab-area-history-image.dto";
 import { UpsertSwabEnvironmentDto } from "./upsert-swab-environment.dto";
@@ -12,6 +13,10 @@ export class ParamCommandUpdateSwabPlanByIdDto {
 }
 
 export class BodyCommandUpdateSwabPlanByIdDto {
+    @IsNotEmpty()
+    @Validate(TimeOnlyRule)
+    swabAreaSwabedAt: string;
+
     @IsOptional()
     @IsNotEmpty()
     @Min(0)

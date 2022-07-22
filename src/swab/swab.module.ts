@@ -20,6 +20,8 @@ import { SwabAreaHistoryExistsRule } from './validators/swab-area-history-exists
 import { SwabEnvironment } from './entities/swab-environment.entity';
 import { SwabEnvironmentExistsRule } from './validators/swab-environment-exists-validator';
 import { SwabAreaHistoryImageExistsRule } from './validators/swab-area-history-image-exists-validator';
+import { SwabEnvironmentController } from './controllers/swab-environment.controller';
+import { SwabEnvironmentService } from './services/swab-environment.service';
 
 @Module({
   imports: [
@@ -37,13 +39,15 @@ import { SwabAreaHistoryImageExistsRule } from './validators/swab-area-history-i
     SwabController,
     SwabAreaController,
     SwabAreaHistoryController,
-    SwabPeriodController
+    SwabPeriodController,
+    SwabEnvironmentController
   ],
   providers: [
     SwabService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabPeriodService,
+    SwabEnvironmentService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
     SwabAreaHistoryExistsRule,
