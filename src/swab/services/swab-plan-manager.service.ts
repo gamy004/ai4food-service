@@ -14,10 +14,12 @@ import { SwabArea } from "../entities/swab-area.entity";
 import { SwabEnvironment } from "../entities/swab-environment.entity";
 import { SwabTest } from "../entities/swab-test.entity";
 import { SwabPeriodService } from "./swab-period.service";
+import { ProductService } from '~/product/product.service';
 
 @Injectable()
 export class SwabPlanManagerService {
     constructor(
+        protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
         @InjectRepository(SwabAreaHistory)
         protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
@@ -36,6 +38,8 @@ export class SwabPlanManagerService {
             swabAreaTemperature,
             swabAreaHumidity,
             swabAreaNote,
+            productLot,
+            product: connectProductDto,
             swabEnvironments: upsertSwabEnvironmentDto = [],
             swabAreaHistoryImages: upsertSwabAreaHistoryImageDto = []
         } = bodycommandUpdateSwabPlanByIdDto;
@@ -43,6 +47,9 @@ export class SwabPlanManagerService {
         const swabAreaHistory = await this.swabAreaHistoryRepository.findOneBy({ id });
 
         swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
+
+        swabAreaHistory.product = this.productService.init(connectProductDto);
+        swabAreaHistory.productLot = productLot;
 
         if (swabAreaTemperature) {
             swabAreaHistory.swabAreaTemperature = swabAreaTemperature;

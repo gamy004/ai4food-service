@@ -283,6 +283,8 @@ export class SwabPlanQueryService {
         swabAreaHumidity: true,
         swabAreaAtp: true,
         swabAreaNote: true,
+        productId: true,
+        productLot: true,
         swabTestId: true,
         swabTest: {
           id: true,

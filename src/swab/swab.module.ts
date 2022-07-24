@@ -23,6 +23,7 @@ import { SwabAreaHistoryImageExistsRule } from './validators/swab-area-history-i
 import { SwabEnvironmentController } from './controllers/swab-environment.controller';
 import { SwabEnvironmentService } from './services/swab-environment.service';
 import { SwabPlanManagerService } from './services/swab-plan-manager.service';
+import { ProductModule } from '~/product/product.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { SwabPlanManagerService } from './services/swab-plan-manager.service';
       SwabTest,
       SwabEnvironment
     ]),
-    FacilityModule
+    FacilityModule,
+    ProductModule
   ],
   controllers: [
     SwabController,

@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsUUID, Max, Min, Validate, ValidateNested } from "class-validator";
 import { TimeOnlyRule } from "~/common/validators/time-only-validator";
+import { ConnectProductDto } from "~/product/dto/connect-product.dto";
 import { SwabAreaHistoryExistsRule } from "../validators/swab-area-history-exists-validator";
 import { UpsertSwabAreaHistoryImageDto } from "./upsert-swab-area-history-image.dto";
 import { UpsertSwabEnvironmentDto } from "./upsert-swab-environment.dto";
@@ -32,6 +33,13 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     @IsOptional()
     @IsNotEmpty()
     swabAreaNote?: string;
+
+    @ValidateNested()
+    @Type(() => ConnectProductDto)
+    product!: ConnectProductDto;
+
+    @IsNotEmpty()
+    productLot!: string;
 
     @ValidateNested({ each: true })
     @Type(() => UpsertSwabEnvironmentDto)

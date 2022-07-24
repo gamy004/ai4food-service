@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { ProductSchedule } from "~/product-schedule/entities/product-schedule.entity";
+import { SwabAreaHistory } from "~/swab/entities/swab-area-history.entity";
 
 @Entity()
 export class Product extends BaseSoftDeletableEntity {
@@ -15,4 +16,7 @@ export class Product extends BaseSoftDeletableEntity {
 
     @OneToMany(() => ProductSchedule, entity => entity.product)
     productSchedules: ProductSchedule[];
+
+    @OneToMany(() => SwabAreaHistory, entity => entity.product)
+    swabAreaHistories: SwabAreaHistory[];
 }

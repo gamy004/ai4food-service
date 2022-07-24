@@ -1,8 +1,10 @@
 // Adapter Layer!!
 export interface CrudServiceInterface<T> {
+    init(t: T | any): T | any;
+
     create(t: T | any): Promise<T | any>;
 
-    update(t: T| any, data: object): Promise<T| any>;
+    update(t: T | any, data: object): Promise<T | any>;
 
     findAll(options?: any): Promise<T[] | any[]>;
 

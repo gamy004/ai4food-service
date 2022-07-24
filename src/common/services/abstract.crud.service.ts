@@ -11,6 +11,10 @@ export abstract class CrudService<Entity> implements CrudServiceInterface<Entity
     protected readonly repository: Repository<Entity>
   ) { }
 
+  init(initDto: DeepPartial<Entity>): DeepPartial<Entity> & Entity {
+    return this.repository.create(initDto);
+  }
+
   create(createDto: DeepPartial<Entity>): Promise<DeepPartial<Entity> & Entity> {
     return this.repository.save(createDto);
   }

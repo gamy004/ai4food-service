@@ -10,12 +10,19 @@ import { ProductExistsRule } from './validators/product-exists-validator';
   imports: [
     TypeOrmModule.forFeature([Product])
   ],
+
   controllers: [ProductController],
+
   providers: [
     // {
     //   provide: 'CrudService<Product>',
     //   useClass: ProductService
     // },
+    ProductService,
+    ProductExistsRule
+  ],
+
+  exports: [
     ProductService,
     ProductExistsRule
   ]
