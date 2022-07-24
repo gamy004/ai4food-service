@@ -3,14 +3,15 @@ import { Transform } from 'class-transformer';
 import { DateOnlyRule } from "~/common/validators/date-only-validator";
 
 export class QueryLabSwabPlanDto {
+    @IsOptional()
     @Validate(DateOnlyRule)
-    swabAreaDate: string;
+    swabAreaDate?: string;
 
     @IsNotEmpty()
     swabTestCode: string;
 
     @IsOptional()
     @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
+    @Transform(({ value }) => value === 'true')
     listeriaMonoDetected?: boolean;
 }

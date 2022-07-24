@@ -3,11 +3,19 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+// import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
   const appOptions = { cors: true };
 
   const app = await NestFactory.create(AppModule, appOptions);
+
+  // const mqttApp = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  //   transport: Transport.MQTT,
+  //   options: {
+  //     url: 'mqtt://localhost:1883',
+  //   },
+  // });
 
   app.setGlobalPrefix('api');
 
@@ -36,6 +44,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   await app.listen(3001);
+  // await mqttApp.listen();
 }
 
 bootstrap();

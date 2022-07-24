@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SwabService } from './services/swab.service';
+import { SwabPlanQueryService } from './services/swab-plan-query.service';
 import { SwabController } from './controllers/swab.controller';
 import { SwabAreaHistoryController } from './controllers/swab-area-history.controller';
 import { SwabAreaHistoryService } from './services/swab-area-history.service';
@@ -22,6 +22,7 @@ import { SwabEnvironmentExistsRule } from './validators/swab-environment-exists-
 import { SwabAreaHistoryImageExistsRule } from './validators/swab-area-history-image-exists-validator';
 import { SwabEnvironmentController } from './controllers/swab-environment.controller';
 import { SwabEnvironmentService } from './services/swab-environment.service';
+import { SwabPlanManagerService } from './services/swab-plan-manager.service';
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { SwabEnvironmentService } from './services/swab-environment.service';
     SwabEnvironmentController
   ],
   providers: [
-    SwabService,
+    SwabPlanQueryService,
+    SwabPlanManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabPeriodService,
