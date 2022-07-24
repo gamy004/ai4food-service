@@ -72,10 +72,6 @@ export class SwabPlanManagerService {
             swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
         }
 
-        if (swabEnvironments.length) {
-            swabAreaHistory.swabEnvironments = swabEnvironments;
-        }
-
         await this.swabAreaHistoryRepository.save(swabAreaHistory);
     }
 
