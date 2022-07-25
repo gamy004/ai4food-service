@@ -15,6 +15,7 @@ import { SwabEnvironment } from "../entities/swab-environment.entity";
 import { SwabTest } from "../entities/swab-test.entity";
 import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
+import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -80,6 +81,10 @@ export class SwabPlanManagerService {
         }
 
         await this.swabAreaHistoryRepository.save(swabAreaHistory);
+    }
+
+    async commandUpdateSwabProductHistoryById(id: string, bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto): Promise<void> {
+
     }
 
     async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {
