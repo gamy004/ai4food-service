@@ -37,10 +37,21 @@ export default class UserSeeder implements Seeder {
         team: UserTeam.SWAB
       });
 
+      const labUserName = `lab${index}`;
+      const labUserPassword = await hash(`${labUserName}password`, 14);
+
+      const labTeamUser = await userFactory.make({
+        userName: `lab${index}`,
+        password: labUserPassword,
+        role: UserRole.USER,
+        team: UserTeam.LAB
+      });
+
       seedUsers = [
         ...seedUsers,
         adminTeamUser,
-        swabTeamUser
+        swabTeamUser,
+        labTeamUser
       ];
     }
 
