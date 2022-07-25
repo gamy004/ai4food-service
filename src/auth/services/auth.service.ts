@@ -1,7 +1,12 @@
+import { hash } from "bcrypt";
 import { compare } from "bcrypt";
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
+import { RegisterDto } from "../dto/register-dto";
+import { User } from "../entities/user.entity";
+
+export const HASH_SALT: number = 14;
 
 @Injectable()
 export class AuthService {
@@ -30,5 +35,16 @@ export class AuthService {
         return {
             access_token: await this.jwtService.signAsync({ user }),
         };
+    }
+
+    async register(data: RegisterDto): Promise<User> {
+        const hashedPassword = await hash(data.password, HASH_SALT);
+
+        return this.userService.create({
+            userName: data.userName,
+            password: hashedPassword,
+            role: data.role,
+            team: data.team
+        })
     }
 }

@@ -21,17 +21,17 @@ export class User extends BaseSoftDeletableEntity {
     @Column()
     userName!: string;
 
-    @Column()
-    email!: string;
+    @Column({ nullable: true })
+    email?: string;
 
     @Column()
     password!: string;
 
-    @Column()
-    firstName!: string;
+    @Column({ nullable: true })
+    firstName?: string;
 
-    @Column()
-    lastName!: string;
+    @Column({ nullable: true })
+    lastName?: string;
 
     @Column({ type: "enum", enum: UserRole })
     role = UserRole.USER;
