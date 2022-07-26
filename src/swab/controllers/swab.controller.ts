@@ -6,6 +6,7 @@ import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { BodyCommandUpdateSwabPlanByIdDto, ParamCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
+import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 
 @Controller('swab')
 export class SwabController {
@@ -34,8 +35,8 @@ export class SwabController {
   }
 
   @Post('generate')
-  generateSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
-    return this.swabPlanManagerService.generateSwabPlan(querySwabPlanDto);
+  generateSwabPlan(@Query() generateSwabPlanDto: GenerateSwabPlanDto) {
+    return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 
   @Put("update-plan/:id")

@@ -16,6 +16,7 @@ import { SwabTest } from "../entities/swab-test.entity";
 import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
 import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
+import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -101,8 +102,8 @@ export class SwabPlanManagerService {
 
     }
 
-    async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {
-        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = 1 } = querySwabPlanDto;
+    async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
+        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = 1 } = generateSwabPlanDto;
 
         let fromDate, toDate;
 

@@ -1,19 +1,17 @@
-import { AfterInsert, Column, Entity, Index } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { BaseSoftDeletableIncrementEntity } from "~/common/entities/base-softdeletable-increment.entity";
 
 export const SWAB_TEST_CODE_PREFIX = "AI";
 @Entity()
 export class SwabTest extends BaseSoftDeletableIncrementEntity {
-
-    @Index()
-    @Column({ nullable: true })
-    swabTestCode?: string;
+    @Column({ unique: true })
+    swabTestCode: string;
 
     @Column({ type: 'boolean', nullable: true })
-    listeriaMonoDetected?: boolean;
+    listeriaMonoDetected: boolean;
 
     @Column({ type: 'float', nullable: true })
-    listeriaMonoValue?: number;
+    listeriaMonoValue: number;
 
     // @AfterInsert()
     // generateSwabTestNo() {

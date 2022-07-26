@@ -9,7 +9,4 @@ export class QuerySwabPlanDto {
     @IsOptional()
     @Validate(DateOnlyRule)
     toDate?: string;
-
-    @IsNotEmpty()
-    roundNumberSwabTest: number;
 }

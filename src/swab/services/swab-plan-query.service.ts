@@ -132,7 +132,7 @@ export class SwabPlanQueryService {
       }
 
       if (swabAreas.length) {
-        let mainSwabAreas = [];
+        // let mainSwabAreas = [];
 
         const facilityIds = [...new Set(swabAreas.map(({ facilityId }) => facilityId))].filter(Boolean);
 
@@ -156,20 +156,20 @@ export class SwabPlanQueryService {
           });
         }
 
-        const mainSwabAreaIds = [...new Set(swabAreas.map(({ mainSwabAreaId }) => mainSwabAreaId))].filter(Boolean);
+        // const mainSwabAreaIds = [...new Set(swabAreas.map(({ mainSwabAreaId }) => mainSwabAreaId))].filter(Boolean);
 
-        if (mainSwabAreaIds.length) {
-          mainSwabAreas = await this.swabAreaRepository.findBy({
-            id: In(mainSwabAreaIds)
-          });
-        }
+        // if (mainSwabAreaIds.length) {
+        //   mainSwabAreas = await this.swabAreaRepository.findBy({
+        //     id: In(mainSwabAreaIds)
+        //   });
+        // }
 
-        if (mainSwabAreas.length) {
-          swabAreas = [
-            ...swabAreas,
-            ...mainSwabAreas
-          ];
-        }
+        // if (mainSwabAreas.length) {
+        //   swabAreas = [
+        //     ...swabAreas,
+        //     ...mainSwabAreas
+        //   ];
+        // }
       }
     }
     return {
