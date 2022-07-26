@@ -17,10 +17,12 @@ import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
 import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
+import { FacilityItemService } from '~/facility/facility-item.service';
 
 @Injectable()
 export class SwabPlanManagerService {
     constructor(
+        protected readonly facilityItemService: FacilityItemService,
         protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
         @InjectRepository(SwabAreaHistory)
@@ -43,6 +45,7 @@ export class SwabPlanManagerService {
             productDate: productDateString,
             productLot,
             product: connectProductDto,
+            facilityItem: connectFacilityItemDto,
             swabEnvironments: upsertSwabEnvironmentDto = [],
             swabAreaHistoryImages: upsertSwabAreaHistoryImageDto = []
         } = bodycommandUpdateSwabPlanByIdDto;
@@ -65,6 +68,10 @@ export class SwabPlanManagerService {
 
         if (productLot) {
             swabAreaHistory.productLot = productLot;
+        }
+
+        if (connectFacilityItemDto) {
+            swabAreaHistory.facilityItem = this.facilityItemService.init(connectFacilityItemDto);
         }
 
         if (swabAreaTemperature) {

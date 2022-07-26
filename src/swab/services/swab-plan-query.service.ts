@@ -227,7 +227,8 @@ export class SwabPlanQueryService {
       relations: {
         swabTest: true,
         swabArea: true,
-        swabAreaHistoryImages: true
+        swabAreaHistoryImages: true,
+        swabEnvironments: true
       },
       select: {
         id: true,
@@ -239,6 +240,10 @@ export class SwabPlanQueryService {
         swabAreaTemperature: true,
         swabAreaHumidity: true,
         swabTestId: true,
+        facilityItemId: true,
+        productDate: true,
+        productLot: true,
+        productId: true,
         swabTest: {
           id: true,
           swabTestCode: true,
@@ -247,6 +252,10 @@ export class SwabPlanQueryService {
           id: true,
           swabAreaHistoryImageUrl: true,
           swabAreaHistoryId: true
+        },
+        swabEnvironments: {
+          id: true,
+          swabEnvironmentName: true
         }
       },
       order: {
@@ -290,6 +299,8 @@ export class SwabPlanQueryService {
         swabAreaNote: true,
         productId: true,
         productLot: true,
+        productDate: true,
+        facilityItemId: true,
         swabTestId: true,
         swabTest: {
           id: true,

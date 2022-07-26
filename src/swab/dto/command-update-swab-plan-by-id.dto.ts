@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsUUID, Max, Min, Validate, ValidateNested } from "class-validator";
 import { DateOnlyRule } from "~/common/validators/date-only-validator";
 import { TimeOnlyRule } from "~/common/validators/time-only-validator";
+import { ConnectFacilityItemDto } from "~/facility/dto/connect-facility-item.dto";
 import { ConnectProductDto } from "~/product/dto/connect-product.dto";
 import { SwabAreaHistoryExistsRule } from "../validators/swab-area-history-exists-validator";
 import { UpsertSwabAreaHistoryImageDto } from "./upsert-swab-area-history-image.dto";
@@ -18,6 +19,10 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     @IsNotEmpty()
     @Validate(TimeOnlyRule)
     swabAreaSwabedAt: string;
+
+    @ValidateNested()
+    @Type(() => ConnectFacilityItemDto)
+    facilityItem!: ConnectFacilityItemDto;
 
     @IsOptional()
     @IsNotEmpty()
@@ -38,7 +43,7 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     @IsOptional()
     @ValidateNested()
     @Type(() => ConnectProductDto)
-    product!: ConnectProductDto;
+    product?: ConnectProductDto;
 
     @Validate(DateOnlyRule)
     productDate?: string;
