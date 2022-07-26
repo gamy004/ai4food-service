@@ -15,10 +15,10 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
     @Column({ type: 'float', nullable: true })
     listeriaMonoValue?: number;
 
-    @AfterInsert()
-    generateSwabTestNo() {
-        SwabTest.update(this.id, {
-            swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${this.id}`
-        });
-    }
+    // @AfterInsert()
+    // generateSwabTestNo() {
+    //     SwabTest.update(this.id, {
+    //         swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${this.id}`
+    //     });
+    // }
 }

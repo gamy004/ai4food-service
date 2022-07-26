@@ -88,7 +88,7 @@ export class SwabPlanManagerService {
     }
 
     async generateSwabPlan(querySwabPlanDto: QuerySwabPlanDto) {
-        const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
+        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = 1 } = querySwabPlanDto;
 
         let fromDate, toDate;
 
@@ -308,6 +308,8 @@ export class SwabPlanManagerService {
 
         const swabAreaHistories = [];
         const swabAreas = [];
+        const SWAB_TEST_CODE_PREFIX = "AI";
+        let SWAB_TEST_START_NUMBER_PREFIX = 1;
 
         for (let index = 0; index < swabAreasTemplate.length; index++) {
             const { facilityName, mainSwabAreas = [] } = swabAreasTemplate[index];
@@ -363,16 +365,19 @@ export class SwabPlanManagerService {
                 swabPeriod,
                 swabTest: null,
                 swabArea,
-                shift
+                shift,
+                productLot: ""
             };
 
             if (creteSwabTest) {
                 const swabTestData = SwabTest.create({
                     listeriaMonoDetected: null,
-                    listeriaMonoValue: null
+                    listeriaMonoValue: null,
+                    swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}/${roundNumberSwabTest}`
                 });
 
                 historyData.swabTest = swabTestData;
+                SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1
             }
 
             const swabAreaHistory = SwabAreaHistory.create(historyData);
@@ -387,19 +392,19 @@ export class SwabPlanManagerService {
                 for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
                     const bigCleaningSwabPeriod = bigCleaningSwabPeriods[bigCleaningSwabPeriodsTemplate[index].swabPeriodName];
                     for (let index = 0; index < swabAreasAll.length; index++) {
-                        const swabAreasGroupByFacilityItem = swabAreasAll[index];
+                        const swabAreasGroupByFacility = swabAreasAll[index];
 
-                        for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
-                            const swabAreas = swabAreasGroupByFacilityItem[index];
+                        for (let index = 0; index < swabAreasGroupByFacility.length; index++) {
+                            const swabAreas = swabAreasGroupByFacility[index];
                             const { subSwabAreas = null } = swabAreas;
-                            const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+                            // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
                             await generateSwabAreaHistory(
                                 currentDate,
                                 swabAreas,
                                 bigCleaningSwabPeriod,
                                 null,
-                                createSwabTest
+                                true
                             );
 
                             if (subSwabAreas && subSwabAreas.length > 0) {
@@ -410,7 +415,7 @@ export class SwabPlanManagerService {
                                         swabArea,
                                         bigCleaningSwabPeriod,
                                         null,
-                                        true
+                                        false
                                     );
                                 }
                             }
@@ -426,21 +431,21 @@ export class SwabPlanManagerService {
                     const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
 
                     for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
-                        const swabAreasGroupByFacilityItem = swabAreasAll[index3];
+                        const swabAreasGroupByFacility = swabAreasAll[index3];
 
-                        for (let index = 0; index < swabAreasGroupByFacilityItem.length; index++) {
-                            const swabAreas = swabAreasGroupByFacilityItem[index];
+                        for (let index = 0; index < swabAreasGroupByFacility.length; index++) {
+                            const swabAreas = swabAreasGroupByFacility[index];
 
                             const { subSwabAreas = null } = swabAreas;
 
-                            const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+                            // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
                             await generateSwabAreaHistory(
                                 currentDate,
                                 swabAreas,
                                 swabPeriod,
                                 Shift[shiftKey],
-                                createSwabTest
+                                true
                             );
 
                             if (subSwabAreas && subSwabAreas.length > 0) {
@@ -452,7 +457,7 @@ export class SwabPlanManagerService {
                                         swabArea,
                                         swabPeriod,
                                         Shift[shiftKey],
-                                        true
+                                        false
                                     );
                                 }
                             }
