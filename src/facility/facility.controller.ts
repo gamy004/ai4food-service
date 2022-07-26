@@ -1,9 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { FacilityService } from './facility.service';
-import { CreateFacilityDto } from './dto/create-facility.dto';
-import { UpdateFacilityDto } from './dto/update-facility.dto';
 import { FacilityItemService } from './facility-item.service';
 import { Not, IsNull } from 'typeorm';
+import { QueryFindAllFacilityItemDto } from './dto/query-find-all-facility-item.dto';
 
 @Controller('facility')
 export class FacilityController {
@@ -17,25 +16,34 @@ export class FacilityController {
   //   return this.facilityService.create(createFacilityDto);
   // }
 
-  @Get()
-  findAll() {
-    return this.facilityService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.facilityService.findAll();
+  // }
 
-  @Get('items')
-  findAllItems() {
-    return this.facilityItemService.findAll();
-  }
+  // @Get('items')
+  // findAllItems() {
+  //   return this.facilityItemService.findAll();
+  // }
 
-  @Get('swab-items')
+  @Get('swab-item')
   findAllSwabItems() {
-    // return this.facilityItemService.findAll({
-    //   where: {
-    //     swabAreas: {
-    //       id: Not(IsNull())
-    //     }
-    //   }
-    // });
+    return this.facilityService.findAll({
+      where: {
+        swabAreas: {
+          id: Not(IsNull())
+        }
+      }
+    });
+  }
+
+  @Get(':id/item')
+  findAllFacilityItem(@Param() param: QueryFindAllFacilityItemDto) {
+    return this.facilityItemService.findAll({
+      where: {
+        facilityId: param.id
+      }
+    });
   }
 
   // @Get(':id')

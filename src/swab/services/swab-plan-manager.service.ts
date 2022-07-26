@@ -254,7 +254,7 @@ export class SwabPlanManagerService {
                 ]
             },
             {
-                facilityItemName: "ตู้ Vac.",
+                facilityName: "ตู้ Vac.",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -266,7 +266,7 @@ export class SwabPlanManagerService {
                 ]
             },
             {
-                facilityItemName: "ตู้ Steam",
+                facilityName: "ตู้ Steam",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -286,7 +286,7 @@ export class SwabPlanManagerService {
             //   ]
             // },
             {
-                facilityItemName: "รถเข็นกะบะ",
+                facilityName: "รถเข็นกะบะ",
                 mainSwabAreas: [
                     {
                         swabAreaName: "ล้อรถเข็นกะบะ",

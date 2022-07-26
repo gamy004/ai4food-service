@@ -13,8 +13,4 @@ export class FacilityService extends CrudService<Facility> {
   ) {
     super(repository);
   }
-
-  find(where: FindOptionsWhere<Facility> | FindOptionsWhere<Facility>[]) {
-    return this.repository.findBy(where);
-  }
 }
