@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  ansible:
+    image: cytopia/ansible:latest-aws
+    working_dir: /workspace
+    volumes:
+      - ../:/workspace
+    env_file:
+      - .env
+    command: ansible-playbook -i ansible/inventory.yml ansible/play.deploy.yml

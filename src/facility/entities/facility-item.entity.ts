@@ -28,6 +28,6 @@ export class FacilityItem extends BaseSoftDeletableEntity {
     @ManyToOne(() => Zone, entity => entity.facilityItems, { nullable: true, onDelete: 'SET NULL' })
     zone?: Zone;
 
-    @OneToMany(() => SwabArea, entity => entity.facilityItem)
-    swabAreas: SwabArea[];
+    // @OneToMany(() => SwabArea, entity => entity.facilityItem)
+    // swabAreas: SwabArea[];
 }

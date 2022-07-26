@@ -29,13 +29,13 @@ export class FacilityController {
 
   @Get('swab-items')
   findAllSwabItems() {
-    return this.facilityItemService.findAll({
-      where: {
-        swabAreas: {
-          id: Not(IsNull())
-        }
-      }
-    });
+    // return this.facilityItemService.findAll({
+    //   where: {
+    //     swabAreas: {
+    //       id: Not(IsNull())
+    //     }
+    //   }
+    // });
   }
 
   // @Get(':id')

@@ -1,0 +1,167 @@
+---
+# - name: Change to working directory
+#   shell: cd /workspace
+#   no_log: true
+
+# # Derive parameters
+# - name: Get service commit hash
+#   shell: git rev-parse @:{{ git_repo_slug }}
+#   register: image_tag_output
+#   no_log: true
+#   when: "'services' in group_names"
+# - set_fact:
+#     image_tag: "{{ image_tag_output.stdout }}"
+#   when: "'services' in group_names"
+
+# - name: Get webapp commit hash
+#   shell: git rev-parse @:components/{{ git_repo_slug }}
+#   register: image_tag_output
+#   no_log: true
+#   when: "'webapp_servers' in group_names"
+
+# - set_fact:
+#     image_tag: "{{ image_tag_output.stdout }}"
+#   when: "'webapp_servers' in group_names"
+
+# - set_fact:
+#     image_repo_uri: "591718621210.dkr.ecr.{{ aws_default_region }}.amazonaws.com/{{ image_name }}"
+# no_log: true
+# - set_fact:
+#     image_uri: "{{ image_repo_uri }}:{{ image_tag }}"
+# task_def_name: "{{ project_name }}-{{ env }}"
+# no_log: true
+- name: Check if the image with the tag exists
+  shell: aws ecr batch-get-image --repository-name {{ image_name }} --image-ids imageTag={{ image_tag }} --query 'images[].imageManifest' --output text
+  register: target_image_tag_manifest
+
+- fail: msg="The image {{ image_name }}:{{ image_tag }} does not exist."
+  when: target_image_tag_manifest.stdout == ""
+
+- set_fact:
+    default_task_env:
+      - name: PORT
+        value: "80"
+      - name: DATABASE_URL
+        value: "{{ service_database_url }}"
+      - name: DATABASE_TIMEZONE
+        value: "{{ service_database_timezone }}"
+      - name: JWT_SECRET_KEY
+        value: "{{ service_jwt_secret_key }}"
+      - name: AWS_DEFAULT_REGION
+        value: "{{ service_aws_default_region }}"
+      - name: AWS_ACCESS_KEY_ID
+        value: "{{ service_aws_access_key_id }}"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "{{ service_aws_secret_access_key }}"
+  # no_log: true
+- set_fact:
+    task_env: "{{ default_task_env + additional_task_env | default([]) }}"
+  # no_log: true
+#### Log group
+- name: Create a CloudWatch log group
+  cloudwatchlogs_log_group:
+    state: present
+    log_group_name: ecs/ai4food-service-{{ env }}
+
+#### ECS Task Definition
+- name: Create the task definition
+  ecs_taskdefinition:
+    family: "{{ task_def_name }}"
+    state: present
+    force_create: yes
+    network_mode: awsvpc
+    cpu: "{{ cpu | default(256) }}"
+    memory: "{{ memory | default(512) }}"
+    task_role_arn: "{{ exec_role_arn }}"
+    execution_role_arn: "{{ exec_role_arn }}"
+    launch_type: FARGATE
+    containers:
+      - name: "{{ container_name }}"
+        image: "{{ image_repo_uri }}:{{ image_tag }}"
+        cpu: 0
+        portMappings:
+          - containerPort: 80
+            hostPort: 80
+            protocol: tcp
+        essential: true
+        environment: "{{ task_env }}"
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: ecs/ai4food-service-{{ env }}
+            awslogs-region: "{{ aws_default_region }}"
+            awslogs-stream-prefix: "{{ image_tag }}"
+
+  register: task_definition_output
+- set_fact:
+    task_definition_arn: "{{ task_definition_output.taskdefinition.taskDefinitionArn }}"
+  no_log: true
+
+#### ECS Cluster
+- name: Ensure the cluster exists
+  ecs_cluster:
+    name: "{{ cluster }}"
+    state: present
+  register: cluster_output
+- set_fact:
+    cluster_arn: "{{ cluster_output.cluster.clusterArn }}"
+  no_log: true
+
+#### ELB Target Group
+# - name: Ensure the target group exists
+#   elb_target_group:
+#     name: "{{ taget_group_name }}"
+#     protocol: http
+#     port: 80
+#     vpc_id: "{{ vpc_id }}"
+#     target_type: ip
+#     state: present
+#   register: target_group_output
+# - set_fact:
+#     target_group_arn: "{{ target_group_output.target_group_arn }}"
+#   no_log: true
+
+# #### ELB Listener
+# - name: Ensure the ELB listener and the rule for the service exists
+#   elb_application_lb:
+#     name: "{{ elb_name }}"
+#     purge_listeners: no
+#     purge_rules: no
+#     listeners:
+#       - Certificates:
+#           - CertificateArn: "{{ certificate_arn }}"
+#         DefaultActions:
+#           - Type: forward
+#             TargetGroupArn: "{{ target_group_arn }}"
+#             ForwardConfig:
+#               TargetGroups:
+#                 - TargetGroupArn: "{{ target_group_arn }}"
+#                   Weight: 1
+#               TargetGroupStickinessConfig:
+#                 Enabled: false
+#         Port: "{{ elb_port }}"
+#         Protocol: "HTTPS"
+#         SslPolicy: ELBSecurityPolicy-2016-08
+#     security_groups: "{{ security_groups_arn }}"
+#     subnets: "{{ subnets_arn }}"
+#     state: present
+#   when: "'services' in group_names"
+
+# #### ECS service
+# - name: Ensure the service exists in the cluster
+#   ecs_service:
+#     cluster: "{{ cluster }}"
+#     name: "{{ project_name }}"
+#     task_definition: "{{ task_definition_arn }}"
+#     desired_count: 1
+#     launch_type: FARGATE
+#     load_balancers:
+#       - targetGroupArn: "{{ target_group_arn }}"
+#         containerName: "{{ container_name }}"
+#         containerPort: 80
+#     network_configuration:
+#       security_groups: "{{ security_groups_arn }}"
+#       subnets: "{{ subnets_arn }}"
+#       assign_public_ip: yes
+#     force_new_deployment: yes
+#     state: present

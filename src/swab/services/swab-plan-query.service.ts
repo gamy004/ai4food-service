@@ -8,7 +8,7 @@ import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
 import { SwabArea } from '../entities/swab-area.entity';
-import { FacilityItemService } from '~/facility/facility-item.service';
+import { FacilityService } from '~/facility/facility.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
@@ -19,7 +19,7 @@ import { SwabAreaHistoryImage } from '../entities/swab-area-history-image.entity
 export class SwabPlanQueryService {
   constructor(
 
-    protected readonly facilityItemService: FacilityItemService,
+    protected readonly facilityService: FacilityService,
     protected readonly swabPeriodService: SwabPeriodService,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
@@ -126,7 +126,7 @@ export class SwabPlanQueryService {
             id: true,
             swabAreaName: true,
             mainSwabAreaId: true,
-            facilityItemId: true
+            facilityId: true
           }
         });
       }
@@ -137,16 +137,21 @@ export class SwabPlanQueryService {
         const facilityItemIds = [...new Set(swabAreas.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
 
         if (facilityItemIds.length) {
-          facilityItems = await this.facilityItemService.findAll({
+          facilityItems = await this.facilityService.findAll({
             where: {
               id: In(facilityItemIds)
             },
             select: {
               id: true,
-              facilityItemName: true,
-              facilityId: true,
-              roomId: true,
-              zoneId: true
+              facilityName: true,
+              facilityType: true
+              // facilityId: true,
+              // roomId: true,
+              // zoneId: true
+            },
+            order: {
+              facilityType: 'asc',
+              facilityName: 'asc'
             }
           });
         }
@@ -176,7 +181,7 @@ export class SwabPlanQueryService {
   }
 
   private async transformQueryUpdateSwabPlanDto(querySwabPlanDto: QueryUpdateSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>[]> {
-    let { swabAreaDate: swabAreaDateString, shift, facilityItemId, mainSwabAreaId, swabPeriodId } = querySwabPlanDto;
+    let { swabAreaDate: swabAreaDateString, shift, facilityId, mainSwabAreaId, swabPeriodId } = querySwabPlanDto;
 
     let swabAreaDate = new Date(swabAreaDateString);
 
@@ -195,7 +200,7 @@ export class SwabPlanQueryService {
         swabPeriodId,
         swabArea: {
           id: mainSwabAreaId,
-          facilityItemId: facilityItemId
+          facilityId
         }
       },
       {
@@ -204,7 +209,7 @@ export class SwabPlanQueryService {
         swabPeriodId,
         swabArea: {
           mainSwabAreaId,
-          facilityItemId: facilityItemId
+          facilityId
         }
       },
     ];
@@ -266,7 +271,7 @@ export class SwabPlanQueryService {
       relations: {
         swabTest: true,
         swabArea: {
-          facilityItem: true
+          facility: true
         },
         swabPeriod: true,
         swabAreaHistoryImages: true,
@@ -293,10 +298,10 @@ export class SwabPlanQueryService {
         swabArea: {
           id: true,
           swabAreaName: true,
-          facilityItemId: true,
-          facilityItem: {
+          facilityId: true,
+          facility: {
             id: true,
-            facilityItemName: true
+            facilityName: true
           }
         },
         swabPeriod: {

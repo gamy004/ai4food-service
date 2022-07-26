@@ -163,7 +163,8 @@ export class SwabPlanManagerService {
 
         const swabAreasTemplate = [
             {
-                facilityItemName: "ไลน์4 ขึ้นรูป2",
+                // facilityItemName: "ไลน์4 ขึ้นรูป2",
+                facilityName: "ขึ้นรูป",
                 mainSwabAreas: [
                     // {
                     //   swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
@@ -238,7 +239,7 @@ export class SwabPlanManagerService {
                 ]
             },
             {
-                facilityItemName: "ตู้ Vac. โซนสุก No.1",
+                facilityItemName: "ตู้ Vac.",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -250,7 +251,7 @@ export class SwabPlanManagerService {
                 ]
             },
             {
-                facilityItemName: "ตู้ Steam โซนสุก No.1",
+                facilityItemName: "ตู้ Steam",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -270,7 +271,7 @@ export class SwabPlanManagerService {
             //   ]
             // },
             {
-                facilityItemName: "รถเข็นกะบะ โซนสุก",
+                facilityItemName: "รถเข็นกะบะ",
                 mainSwabAreas: [
                     {
                         swabAreaName: "ล้อรถเข็นกะบะ",
@@ -309,15 +310,15 @@ export class SwabPlanManagerService {
         const swabAreas = [];
 
         for (let index = 0; index < swabAreasTemplate.length; index++) {
-            const { facilityItemName, mainSwabAreas = [] } = swabAreasTemplate[index];
+            const { facilityName, mainSwabAreas = [] } = swabAreasTemplate[index];
 
             const fetchSwabAreas = await Promise.all(mainSwabAreas.map(
                 async (mainSwabArea) => {
                     const swabArea = await this.swabAreaRepository.findOne({
                         where: {
                             swabAreaName: mainSwabArea.swabAreaName,
-                            facilityItem: {
-                                facilityItemName
+                            facility: {
+                                facilityName
                             }
                         },
                         relations: ['subSwabAreas']

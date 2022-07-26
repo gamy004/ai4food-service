@@ -1,20 +1,15 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { SwabAreaHistory } from '~/swab/entities/swab-area-history.entity';
-import { SwabTest } from '~/swab/entities/swab-test.entity';
 import { SwabArea } from '~/swab/entities/swab-area.entity';
-import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { Facility } from '~/facility/entities/facility.entity';
 import { SwabPeriod } from '~/swab/entities/swab-period.entity';
-import { Shift } from '~/common/enums/shift';
-
-const NUMBER_OF_HISTORY_DAY = 3;
 
 export default class SwabSeeder implements Seeder {
     public async run(
         dataSource: DataSource,
         factoryManager: SeederFactoryManager
     ): Promise<any> {
-        const swabPeriodRepository = dataSource.getRepository(SwabPeriod);
+        // const swabPeriodRepository = dataSource.getRepository(SwabPeriod);
 
         // const bigCleaningSwabPeriods = await swabPeriodRepository.findBy([
         //     { swabPeriodName: "ก่อน Super Big Cleaning" },
@@ -32,7 +27,7 @@ export default class SwabSeeder implements Seeder {
 
         const swapAreas = [
             {
-                facilityItemName: "ไลน์4 ขึ้นรูป2",
+                facilityName: "ขึ้นรูป",
                 mainSwabAreas: [
                     // {
                     //     swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter", // not collected in 22-29 July
@@ -107,7 +102,7 @@ export default class SwabSeeder implements Seeder {
                 ]
             },
             {
-                facilityItemName: "ตู้ Vac. โซนสุก No.1",
+                facilityName: "ตู้ Vac.",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -119,7 +114,7 @@ export default class SwabSeeder implements Seeder {
                 ]
             },
             {
-                facilityItemName: "ตู้ Steam โซนสุก No.1",
+                facilityName: "ตู้ Steam",
                 mainSwabAreas: [
                     {
                         swabAreaName: "พื้นและ Slope",
@@ -131,7 +126,7 @@ export default class SwabSeeder implements Seeder {
                 ]
             },
             // {
-            //     facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
+            //     facilityName: "กล่องเครื่องมือวิศวะ โซนสุก",
             //     mainSwabAreas: [
             //         { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
             //         { swabAreaName: "ขอบมุม", subSwabAreas: [] },
@@ -139,7 +134,7 @@ export default class SwabSeeder implements Seeder {
             //     ]
             // },
             {
-                facilityItemName: "รถเข็นกะบะ โซนสุก",
+                facilityName: "รถเข็นกะบะ",
                 mainSwabAreas: [
                     {
                         swabAreaName: "ล้อรถเข็นกะบะ",
@@ -152,7 +147,7 @@ export default class SwabSeeder implements Seeder {
                 ]
             },
             // {
-            //     facilityItemName: "เครื่องซุยข้าว Aiho No.2",
+            //     facilityName: "เครื่องซุยข้าว Aiho No.2",
             //     mainSwabAreas: [
             //         {
             //             swabAreaName: "แกนสายพาน",
@@ -176,17 +171,17 @@ export default class SwabSeeder implements Seeder {
 
         // const swabAreaHistoryRepository = dataSource.getRepository(SwabAreaHistory);
         const swabAreaRepository = dataSource.getRepository(SwabArea);
-        const facilityItemRepository = dataSource.getRepository(FacilityItem);
+        const facilityRepository = dataSource.getRepository(Facility);
         // const swabAreaHistoryFactory = await factoryManager.get(SwabAreaHistory);
         // const swabTestFactory = await factoryManager.get(SwabTest);
 
         // const swabAreaHistories = [];
 
         for (let index = 0; index < swapAreas.length; index++) {
-            const { facilityItemName, mainSwabAreas = [] } = swapAreas[index];
+            const { facilityName, mainSwabAreas = [] } = swapAreas[index];
 
             if (mainSwabAreas.length) {
-                const facilityItem = await facilityItemRepository.findOneBy({ facilityItemName });
+                const facility = await facilityRepository.findOneBy({ facilityName });
 
                 const savedMainSwabAreas = mainSwabAreas.map(
                     mainSwabArea => {
@@ -194,12 +189,12 @@ export default class SwabSeeder implements Seeder {
 
                         return {
                             swabAreaName,
-                            facilityItem,
+                            facility,
                             subSwabAreas: subSwabAreas.map(
                                 subSwabArea => {
                                     return {
                                         ...subSwabArea,
-                                        facilityItem
+                                        facility
                                     }
                                 }
                             )
