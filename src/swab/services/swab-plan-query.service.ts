@@ -111,7 +111,7 @@ export class SwabPlanQueryService {
       }
     });
 
-    let facilityItems = [];
+    let facilities = [];
     let swabAreas = [];
 
     if (swabAreaHistories.length) {
@@ -134,12 +134,12 @@ export class SwabPlanQueryService {
       if (swabAreas.length) {
         let mainSwabAreas = [];
 
-        const facilityItemIds = [...new Set(swabAreas.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
+        const facilityIds = [...new Set(swabAreas.map(({ facilityId }) => facilityId))].filter(Boolean);
 
-        if (facilityItemIds.length) {
-          facilityItems = await this.facilityService.findAll({
+        if (facilityIds.length) {
+          facilities = await this.facilityService.findAll({
             where: {
-              id: In(facilityItemIds)
+              id: In(facilityIds)
             },
             select: {
               id: true,
@@ -176,7 +176,7 @@ export class SwabPlanQueryService {
       swabPeriods,
       swabAreaHistories,
       swabAreas,
-      facilityItems
+      facilities
     };
   }
 

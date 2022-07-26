@@ -39,6 +39,7 @@ export class SwabPlanManagerService {
             swabAreaTemperature,
             swabAreaHumidity,
             swabAreaNote,
+            productDate: productDateString,
             productLot,
             product: connectProductDto,
             swabEnvironments: upsertSwabEnvironmentDto = [],
@@ -49,8 +50,21 @@ export class SwabPlanManagerService {
 
         swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
 
-        swabAreaHistory.product = this.productService.init(connectProductDto);
-        swabAreaHistory.productLot = productLot;
+        if (connectProductDto) {
+            swabAreaHistory.product = this.productService.init(connectProductDto);
+        }
+
+        if (productDateString) {
+            const productDate = new Date(productDateString);
+
+            productDate.setMinutes(0, 0, 0);
+
+            swabAreaHistory.productDate = productDate;
+        }
+
+        if (productLot) {
+            swabAreaHistory.productLot = productLot;
+        }
 
         if (swabAreaTemperature) {
             swabAreaHistory.swabAreaTemperature = swabAreaTemperature;

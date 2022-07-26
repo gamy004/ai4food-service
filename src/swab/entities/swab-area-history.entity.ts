@@ -63,6 +63,9 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @ManyToOne(() => Product, entity => entity.swabAreaHistories)
     product: Product;
 
-    @Column()
+    @Column({ type: 'date', nullable: true })
+    productDate!: Date;
+
+    @Column({ nullable: true })
     productLot!: string;
 }
