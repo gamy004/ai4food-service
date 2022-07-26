@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { SwabModule } from './swab/swab.module';
 import { FacilityModule } from './facility/facility.module';
 import { AwsModule } from './aws/aws.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -33,6 +34,9 @@ import { AwsModule } from './aws/aws.module';
     SwabModule,
     FacilityModule,
     AwsModule,
+  ],
+  controllers: [
+    AppController
   ],
   providers: [
     AppService
