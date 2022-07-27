@@ -24,6 +24,7 @@ import { SwabEnvironmentController } from './controllers/swab-environment.contro
 import { SwabEnvironmentService } from './services/swab-environment.service';
 import { SwabPlanManagerService } from './services/swab-plan-manager.service';
 import { ProductModule } from '~/product/product.module';
+import { SwabProductHistory } from './entities/swab-product-history.entity';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { ProductModule } from '~/product/product.module';
       SwabArea,
       SwabPeriod,
       SwabTest,
-      SwabEnvironment
+      SwabEnvironment,
+      SwabProductHistory
     ]),
     FacilityModule,
     ProductModule

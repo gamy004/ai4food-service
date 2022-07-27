@@ -244,6 +244,12 @@ export class SwabPlanQueryService {
         productDate: true,
         productLot: true,
         productId: true,
+        swabArea: {
+          id: true,
+          swabAreaName: true,
+          facilityId: true,
+          mainSwabAreaId: true
+        },
         swabTest: {
           id: true,
           swabTestCode: true,
@@ -311,6 +317,7 @@ export class SwabPlanQueryService {
           id: true,
           swabAreaName: true,
           facilityId: true,
+          mainSwabAreaId: true,
           facility: {
             id: true,
             facilityName: true
