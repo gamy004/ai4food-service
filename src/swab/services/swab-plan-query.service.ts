@@ -280,7 +280,8 @@ export class SwabPlanQueryService {
       relations: {
         swabTest: true,
         swabArea: {
-          facility: true
+          facility: true,
+          subSwabAreas: true
         },
         swabPeriod: true,
         swabAreaHistoryImages: true,

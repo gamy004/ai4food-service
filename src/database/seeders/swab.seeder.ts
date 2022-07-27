@@ -40,10 +40,24 @@ export default class SwabSeeder implements Seeder {
                     //     ]
                     // },
                     {
+                        swabAreaName: "ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์",
+                        subSwabAreas: [
+                            { swabAreaName: "ชุดเติมข้าว ส่วน Sup Weight" },
+                            { swabAreaName: "แขนชัตเตอร์" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด",
+                        subSwabAreas: [
+                            { swabAreaName: "ชุดกดหน้าข้าว" },
+                            { swabAreaName: "ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด" },
+                        ]
+                    },
+                    {
                         swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
                     },
                     {
-                        swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่องและช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
+                        swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
                         subSwabAreas: [
                             { swabAreaName: "คานตู้ control หน้าเครื่อง Portion" },
                             { swabAreaName: "Cover ด้านบนเครื่อง" },
@@ -51,7 +65,7 @@ export default class SwabSeeder implements Seeder {
                         ]
                     },
                     {
-                        swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และโครงชุดแขนชัตเตอร์",
+                        swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และ โครงชุดแขนชัตเตอร์",
                         subSwabAreas: [
                             { swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight" },
                             { swabAreaName: "แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight" },
@@ -59,21 +73,50 @@ export default class SwabSeeder implements Seeder {
                         ]
                     },
                     {
-                        swabAreaName: "สายพานลำเลียงถาด",
+                        swabAreaName: "Cover มอเตอร์ แกนกลางเครื่อง", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด",
                         subSwabAreas: [
-                            { swabAreaName: "ตัวแผ่น" },
-                            { swabAreaName: "ตัวกั้น" },
+                            { swabAreaName: "Cover หน้าเครื่องจุดวางถาด" },
+                            { swabAreaName: "ชุดกันรอบสายพานลำเลียงถาด" },
                         ]
                     },
                     {
-                        swabAreaName: "รางสายไฟและรอยต่อโครงสร้างด้านใต้สายพาน",
+                        swabAreaName: "ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว",
                         subSwabAreas: [
-                            { swabAreaName: "รางสายไฟ" },
+                            { swabAreaName: "ช่องยกคานลิฟท์ด้านหลัง" },
+                            { swabAreaName: "ใต้ฐานลิฟท์ยกข้าว" },
+                            { swabAreaName: "แขนชุดลิฟท์ยกข้าว" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง",
+                        subSwabAreas: [
+                            { swabAreaName: "Cover ใส" },
+                            { swabAreaName: "Cover สแตนเลส" },
+                            { swabAreaName: "Slope ท้ายเครื่อง" },
+                        ]
+                    },
+                    // {
+                    //     swabAreaName: "สายพานลำเลียงถาด",
+                    //     subSwabAreas: [
+                    //         { swabAreaName: "ตัวแผ่น" },
+                    //         { swabAreaName: "ตัวกั้น" },
+                    //     ]
+                    // },
+                    {
+                        swabAreaName: "เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน",
+                        subSwabAreas: [
+                            { swabAreaName: "เลื่อนสายพาน" },
                             { swabAreaName: "รอยต่อโครงสร้างด้านใต้สายพาน" },
                         ]
                     },
                     {
-                        swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และช่องข้างขาตั้งชุด Control",
+                        swabAreaName: "ช่องใต้เฟรมสายพาน", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control",
                         subSwabAreas: [
                             { swabAreaName: "ขาตั้งเครื่อง" },
                             { swabAreaName: "ใต้ฐานขาตั้งเครื่อง" },
@@ -81,7 +124,7 @@ export default class SwabSeeder implements Seeder {
                         ]
                     },
                     {
-                        swabAreaName: "ด้านบนตู้ Control Infeed และสายไฟ",
+                        swabAreaName: "ด้านบนตู้ Control Infeed และ สายไฟ",
                         subSwabAreas: [
                             { swabAreaName: "ด้านบนตู้ Control Infeed" },
                             { swabAreaName: "สายไฟ" },
@@ -91,13 +134,35 @@ export default class SwabSeeder implements Seeder {
                         swabAreaName: "พื้นใต้เครื่อง Portion", subSwabAreas: []
                     },
                     {
-                        swabAreaName: "รางระบายน้ำห้อง Processing 2",
+                        swabAreaName: "พื้นห้อง", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "ผนังห้อง", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "รางระบายน้ำห้อง",
                         subSwabAreas: [
                             { swabAreaName: "กลางราง" },
                             { swabAreaName: "ขอบรางซ้าย" },
                             { swabAreaName: "ขอบรางขวา" },
                             { swabAreaName: "Main Hole" },
                         ]
+                    },
+                    {
+                        swabAreaName: "แป้นกดสบู่ และ อ่างล้างมือ",
+                        subSwabAreas: [
+                            { swabAreaName: "แป้นกดสบู่" },
+                            { swabAreaName: "อ่างล้างมือ" },
+                        ]
+                    },
+                    {
+                        swabAreaName: "มือพนักงานช่างประกอบเครื่องหลังล้าง", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "สายลมเครื่อง Portion", subSwabAreas: []
+                    },
+                    {
+                        swabAreaName: "เครื่องชั่ง Topping", subSwabAreas: []
                     },
                 ]
             },

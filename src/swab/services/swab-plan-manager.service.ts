@@ -173,6 +173,11 @@ export class SwabPlanManagerService {
             { swabPeriodName: "หลังล้างท้ายกะ", deletedAt: null },
         ]);
 
+        const allSwabPeriods = [
+            ...result_bigClean,
+            ...result_general
+        ];
+
         const generalSwabPeriods = result_general.reduce((acc, obj) => {
             let key = obj['swabPeriodName']
             if (!acc[key]) {
@@ -182,27 +187,47 @@ export class SwabPlanManagerService {
             return acc
         }, {})
 
-
         const swabAreasTemplate = [
             {
-                // facilityItemName: "ไลน์4 ขึ้นรูป2",
                 facilityName: "ขึ้นรูป",
                 mainSwabAreas: [
                     // {
-                    //   swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter",
-                    //   subSwabAreas: [
-                    //     { swabAreaName: "ชุดเติมข้าว" },
-                    //     { swabAreaName: "สายพานลำเลียง" },
-                    //     { swabAreaName: "แกนซุย" },
-                    //     { swabAreaName: "ชุด Hopper" },
-                    //     { swabAreaName: "Shutter" },
-                    //   ]
+                    //     swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter", // not collected in 22-29 July
+                    //     subSwabAreas: [
+                    //         { swabAreaName: "ชุดเติมข้าว" },
+                    //         { swabAreaName: "สายพานลำเลียง" },
+                    //         { swabAreaName: "แกนซุย" },
+                    //         { swabAreaName: "ชุด Hopper" },
+                    //         { swabAreaName: "Shutter" },
+                    //     ]
                     // },
+                    {
+                        swabAreaName: "ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์",
+                        subSwabAreas: [
+                            { swabAreaName: "ชุดเติมข้าว ส่วน Sup Weight" },
+                            { swabAreaName: "แขนชัตเตอร์" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด",
+                        subSwabAreas: [
+                            { swabAreaName: "ชุดกดหน้าข้าว" },
+                            { swabAreaName: "ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
                     {
                         swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
                     },
                     {
-                        swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่องและช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
+                        swabAreaName: "คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว",
                         subSwabAreas: [
                             { swabAreaName: "คานตู้ control หน้าเครื่อง Portion" },
                             { swabAreaName: "Cover ด้านบนเครื่อง" },
@@ -210,29 +235,82 @@ export class SwabPlanManagerService {
                         ]
                     },
                     {
-                        swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และโครงชุดแขนชัตเตอร์",
+                        swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และ โครงชุดแขนชัตเตอร์",
                         subSwabAreas: [
                             { swabAreaName: "โครงชุดเติมข้าว ส่วน Sup Weight" },
                             { swabAreaName: "แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight" },
                             { swabAreaName: "โครงชุดแขนชัตเตอร์" }
-                        ]
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
                     },
                     {
-                        swabAreaName: "สายพานลำเลียงถาด",
-                        subSwabAreas: [
-                            { swabAreaName: "ตัวแผ่น" },
-                            { swabAreaName: "ตัวกั้น" },
-                        ]
+                        swabAreaName: "Cover มอเตอร์ แกนกลางเครื่อง", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
                     },
                     {
-                        swabAreaName: "รางสายไฟและรอยต่อโครงสร้างด้านใต้สายพาน",
+                        swabAreaName: "Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด",
                         subSwabAreas: [
-                            { swabAreaName: "รางสายไฟ" },
+                            { swabAreaName: "Cover หน้าเครื่องจุดวางถาด" },
+                            { swabAreaName: "ชุดกันรอบสายพานลำเลียงถาด" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว",
+                        subSwabAreas: [
+                            { swabAreaName: "ช่องยกคานลิฟท์ด้านหลัง" },
+                            { swabAreaName: "ใต้ฐานลิฟท์ยกข้าว" },
+                            { swabAreaName: "แขนชุดลิฟท์ยกข้าว" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง",
+                        subSwabAreas: [
+                            { swabAreaName: "Cover ใส" },
+                            { swabAreaName: "Cover สแตนเลส" },
+                            { swabAreaName: "Slope ท้ายเครื่อง" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    // {
+                    //     swabAreaName: "สายพานลำเลียงถาด",
+                    //     subSwabAreas: [
+                    //         { swabAreaName: "ตัวแผ่น" },
+                    //         { swabAreaName: "ตัวกั้น" },
+                    //     ]
+                    // },
+                    {
+                        swabAreaName: "เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน",
+                        subSwabAreas: [
+                            { swabAreaName: "เลื่อนสายพาน" },
                             { swabAreaName: "รอยต่อโครงสร้างด้านใต้สายพาน" },
                         ]
                     },
                     {
-                        swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และช่องข้างขาตั้งชุด Control",
+                        swabAreaName: "ช่องใต้เฟรมสายพาน", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control",
                         subSwabAreas: [
                             { swabAreaName: "ขาตั้งเครื่อง" },
                             { swabAreaName: "ใต้ฐานขาตั้งเครื่อง" },
@@ -240,7 +318,7 @@ export class SwabPlanManagerService {
                         ]
                     },
                     {
-                        swabAreaName: "ด้านบนตู้ Control Infeed และสายไฟ",
+                        swabAreaName: "ด้านบนตู้ Control Infeed และ สายไฟ",
                         subSwabAreas: [
                             { swabAreaName: "ด้านบนตู้ Control Infeed" },
                             { swabAreaName: "สายไฟ" },
@@ -250,13 +328,59 @@ export class SwabPlanManagerService {
                         swabAreaName: "พื้นใต้เครื่อง Portion", subSwabAreas: []
                     },
                     {
-                        swabAreaName: "รางระบายน้ำห้อง Processing 2",
+                        swabAreaName: "พื้นห้อง", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "ผนังห้อง", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "รางระบายน้ำห้อง",
                         subSwabAreas: [
                             { swabAreaName: "กลางราง" },
                             { swabAreaName: "ขอบรางซ้าย" },
                             { swabAreaName: "ขอบรางขวา" },
                             { swabAreaName: "Main Hole" },
                         ]
+                    },
+                    {
+                        swabAreaName: "แป้นกดสบู่ และ อ่างล้างมือ",
+                        subSwabAreas: [
+                            { swabAreaName: "แป้นกดสบู่" },
+                            { swabAreaName: "อ่างล้างมือ" },
+                        ],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "มือพนักงานช่างประกอบเครื่องหลังล้าง", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "สายลมเครื่อง Portion", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                    },
+                    {
+                        swabAreaName: "เครื่องชั่ง Topping", subSwabAreas: [],
+                        swabPeriodMapping: [
+                            "ก่อน Super Big Cleaning",
+                            "หลัง Super Big Cleaning"
+                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
                     },
                 ]
             },
@@ -285,12 +409,12 @@ export class SwabPlanManagerService {
                 ]
             },
             // {
-            //   facilityItemName: "กล่องเครื่องมือวิศวะ โซนสุก",
-            //   mainSwabAreas: [
-            //     { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
-            //     { swabAreaName: "ขอบมุม", subSwabAreas: [] },
-            //     { swabAreaName: "ประแจ", subSwabAreas: [] },
-            //   ]
+            //     facilityName: "กล่องเครื่องมือวิศวะ โซนสุก",
+            //     mainSwabAreas: [
+            //         { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
+            //         { swabAreaName: "ขอบมุม", subSwabAreas: [] },
+            //         { swabAreaName: "ประแจ", subSwabAreas: [] },
+            //     ]
             // },
             {
                 facilityName: "รถเข็นกะบะ",
@@ -306,25 +430,25 @@ export class SwabPlanManagerService {
                 ]
             },
             // {
-            //   facilityItemName: "เครื่องซุยข้าว Aiho No.2",
-            //   mainSwabAreas: [
-            //     {
-            //       swabAreaName: "แกนสายพาน",
-            //       subSwabAreas: [
-            //         { swabAreaName: "แกนกลาง" },
-            //         { swabAreaName: "ก้านซุย" },
-            //       ]
-            //     },
-            //     {
-            //       swabAreaName: "สายพานและแผ่นเพลท",
-            //       subSwabAreas: [
-            //         { swabAreaName: "สายพาน - กลาง" },
-            //         { swabAreaName: "สายพาน - ขอบซ้าย" },
-            //         { swabAreaName: "สายพาน - ขอบขวา" },
-            //         { swabAreaName: "แผ่นเพลท" },
-            //       ]
-            //     },
-            //   ]
+            //     facilityName: "เครื่องซุยข้าว Aiho No.2",
+            //     mainSwabAreas: [
+            //         {
+            //             swabAreaName: "แกนสายพาน",
+            //             subSwabAreas: [
+            //                 { swabAreaName: "แกนกลาง" },
+            //                 { swabAreaName: "ก้านซุย" },
+            //             ]
+            //         },
+            //         {
+            //             swabAreaName: "สายพานและแผ่นเพลท",
+            //             subSwabAreas: [
+            //                 { swabAreaName: "สายพาน - กลาง" },
+            //                 { swabAreaName: "สายพาน - ขอบซ้าย" },
+            //                 { swabAreaName: "สายพาน - ขอบขวา" },
+            //                 { swabAreaName: "แผ่นเพลท" },
+            //             ]
+            //         },
+            //     ]
             // },
         ];
 
@@ -350,7 +474,7 @@ export class SwabPlanManagerService {
 
                     if (swabArea) {
                         const { subSwabAreas: subSwabAreasByApi } = swabArea;
-                        const { subSwabAreas: subSwabAreasByTemplate } = mainSwabArea
+                        const { subSwabAreas: subSwabAreasByTemplate, swabPeriodMapping = [] } = mainSwabArea
 
                         const subSwabAreaDatas = subSwabAreasByApi.reduce((acc, obj) => {
                             let key = obj['swabAreaName']
@@ -369,7 +493,8 @@ export class SwabPlanManagerService {
                         }
                         return {
                             ...swabArea,
-                            subSwabAreas: [...subSwabAreas]
+                            subSwabAreas: [...subSwabAreas],
+                            swabPeriodMapping
                         }
                     }
                 }
@@ -418,8 +543,12 @@ export class SwabPlanManagerService {
 
                         for (let index = 0; index < swabAreasGroupByFacility.length; index++) {
                             const swabAreas = swabAreasGroupByFacility[index];
-                            const { subSwabAreas = null } = swabAreas;
+                            const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
                             // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+
+                            if (swabPeriodMapping.length && !swabPeriodMapping.includes(bigCleaningSwabPeriod.swabPeriodName)) {
+                                continue;
+                            }
 
                             await generateSwabAreaHistory(
                                 currentDate,
@@ -458,8 +587,11 @@ export class SwabPlanManagerService {
                         for (let index = 0; index < swabAreasGroupByFacility.length; index++) {
                             const swabAreas = swabAreasGroupByFacility[index];
 
-                            const { subSwabAreas = null } = swabAreas;
+                            const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
 
+                            if (swabPeriodMapping.length && !swabPeriodMapping.includes(swabPeriod.swabPeriodName)) {
+                                continue;
+                            }
                             // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
                             await generateSwabAreaHistory(

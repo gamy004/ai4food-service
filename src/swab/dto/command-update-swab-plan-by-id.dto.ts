@@ -45,6 +45,7 @@ export class BodyCommandUpdateSwabPlanByIdDto {
     @Type(() => ConnectProductDto)
     product?: ConnectProductDto;
 
+    @IsOptional()
     @Validate(DateOnlyRule)
     productDate?: string;
 
