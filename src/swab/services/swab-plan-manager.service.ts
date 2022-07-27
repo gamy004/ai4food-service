@@ -18,6 +18,7 @@ import { ProductService } from '~/product/product.service';
 import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
+import { SwabProductHistory } from '../entities/swab-product-history.entity';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -33,6 +34,8 @@ export class SwabPlanManagerService {
         protected readonly swabEnvironmentRepository: Repository<SwabEnvironment>,
         @InjectRepository(SwabAreaHistoryImage)
         protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
+        @InjectRepository(SwabProductHistory)
+        protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
 
     ) { }
 
@@ -106,7 +109,32 @@ export class SwabPlanManagerService {
     }
 
     async commandUpdateSwabProductHistoryById(id: string, bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto): Promise<void> {
+        const {
+            swabProductSwabedAt,
+            swabProductDate,
+            swabProductLot,
+            shift,
+            product: connectProductDto,
+        } = bodyCommandUpdateSwabProductHistoryByIdDto;
 
+        const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
+
+        swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
+        swabProductHistory.swabProductDate = swabProductDate;
+
+        if (connectProductDto) {
+            swabProductHistory.product = this.productService.init(connectProductDto);
+        }
+
+        if (swabProductLot) {
+            swabProductHistory.swabProductLot = swabProductLot;
+        }
+
+        if (shift) {
+            swabProductHistory.shift = shift;
+        }
+
+        await this.swabProductHistoryRepository.save(swabProductHistory);
     }
 
     async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
