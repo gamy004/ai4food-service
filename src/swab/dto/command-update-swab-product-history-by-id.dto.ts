@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsUUID, Max, Min, Validate, ValidateNested } from "class-validator";
+import { Shift } from "~/common/enums/shift";
 import { TimeOnlyRule } from "~/common/validators/time-only-validator";
 import { ConnectProductDto } from "~/product/dto/connect-product.dto";
 import { SwabProductHistoryExistsRule } from "../validators/swab-product-history-exists-validator";
@@ -22,11 +23,12 @@ export class BodyCommandUpdateSwabProductHistoryByIdDto {
 
     @IsOptional()
     @IsNotEmpty()
-    shift?: string;
+    shift?: Shift;
 
+    @IsOptional()
     @ValidateNested()
     @Type(() => ConnectProductDto)
-    product!: ConnectProductDto;
+    product?: ConnectProductDto;
 
     @IsNotEmpty()
     swabProductLot!: string;
