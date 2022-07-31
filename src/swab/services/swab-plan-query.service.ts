@@ -338,6 +338,7 @@ export class SwabPlanQueryService {
         swabAreaHistoryImages: {
           id: true,
           swabAreaHistoryId: true,
+          createdAt: true,
           file: {
             id: true,
             fileKey: true,
@@ -347,6 +348,13 @@ export class SwabPlanQueryService {
         swabEnvironments: {
           id: true,
           swabEnvironmentName: true
+        }
+      },
+      order: {
+        swabAreaHistoryImages: {
+          createdAt: {
+            direction: 'desc'
+          }
         }
       }
     });

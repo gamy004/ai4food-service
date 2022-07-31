@@ -25,6 +25,7 @@ import { SwabEnvironmentService } from './services/swab-environment.service';
 import { SwabPlanManagerService } from './services/swab-plan-manager.service';
 import { ProductModule } from '~/product/product.module';
 import { SwabProductHistory } from './entities/swab-product-history.entity';
+import { SwabAreaHistoryImageService } from './services/swab-area-history-image.service';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { SwabProductHistory } from './entities/swab-product-history.entity';
     SwabPlanManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
+    SwabAreaHistoryImageService,
     SwabPeriodService,
     SwabEnvironmentService,
     SwabAreaExistsRule,
