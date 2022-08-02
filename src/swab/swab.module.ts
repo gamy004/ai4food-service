@@ -25,6 +25,9 @@ import { SwabEnvironmentService } from './services/swab-environment.service';
 import { SwabPlanManagerService } from './services/swab-plan-manager.service';
 import { ProductModule } from '~/product/product.module';
 import { SwabProductHistory } from './entities/swab-product-history.entity';
+import { SwabTestController } from './controllers/swab-test.controller';
+import { SwabTestService } from './services/swab-test.service';
+import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
 
 @Module({
   imports: [
@@ -45,7 +48,8 @@ import { SwabProductHistory } from './entities/swab-product-history.entity';
     SwabAreaController,
     SwabAreaHistoryController,
     SwabPeriodController,
-    SwabEnvironmentController
+    SwabEnvironmentController,
+    SwabTestController
   ],
   providers: [
     SwabPlanQueryService,
@@ -54,11 +58,13 @@ import { SwabProductHistory } from './entities/swab-product-history.entity';
     SwabAreaHistoryService,
     SwabPeriodService,
     SwabEnvironmentService,
+    SwabTestService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
     SwabAreaHistoryExistsRule,
     SwabEnvironmentExistsRule,
-    SwabAreaHistoryImageExistsRule
+    SwabAreaHistoryImageExistsRule,
+    SwabTestExistsRule
   ]
 })
 export class SwabModule { }
