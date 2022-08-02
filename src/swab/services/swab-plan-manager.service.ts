@@ -2,7 +2,7 @@ import { differenceInDays } from 'date-fns'
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { format } from "date-fns-tz";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, In, Not, Repository } from "typeorm";
 import { Shift } from "~/common/enums/shift";
 import { BodyCommandUpdateSwabPlanByIdDto } from "../dto/command-update-swab-plan-by-id.dto";
 import { QuerySwabPlanDto } from "../dto/query-swab-plan.dto";
@@ -19,6 +19,7 @@ import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-updat
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
+import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -34,6 +35,7 @@ export class SwabPlanManagerService {
         protected readonly swabEnvironmentRepository: Repository<SwabEnvironment>,
         @InjectRepository(SwabAreaHistoryImage)
         protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
+        protected readonly swabAreaHistoryImageService: SwabAreaHistoryImageService,
         @InjectRepository(SwabProductHistory)
         protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
 
@@ -97,9 +99,32 @@ export class SwabPlanManagerService {
             swabAreaHistory.swabEnvironments = swabEnvironments;
         }
 
-        let swabAreaHistoryImages = upsertSwabAreaHistoryImageDto.map(
-            (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => this.swabAreaHistoryImageRepository.create(upsertSwabAreaHistoryImageData)
+        const currentSwabAreaHistoryImageIds = [];
+        const swabAreaHistoryImages = [];
+
+        upsertSwabAreaHistoryImageDto.forEach(
+            (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => {
+                if (upsertSwabAreaHistoryImageData.id) {
+                    currentSwabAreaHistoryImageIds.push(upsertSwabAreaHistoryImageData.id);
+                }
+
+                swabAreaHistoryImages.push(
+                    this.swabAreaHistoryImageService.init(upsertSwabAreaHistoryImageData)
+                );
+            }
         )
+
+        const removeSwabAreaHistoryImageCondition: FindOptionsWhere<SwabAreaHistoryImage> = {
+            swabAreaHistoryId: swabAreaHistory.id,
+        };
+
+        if (currentSwabAreaHistoryImageIds.length) {
+            removeSwabAreaHistoryImageCondition.id = Not(In([...new Set(currentSwabAreaHistoryImageIds)]))
+        }
+
+        console.log(removeSwabAreaHistoryImageCondition);
+
+        await this.swabAreaHistoryImageService.remove(removeSwabAreaHistoryImageCondition);
 
         if (swabAreaHistoryImages.length) {
             swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;

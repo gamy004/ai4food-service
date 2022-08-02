@@ -12,6 +12,7 @@ import { SwabModule } from './swab/swab.module';
 import { FacilityModule } from './facility/facility.module';
 import { AwsModule } from './aws/aws.module';
 import { AppController } from './app.controller';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AppController } from './app.controller';
         autoLoadEntities: true,
       })
     }),
+    CommonModule,
     ImportTransactionModule,
     ProductScheduleModule,
     ProductModule,
@@ -33,7 +35,7 @@ import { AppController } from './app.controller';
     AuthModule,
     SwabModule,
     FacilityModule,
-    AwsModule,
+    AwsModule
   ],
   controllers: [
     AppController

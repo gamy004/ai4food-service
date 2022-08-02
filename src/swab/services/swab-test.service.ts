@@ -10,20 +10,14 @@ import { BodyUpdateSwabTestDto, ParamUpdateSwabTestDto } from '../dto/command-up
 export class SwabTestService {
   constructor(
     @InjectRepository(SwabTest)
-    protected readonly swabTestRepository: Repository<SwabTest>,
+    protected readonly swabTestRepository: Repository<SwabTest>
+  ) { }
 
-  ) {}
-  async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto): Promise<void> {
+  async commandUpdateSwabPlanById(id: number, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto): Promise<void> {
     const {
       listeriaMonoDetected
     } = bodycommandUpdateSwabTestDto;
-    console.log(listeriaMonoDetected)
-    const swabTest = await this.swabTestRepository.findOneBy({ id });
-    if(listeriaMonoDetected){
-      swabTest.listeriaMonoDetected = listeriaMonoDetected
-    }
-    this.swabTestRepository.save(swabTest)
-    
 
-}
+    await this.swabTestRepository.update({ id }, { listeriaMonoDetected });
+  }
 }

@@ -6,7 +6,7 @@ import { BodyUpdateSwabTestDto, ParamUpdateSwabTestDto } from '../dto/command-up
 export class SwabTestController {
   constructor(private readonly swabTestService: SwabTestService) { }
 
-  @Put("update-test/:id")
+  @Put(":id/listeria-mono")
   async commandUpdateSwabTest(
     @Param() paramCommandUpdateSwabPlanByIdDto: ParamUpdateSwabTestDto,
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyUpdateSwabTestDto
@@ -23,7 +23,7 @@ export class SwabTestController {
 
     return {
       ok: true,
-      message: 'update swab plan success'
+      message: 'update listeria result success'
     };
   }
 }

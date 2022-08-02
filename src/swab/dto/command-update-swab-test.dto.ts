@@ -6,13 +6,11 @@ export class ParamUpdateSwabTestDto {
     @Type(() => Number)
     @IsNumber()
     @Validate(SwabTestExistsRule)
-    id: string;
-
+    id: number;
 }
 
 export class BodyUpdateSwabTestDto {
     @IsNotEmpty()
     @IsBoolean()
     listeriaMonoDetected!: boolean;
-
 }

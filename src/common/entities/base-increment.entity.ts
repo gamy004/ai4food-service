@@ -2,7 +2,7 @@ import { BaseEntity as TypeOrmBaseEntity, PrimaryGeneratedColumn, CreateDateColu
 
 export abstract class BaseIncrementEntity extends TypeOrmBaseEntity {
     @PrimaryGeneratedColumn("increment", { type: "bigint" })
-    id: string | number;
+    id: number;
 
     @CreateDateColumn()
     createdAt: Date;

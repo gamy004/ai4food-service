@@ -28,6 +28,7 @@ import { SwabProductHistory } from './entities/swab-product-history.entity';
 import { SwabTestController } from './controllers/swab-test.controller';
 import { SwabTestService } from './services/swab-test.service';
 import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
+import { SwabAreaHistoryImageService } from './services/swab-area-history-image.service';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
     SwabPlanManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
+    SwabAreaHistoryImageService,
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
