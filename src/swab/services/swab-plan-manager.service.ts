@@ -263,7 +263,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด",
@@ -274,7 +277,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "ถาดรองเศษใต้ Portion", subSwabAreas: []
@@ -297,14 +303,20 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "Cover มอเตอร์ แกนกลางเครื่อง", subSwabAreas: [],
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด",
@@ -315,7 +327,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว",
@@ -327,7 +342,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง",
@@ -339,7 +357,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     // {
                     //     swabAreaName: "สายพานลำเลียงถาด",
@@ -360,7 +381,10 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control",
@@ -385,14 +409,20 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "ผนังห้อง", subSwabAreas: [],
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "รางระบายน้ำห้อง",
@@ -412,28 +442,40 @@ export class SwabPlanManagerService {
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "มือพนักงานช่างประกอบเครื่องหลังล้าง", subSwabAreas: [],
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "สายลมเครื่อง Portion", subSwabAreas: [],
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                     {
                         swabAreaName: "เครื่องชั่ง Topping", subSwabAreas: [],
                         swabPeriodMapping: [
                             "ก่อน Super Big Cleaning",
                             "หลัง Super Big Cleaning"
-                        ] // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+                        shiftMapping: [
+                            'day'
+                        ]
                     },
                 ]
             },
@@ -527,7 +569,7 @@ export class SwabPlanManagerService {
 
                     if (swabArea) {
                         const { subSwabAreas: subSwabAreasByApi } = swabArea;
-                        const { subSwabAreas: subSwabAreasByTemplate, swabPeriodMapping = [] } = mainSwabArea
+                        const { subSwabAreas: subSwabAreasByTemplate, swabPeriodMapping = [], shiftMapping = [] } = mainSwabArea
 
                         const subSwabAreaDatas = subSwabAreasByApi.reduce((acc, obj) => {
                             let key = obj['swabAreaName']
@@ -547,7 +589,8 @@ export class SwabPlanManagerService {
                         return {
                             ...swabArea,
                             subSwabAreas: [...subSwabAreas],
-                            swabPeriodMapping
+                            swabPeriodMapping,
+                            shiftMapping
                         }
                     }
                 }
@@ -587,6 +630,7 @@ export class SwabPlanManagerService {
 
         async function generateHistory(swabAreasAll, currentDate = new Date(), dateIndex) {
             currentDate.setDate(currentDate.getDate() + dateIndex);
+            let shiftKeys = Object.keys(Shift)
 
             if (dateIndex === 0) {
                 for (let index = 0; index < bigCleaningSwabPeriodsTemplate.length; index++) {
@@ -594,42 +638,73 @@ export class SwabPlanManagerService {
                     for (let index = 0; index < swabAreasAll.length; index++) {
                         const swabAreasGroupByFacility = swabAreasAll[index];
 
-                        for (let index = 0; index < swabAreasGroupByFacility.length; index++) {
-                            const swabAreas = swabAreasGroupByFacility[index];
-                            const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
+                        for (let indexSwabArea = 0; indexSwabArea < swabAreasGroupByFacility.length; indexSwabArea++) {
+                            const swabAreas = swabAreasGroupByFacility[indexSwabArea];
+                            const { subSwabAreas = [], swabPeriodMapping = [], shiftMapping = [] } = swabAreas;
                             // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
                             if (swabPeriodMapping.length && !swabPeriodMapping.includes(bigCleaningSwabPeriod.swabPeriodName)) {
                                 continue;
                             }
 
-                            await generateSwabAreaHistory(
-                                currentDate,
-                                swabAreas,
-                                bigCleaningSwabPeriod,
-                                null,
-                                true
-                            );
-
-                            if (subSwabAreas && subSwabAreas.length > 0) {
-                                for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
-                                    const swabArea = subSwabAreas[index3];
+                            if (shiftMapping.length) {
+                                for (let indexShift = 0; indexShift < shiftMapping.length; indexShift++) {
+                                    const shift = shiftMapping[indexShift];
                                     await generateSwabAreaHistory(
                                         currentDate,
-                                        swabArea,
+                                        swabAreas,
                                         bigCleaningSwabPeriod,
-                                        null,
-                                        false
+                                        shift,
+                                        true
                                     );
+
+                                    if (subSwabAreas && subSwabAreas.length > 0) {
+                                        for (let indexSubSwabArea = 0; indexSubSwabArea < subSwabAreas.length; indexSubSwabArea++) {
+                                            const swabArea = subSwabAreas[indexSubSwabArea];
+                                            await generateSwabAreaHistory(
+                                                currentDate,
+                                                swabArea,
+                                                bigCleaningSwabPeriod,
+                                                shift,
+                                                false
+                                            );
+                                        }
+                                    }
+                                }
+                            } else {
+                                await generateSwabAreaHistory(
+                                    currentDate,
+                                    swabAreas,
+                                    bigCleaningSwabPeriod,
+                                    'day',
+                                    true
+                                );
+
+                                if (subSwabAreas && subSwabAreas.length > 0) {
+                                    for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
+                                        const swabArea = subSwabAreas[index3];
+                                        await generateSwabAreaHistory(
+                                            currentDate,
+                                            swabArea,
+                                            bigCleaningSwabPeriod,
+                                            'day',
+                                            false
+                                        );
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                shiftKeys = [Object.keys(Shift)[1]]
             }
 
-            for (let index2 = 0; index2 < Object.keys(Shift).length; index2++) {
-                const shiftKey = Object.keys(Shift)[index2];
+            if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
+                shiftKeys = [Object.keys(Shift)[0]]
+            }
+
+            for (let index2 = 0; index2 < shiftKeys.length; index2++) {
+                const shiftKey = shiftKeys[index2];
 
                 for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
                     const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
@@ -680,8 +755,8 @@ export class SwabPlanManagerService {
             await generateHistory(swabAreas, currentDate, dateIndex);
         }
 
-        await this.swabAreaHistoryRepository.save(swabAreaHistories);
+        // await this.swabAreaHistoryRepository.save(swabAreaHistories);
 
-        return;
+        return await this.swabAreaHistoryRepository.save(swabAreaHistories);
     }
 }
