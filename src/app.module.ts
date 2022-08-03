@@ -13,6 +13,7 @@ import { FacilityModule } from './facility/facility.module';
 import { AwsModule } from './aws/aws.module';
 import { AppController } from './app.controller';
 import { CommonModule } from './common/common.module';
+import { LabModule } from './lab/lab.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { CommonModule } from './common/common.module';
     AuthModule,
     SwabModule,
     FacilityModule,
-    AwsModule
+    AwsModule,
+    LabModule
   ],
   controllers: [
     AppController
