@@ -20,6 +20,9 @@ export class File extends BaseSoftDeletableEntity {
     @Column()
     fileSize!: number;
 
+    @Column({ type: "varchar", length: 36, nullable: true })
+    userId?: string;
+
     @ManyToOne(() => User, entity => entity.files, { onDelete: 'SET NULL' })
-    user: User;
+    user?: User;
 }

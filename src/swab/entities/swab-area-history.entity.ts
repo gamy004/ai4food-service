@@ -29,14 +29,14 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @Column({ type: 'text', nullable: true })
     swabAreaNote?: string;
 
-    @Column({ nullable: true })
-    swabPeriodId: string;
+    @Column({ type: "varchar", length: 36 })
+    swabPeriodId!: string;
 
     @ManyToOne(() => SwabPeriod, entity => entity.swabAreaHistories)
     swabPeriod: SwabPeriod;
 
-    @Column({ nullable: true })
-    swabAreaId: string;
+    @Column({ type: "varchar", length: 36 })
+    swabAreaId!: string;
 
     @ManyToOne(() => SwabArea, entity => entity.swabAreaHistories)
     swabArea: SwabArea;
@@ -45,11 +45,11 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     swabAreaHistoryImages: SwabAreaHistoryImage[];
 
     @Column({ nullable: true })
-    swabTestId: number;
+    swabTestId?: number;
 
     @OneToOne(() => SwabTest, { cascade: ['insert', 'soft-remove'] })
     @JoinColumn()
-    swabTest: SwabTest;
+    swabTest?: SwabTest;
 
     @Column({ type: "enum", enum: Shift, nullable: true })
     shift?: Shift;
@@ -58,21 +58,21 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @JoinTable()
     swabEnvironments: SwabEnvironment[];
 
-    @Column({ nullable: true })
-    productId: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    productId?: string;
 
     @ManyToOne(() => Product, entity => entity.swabAreaHistories)
-    product: Product;
+    product?: Product;
 
     @Column({ type: 'date', nullable: true })
-    productDate: Date;
+    productDate?: Date;
 
     @Column({ nullable: true })
-    productLot: string;
+    productLot?: string;
 
-    @Column({ nullable: true })
-    facilityItemId: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    facilityItemId?: string;
 
-    @ManyToOne(() => FacilityItem, entity => entity.swabAreaHistories)
-    facilityItem: FacilityItem;
+    @ManyToOne(() => FacilityItem, entity => entity.swabAreaHistories, { onDelete: 'SET NULL' })
+    facilityItem?: FacilityItem;
 }

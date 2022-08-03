@@ -9,7 +9,7 @@ export class SwabArea extends BaseSoftDeletableEntity {
     @Column()
     swabAreaName!: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar", length: 36, nullable: true })
     mainSwabAreaId?: string;
 
     @ManyToOne(() => SwabArea, entity => entity.subSwabAreas, { nullable: true })
@@ -27,9 +27,9 @@ export class SwabArea extends BaseSoftDeletableEntity {
     // @ManyToOne(() => FacilityItem, entity => entity.swabAreas, { nullable: true })
     // facilityItem?: FacilityItem;
 
-    @Column({ nullable: true })
-    facilityId: string;
+    @Column({ type: "varchar", length: 36 })
+    facilityId!: string;
 
-    @ManyToOne(() => Facility, entity => entity.swabAreas, { nullable: true })
-    facility?: Facility;
+    @ManyToOne(() => Facility, entity => entity.swabAreas)
+    facility!: Facility;
 }

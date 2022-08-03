@@ -6,11 +6,11 @@ import { SwabTest } from "./swab-test.entity";
 
 @Entity()
 export class SwabProductHistory extends BaseSoftDeletableEntity {
-    @Column({ nullable: true })
-    productId: string;
+    @Column({ type: "varchar", length: 36 })
+    productId!: string;
 
     @ManyToOne(() => Product, entity => entity.swabProductHistories)
-    product: Product;
+    product!: Product;
 
     @Column()
     swabProductLot!: string;
@@ -24,10 +24,10 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
     @Column({ type: 'time', nullable: true })
     swabProductSwabedAt?: string;
 
-    @Column({ nullable: true })
-    swabTestId: number;
+    @Column()
+    swabTestId!: number;
 
     @OneToOne(() => SwabTest, { cascade: ['insert', 'soft-remove'] })
     @JoinColumn()
-    swabTest: SwabTest;
+    swabTest!: SwabTest;
 }

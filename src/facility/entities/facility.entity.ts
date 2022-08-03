@@ -15,7 +15,7 @@ export class Facility extends BaseSoftDeletableEntity {
     facilityName!: string;
 
     @Column({ type: "enum", enum: FacilityType })
-    facilityType: FacilityType;
+    facilityType!: FacilityType;
 
     @OneToMany(() => FacilityItem, entity => entity.facility, { cascade: true })
     facilityItems: FacilityItem[];

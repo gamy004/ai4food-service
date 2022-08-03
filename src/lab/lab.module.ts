@@ -10,6 +10,6 @@ import { Bacteria } from './entities/bacteria.entity';
     ])
   ],
   controllers: [],
-  providers: [BacteriaService]
+  providers: [BacteriaService],
 })
 export class LabModule { }
