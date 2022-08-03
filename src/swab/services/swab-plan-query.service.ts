@@ -398,6 +398,11 @@ export class SwabPlanQueryService {
       where,
       relations: {
         swabTest: true,
+        swabArea: {
+          facility: true,
+          subSwabAreas: true
+        },
+        swabPeriod: true
       },
       select: {
         id: true,
