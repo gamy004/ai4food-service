@@ -366,8 +366,7 @@ export class SwabPlanQueryService {
     let { swabAreaDate: swabAreaDateString, swabTestCode, listeriaMonoDetected } = queryLabSwabPlanDto;
 
     const whereSwabTest: FindOptionsWhere<SwabTest> = {
-      swabTestCode,
-      listeriaMonoDetected: IsNull()
+      swabTestCode
     };
 
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
@@ -381,7 +380,11 @@ export class SwabPlanQueryService {
     }
 
     if (listeriaMonoDetected !== undefined) {
-      whereSwabTest.listeriaMonoDetected = listeriaMonoDetected;
+      whereSwabTest.listeriaMonoDetected = IsNull();
+      if(listeriaMonoDetected){
+        whereSwabTest.listeriaMonoDetected = listeriaMonoDetected 
+      }
+      
     }
 
     whereSwabAreaHistory.swabTest = whereSwabTest;
