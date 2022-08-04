@@ -22,14 +22,14 @@ export enum ImportStatus {
 
 @Entity()
 export class ImportTransaction extends BaseSoftDeletableEntity {
-    @Column({ type: "enum", enum: ImportSource, nullable: false })
-    importSource: ImportSource;
+    @Column({ type: "enum", enum: ImportSource })
+    importSource!: ImportSource;
 
-    @Column({ type: "enum", enum: ImportType, nullable: false })
-    importType: ImportType;
+    @Column({ type: "enum", enum: ImportType })
+    importType!: ImportType;
 
     @Column({ type: "enum", enum: ImportStatus, default: ImportStatus.Pending })
-    importStatus: ImportStatus;
+    importStatus!: ImportStatus;
 
     @Column({ type: "text", nullable: true })
     importedFileUrl?: string;
@@ -37,8 +37,8 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
     @Column({ type: "text", nullable: true })
     importedFileName?: string;
 
-    @Column({ nullable: true })
-    importedUserId: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    importedUserId?: string;
 
     @ManyToOne(() => User, entity => entity.importTransactions, { nullable: true })
     importedUser?: User;

@@ -9,11 +9,11 @@ export class Room extends BaseSoftDeletableEntity {
     @Column()
     roomName!: string;
 
-    @Column({ nullable: true })
-    zoneId: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    zoneId?: string;
 
     @ManyToOne(() => Zone, entity => entity.rooms, { onDelete: "SET NULL" })
-    zone: Zone;
+    zone?: Zone;
 
     @OneToMany(() => FacilityItem, entity => entity.room)
     facilityItems: FacilityItem[];

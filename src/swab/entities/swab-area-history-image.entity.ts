@@ -8,13 +8,16 @@ export class SwabAreaHistoryImage extends BaseSoftDeletableEntity {
     @Column({ type: 'text', nullable: true })
     swabAreaHistoryImageDescription?: string;
 
-    @Column({ nullable: true })
-    swabAreaHistoryId: string;
+    @Column({ type: "varchar", length: 36 })
+    swabAreaHistoryId!: string;
 
     @ManyToOne(() => SwabAreaHistory, entity => entity.swabAreaHistoryImages)
     swabAreaHistory: SwabAreaHistory;
 
+    @Column({ type: "varchar", length: 36 })
+    fileId!: string;
+
     @OneToOne(() => File, { cascade: ['insert', 'update', 'soft-remove'] })
     @JoinColumn()
-    file: File;
+    file!: File;
 }
