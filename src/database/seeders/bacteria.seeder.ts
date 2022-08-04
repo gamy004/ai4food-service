@@ -12,6 +12,6 @@ export default class BacteriaSeeder implements Seeder {
             { bacteriaName: 'Listeria Monocytogenes' }
         ];
 
-        await bacteriaRepository.upsert(bacteria, ['BacteriaName']);
+        await bacteriaRepository.upsert(bacteria, ['bacteriaName']);
     }
 }
