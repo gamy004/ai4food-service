@@ -10,7 +10,5 @@ export class ParamUpdateSwabTestDto {
 }
 
 export class BodyUpdateSwabTestDto {
-    @IsNotEmpty()
-    @IsBoolean()
-    listeriaMonoDetected!: boolean;
+
 }

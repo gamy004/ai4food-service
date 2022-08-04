@@ -9,12 +9,6 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
     @Column({ unique: true })
     swabTestCode: string;
 
-    @Column({ type: 'boolean', nullable: true })
-    listeriaMonoDetected: boolean;
-
-    @Column({ type: 'float', nullable: true })
-    listeriaMonoValue: number;
-
     @ManyToMany(() => Bacteria, { cascade: ['insert', 'update'] })
     @JoinTable()
     bacteria!: Bacteria[];

@@ -14,7 +14,7 @@ export class SwabLabQueryService {
   ) { }
 
   private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate: swabAreaDateString, swabTestCode, listeriaMonoDetected } = queryLabSwabPlanDto;
+    let { swabAreaDate: swabAreaDateString, swabTestCode } = queryLabSwabPlanDto;
 
     const whereSwabTest: FindOptionsWhere<SwabTest> = {
       swabTestCode
@@ -28,14 +28,6 @@ export class SwabLabQueryService {
       swabAreaDate.setMinutes(0, 0, 0);
 
       whereSwabAreaHistory.swabAreaDate = swabAreaDate;
-    }
-
-    if (listeriaMonoDetected !== undefined) {
-      whereSwabTest.listeriaMonoDetected = IsNull();
-      if (listeriaMonoDetected) {
-        whereSwabTest.listeriaMonoDetected = listeriaMonoDetected
-      }
-
     }
 
     whereSwabAreaHistory.swabTest = whereSwabTest;
@@ -64,9 +56,7 @@ export class SwabLabQueryService {
         swabTestId: true,
         swabTest: {
           id: true,
-          swabTestCode: true,
-          listeriaMonoDetected: true,
-          listeriaMonoValue: true,
+          swabTestCode: true
         }
       },
       order: {

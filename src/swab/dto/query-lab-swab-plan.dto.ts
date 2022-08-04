@@ -9,9 +9,4 @@ export class QueryLabSwabPlanDto {
 
     @IsNotEmpty()
     swabTestCode: string;
-
-    @IsOptional()
-    @IsBoolean()
-    @Transform(({ value }) => value === 'true')
-    listeriaMonoDetected?: boolean;
 }

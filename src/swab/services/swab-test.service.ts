@@ -16,10 +16,6 @@ export class SwabTestService extends CrudService<SwabTest> {
   }
 
   async commandUpdateBacteria(id: number, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto): Promise<void> {
-    const {
-      listeriaMonoDetected
-    } = bodycommandUpdateSwabTestDto;
 
-    await this.repository.update({ id }, { listeriaMonoDetected });
   }
 }
