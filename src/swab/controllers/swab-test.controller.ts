@@ -13,7 +13,7 @@ export class SwabTestController {
   ) {
 
     try {
-      await this.swabTestService.commandUpdateSwabPlanById(
+      await this.swabTestService.commandUpdateBacteria(
         paramCommandUpdateSwabPlanByIdDto.id,
         bodycommandUpdateSwabPlanByIdDto
       );

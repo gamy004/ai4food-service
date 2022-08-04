@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BacteriaService } from './bacteria.service';
+import { BacteriaController } from './controllers/bacteria.controller';
 import { Bacteria } from './entities/bacteria.entity';
+import { BacteriaService } from './services/bacteria.service';
 
 @Module({
   imports: [
@@ -9,7 +10,9 @@ import { Bacteria } from './entities/bacteria.entity';
       Bacteria
     ])
   ],
-  controllers: [],
+  controllers: [
+    BacteriaController
+  ],
   providers: [BacteriaService],
 })
 export class LabModule { }

@@ -7,17 +7,19 @@ import { CommonRepositoryInterface } from '~/common/interface/common.repository.
 import { BodyUpdateSwabTestDto, ParamUpdateSwabTestDto } from '../dto/command-update-swab-test.dto';
 
 @Injectable()
-export class SwabTestService {
+export class SwabTestService extends CrudService<SwabTest> {
   constructor(
     @InjectRepository(SwabTest)
-    protected readonly swabTestRepository: Repository<SwabTest>
-  ) { }
+    repository: CommonRepositoryInterface<SwabTest>
+  ) {
+    super(repository);
+  }
 
-  async commandUpdateSwabPlanById(id: number, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto): Promise<void> {
+  async commandUpdateBacteria(id: number, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto): Promise<void> {
     const {
       listeriaMonoDetected
     } = bodycommandUpdateSwabTestDto;
 
-    await this.swabTestRepository.update({ id }, { listeriaMonoDetected });
+    await this.repository.update({ id }, { listeriaMonoDetected });
   }
 }

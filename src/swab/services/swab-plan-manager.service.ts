@@ -614,8 +614,6 @@ export class SwabPlanManagerService {
 
             if (creteSwabTest) {
                 const swabTestData = SwabTest.create({
-                    listeriaMonoDetected: null,
-                    listeriaMonoValue: null,
                     swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}/${roundNumberSwabTest}`
                 });
 

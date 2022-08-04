@@ -4,8 +4,7 @@ import { SwabTest } from "~/swab/entities/swab-test.entity";
 export default setSeederFactory(SwabTest, (faker) => {
     const swabTest = new SwabTest();
 
-    swabTest.listeriaMonoDetected = faker.datatype.boolean();
-    swabTest.listeriaMonoValue = faker.datatype.number({ min: 10, max: 30 });
+    swabTest.swabTestCode = faker.random.alphaNumeric(5);
 
     return swabTest;
 })
