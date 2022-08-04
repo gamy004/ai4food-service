@@ -9,7 +9,7 @@ export default class BacteriaSeeder implements Seeder {
         const bacteriaRepository = dataSource.getRepository(Bacteria);
 
         let bacteria = [
-            { bacteriaName: 'Listeria Monocytogenes' }
+            { bacteriaName: 'Listeria' }
         ];
 
         await bacteriaRepository.upsert(bacteria, ['bacteriaName']);

@@ -13,7 +13,7 @@ export class SwabTestController {
   ) {
 
     try {
-      await this.swabTestService.commandUpdateBacteria(
+      await this.swabTestService.commandUpdateBacteriaSpecie(
         paramCommandUpdateSwabPlanByIdDto.id,
         bodycommandUpdateSwabPlanByIdDto
       );
@@ -23,7 +23,7 @@ export class SwabTestController {
 
     return {
       ok: true,
-      message: 'update listeria result success'
+      message: 'update lab result success'
     };
   }
 }

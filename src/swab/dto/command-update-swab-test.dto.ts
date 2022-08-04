@@ -1,6 +1,28 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, Validate, IsBoolean, IsNumber } from "class-validator";
+import { IsNotEmpty, Validate, IsNumber, ValidateNested, IsOptional, IsUUID } from "class-validator";
+import { BacteriaExistsRule } from "~/lab/validators/bacteria-exists-validator";
+import { BacteriaSpecieExistsRule } from "~/lab/validators/bacteria-specie-exists-validator";
 import { SwabTestExistsRule } from "../validators/swab-test-exists-validator";
+
+export class UpsertBacteriaWithBacteriaSpecieDto {
+    @IsOptional()
+    @IsUUID()
+    @Validate(BacteriaExistsRule)
+    bacteriaId?: string;
+
+    @IsOptional()
+    @IsNotEmpty()
+    bacteriaName?: string;
+
+    @IsOptional()
+    @IsUUID()
+    @Validate(BacteriaSpecieExistsRule)
+    bacteriaSpecieId?: string;
+
+    @IsOptional()
+    @IsNotEmpty()
+    bacteriaSpecieName?: string;
+}
 
 export class ParamUpdateSwabTestDto {
     @Type(() => Number)
@@ -10,5 +32,7 @@ export class ParamUpdateSwabTestDto {
 }
 
 export class BodyUpdateSwabTestDto {
-
+    @ValidateNested({ each: true })
+    @Type(() => UpsertBacteriaWithBacteriaSpecieDto)
+    bacteriaSpecies: UpsertBacteriaWithBacteriaSpecieDto[];
 }
