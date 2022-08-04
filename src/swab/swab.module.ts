@@ -29,6 +29,7 @@ import { SwabTestController } from './controllers/swab-test.controller';
 import { SwabTestService } from './services/swab-test.service';
 import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
 import { SwabAreaHistoryImageService } from './services/swab-area-history-image.service';
+import { SwabLabQueryService } from './services/swab-lab-query.service';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { SwabAreaHistoryImageService } from './services/swab-area-history-image.
   providers: [
     SwabPlanQueryService,
     SwabPlanManagerService,
+    SwabLabQueryService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabAreaHistoryImageService,

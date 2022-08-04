@@ -7,28 +7,8 @@ import { SwabEnvironmentService } from '../services/swab-environment.service';
 export class SwabEnvironmentController {
   constructor(private readonly swabEnvironmentService: SwabEnvironmentService) { }
 
-  // @Post()
-  // create(@Body() createSwabEnvironmentDto: CreateSwabEnvironmentDto) {
-  //   return this.swabEnvironmentService.create(createSwabEnvironmentDto);
-  // }
-
   @Get()
   findAll() {
     return this.swabEnvironmentService.findAll();
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.swabEnvironmentService.findOne({ id });
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSwabEnvironmentDto: UpdateSwabEnvironmentDto) {
-  //   return this.swabEnvironmentService.update({ id }, updateSwabEnvironmentDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.swabEnvironmentService.remove({ id });
-  // }
 }
