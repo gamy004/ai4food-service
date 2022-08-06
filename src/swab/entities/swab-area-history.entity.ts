@@ -77,8 +77,8 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     @ManyToOne(() => FacilityItem, entity => entity.swabAreaHistories, { onDelete: 'SET NULL' })
     facilityItem?: FacilityItem;
 
-    @Column({ nullable: true })
-    recordedUserInd?: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    recordedUserId?: string;
 
     @ManyToOne(() => User, entity => entity.recordedSwabAreaHistories, { onDelete: 'SET NULL' })
     recordedUser: User;

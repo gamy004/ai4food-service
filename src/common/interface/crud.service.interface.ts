@@ -12,5 +12,7 @@ export interface CrudServiceInterface<T> {
 
     findOne(options?: T | any): Promise<T | any>;
 
+    findOneOrFail(options?: T | any): Promise<T | any>;
+
     remove(options?: T | any): Promise<T | any>;
 }

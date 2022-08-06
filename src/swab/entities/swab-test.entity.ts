@@ -10,11 +10,11 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
     @Column({ unique: true })
     swabTestCode: string;
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+    @Column({ type: "timestamp", nullable: true })
     swabTestRecordedAt: Date;
 
-    @Column({ nullable: true })
-    recordedUserInd?: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    recordedUserId?: string;
 
     @ManyToOne(() => User, entity => entity.recordedSwabTests, { onDelete: 'SET NULL' })
     recordedUser: User;

@@ -27,6 +27,7 @@ export class TransactionDatasource {
 
             await queryRunner.commitTransaction();
         } catch (err) {
+            console.error(err);
             // since we have errors lets rollback the changes we made
             await queryRunner.rollbackTransaction();
         } finally {

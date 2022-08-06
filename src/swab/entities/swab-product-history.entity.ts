@@ -32,8 +32,8 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
     @JoinColumn()
     swabTest!: SwabTest;
 
-    @Column({ nullable: true })
-    recordedUserInd?: string;
+    @Column({ type: "varchar", length: 36, nullable: true })
+    recordedUserId?: string;
 
     @ManyToOne(() => User, entity => entity.recordedSwabProductHistories, { onDelete: 'SET NULL' })
     recordedUser: User;
