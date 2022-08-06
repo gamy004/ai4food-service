@@ -1,4 +1,7 @@
 import { Controller, Get, Param, Body, ForbiddenException, Post, Put, Query } from '@nestjs/common';
+import { AuthUser } from '~/auth/decorators/auth-user.decorator';
+import { Authenticated } from '~/auth/decorators/authenticated.decortator';
+import { User } from '~/auth/entities/user.entity';
 import { ParamCommandUpdateSwabPlanByIdDto, BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
@@ -17,21 +20,25 @@ export class SwabAreaHistoryController {
     private readonly swabLabQueryService: SwabLabQueryService,
   ) { }
 
+  @Authenticated()
   @Get()
   queryUpdateSwabPlan(@Query() queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto) {
     return this.swabPlanQueryService.queryUpdateSwabPlan(queryUpdateSwabPlanDto);
   }
 
+  @Authenticated()
   @Get("export")
   querySwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
     return this.swabPlanQueryService.querySwabPlan(querySwabPlanDto);
   }
 
+  @Authenticated()
   @Get(":id")
   queryUpdateSwabPlanById(@Param() queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto) {
     return this.swabPlanQueryService.queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto);
   }
 
+  @Authenticated()
   @Get("lab")
   queryLabSwabPlan(@Query() queryLabSwabPlanDto: QueryLabSwabPlanDto) {
     return this.swabLabQueryService.queryLabSwabPlan(queryLabSwabPlanDto);
@@ -42,8 +49,10 @@ export class SwabAreaHistoryController {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 
+  @Authenticated()
   @Put(":id")
   async commandUpdateSwabPlanById(
+    @AuthUser() user: User,
     @Param() paramCommandUpdateSwabPlanByIdDto: ParamCommandUpdateSwabPlanByIdDto,
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto
   ) {
@@ -51,7 +60,8 @@ export class SwabAreaHistoryController {
     try {
       await this.swabPlanManagerService.commandUpdateSwabPlanById(
         paramCommandUpdateSwabPlanByIdDto.id,
-        bodycommandUpdateSwabPlanByIdDto
+        bodycommandUpdateSwabPlanByIdDto,
+        user
       );
     } catch (error) {
       throw new ForbiddenException(error.message);

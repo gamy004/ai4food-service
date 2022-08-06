@@ -37,10 +37,10 @@ export class BodyUpdateSwabTestDto {
     @IsDateString()
     swabTestRecordedAt: Date;
 
-    // @IsOptional()
-    // @ValidateNested({ each: true })
-    // @Type(() => ConnectUserDto)
-    // recordedUser: ConnectUserDto;
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ConnectUserDto)
+    recordedUser: ConnectUserDto;
 
     @IsOptional()
     @ValidateNested({ each: true })

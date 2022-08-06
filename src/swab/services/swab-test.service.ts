@@ -25,7 +25,11 @@ export class SwabTestService extends CrudService<SwabTest> {
     super(repository);
   }
 
-  async commandUpdateBacteriaSpecie(id: number, bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto, recordedUser: User): Promise<void> {
+  async commandUpdateBacteriaSpecie(
+    id: number,
+    bodycommandUpdateSwabTestDto: BodyUpdateSwabTestDto,
+    recordedUser: User
+  ): Promise<void> {
     const {
       swabTestRecordedAt,
       bacteriaSpecies = []
@@ -127,8 +131,11 @@ export class SwabTestService extends CrudService<SwabTest> {
         const swabTest = await this.repository.findOneBy({ id });
 
         swabTest.swabTestRecordedAt = swabTestRecordedAt;
+
         swabTest.recordedUser = recordedUser;
+
         swabTest.bacteria = Object.keys(swabTestBacteria).map(id => this.bacteriaService.init({ id }));
+
         swabTest.bacteriaSpecies = Object.keys(swabTestBacteriaSpecie).map(id => this.bacteriaSpecieService.init({ id }));
 
         await queryRunnerManger.save(swabTest);

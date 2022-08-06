@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsOptional, IsUUID, Max, Min, Validate, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsOptional, IsUUID, Validate, ValidateNested } from "class-validator";
+import { ConnectUserDto } from "~/auth/dto/connect-user.dto";
 import { Shift } from "~/common/enums/shift";
 import { TimeOnlyRule } from "~/common/validators/time-only-validator";
 import { ConnectProductDto } from "~/product/dto/connect-product.dto";
@@ -32,4 +33,9 @@ export class BodyCommandUpdateSwabProductHistoryByIdDto {
 
     @IsNotEmpty()
     swabProductLot!: string;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ConnectUserDto)
+    recordedUser: ConnectUserDto;
 }
