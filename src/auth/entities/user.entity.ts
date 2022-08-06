@@ -3,6 +3,9 @@ import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.en
 import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
 import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 import { File } from '~/common/entities/file.entity';
+import { SwabTest } from '~/swab/entities/swab-test.entity';
+import { SwabAreaHistory } from '~/swab/entities/swab-area-history.entity';
+import { SwabProductHistory } from '~/swab/entities/swab-product-history.entity';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -45,4 +48,13 @@ export class User extends BaseSoftDeletableEntity {
 
     @OneToMany(() => File, entity => entity.user)
     files: File[];
+
+    @OneToMany(() => SwabTest, entity => entity.recordedUser)
+    recordedSwabTests: SwabTest[];
+
+    @OneToMany(() => SwabAreaHistory, entity => entity.recordedUser)
+    recordedSwabAreaHistories: SwabAreaHistory[];
+
+    @OneToMany(() => SwabProductHistory, entity => entity.recordedUser)
+    recordedSwabProductHistories: SwabProductHistory[];
 }

@@ -30,6 +30,8 @@ import { SwabTestService } from './services/swab-test.service';
 import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
 import { SwabAreaHistoryImageService } from './services/swab-area-history-image.service';
 import { SwabLabQueryService } from './services/swab-lab-query.service';
+import { CommonModule } from '~/common/common.module';
+import { LabModule } from '~/lab/lab.module';
 
 @Module({
   imports: [
@@ -43,7 +45,9 @@ import { SwabLabQueryService } from './services/swab-lab-query.service';
       SwabProductHistory
     ]),
     FacilityModule,
-    ProductModule
+    ProductModule,
+    LabModule,
+    CommonModule
   ],
   controllers: [
     SwabController,

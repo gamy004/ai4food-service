@@ -20,6 +20,7 @@ import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
+import { User } from '~/auth/entities/user.entity';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -41,7 +42,11 @@ export class SwabPlanManagerService {
 
     ) { }
 
-    async commandUpdateSwabPlanById(id: string, bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto): Promise<void> {
+    async commandUpdateSwabPlanById(
+        id: string,
+        bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto,
+        recordedUser: User
+    ): Promise<void> {
         const {
             swabAreaSwabedAt,
             swabAreaTemperature,
@@ -56,6 +61,8 @@ export class SwabPlanManagerService {
         } = bodycommandUpdateSwabPlanByIdDto;
 
         const swabAreaHistory = await this.swabAreaHistoryRepository.findOneBy({ id });
+
+        swabAreaHistory.recordedUser = recordedUser;
 
         swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
 
@@ -106,6 +113,10 @@ export class SwabPlanManagerService {
             (upsertSwabAreaHistoryImageData: UpsertSwabAreaHistoryImageDto) => {
                 if (upsertSwabAreaHistoryImageData.id) {
                     currentSwabAreaHistoryImageIds.push(upsertSwabAreaHistoryImageData.id);
+                } else {
+                    if (upsertSwabAreaHistoryImageData.file) {
+                        upsertSwabAreaHistoryImageData.file.user = recordedUser;
+                    }
                 }
 
                 swabAreaHistoryImages.push(
@@ -122,18 +133,21 @@ export class SwabPlanManagerService {
             removeSwabAreaHistoryImageCondition.id = Not(In([...new Set(currentSwabAreaHistoryImageIds)]))
         }
 
-        console.log(removeSwabAreaHistoryImageCondition);
-
         await this.swabAreaHistoryImageService.remove(removeSwabAreaHistoryImageCondition);
 
         if (swabAreaHistoryImages.length) {
+
             swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
         }
 
         await this.swabAreaHistoryRepository.save(swabAreaHistory);
     }
 
-    async commandUpdateSwabProductHistoryById(id: string, bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto): Promise<void> {
+    async commandUpdateSwabProductHistoryById(
+        id: string,
+        bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto,
+        recordedUser: User
+    ): Promise<void> {
         const {
             swabProductSwabedAt,
             swabProductDate,
@@ -144,6 +158,7 @@ export class SwabPlanManagerService {
 
         const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
 
+        swabProductHistory.recordedUser = recordedUser;
         swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
         swabProductHistory.swabProductDate = swabProductDate;
 

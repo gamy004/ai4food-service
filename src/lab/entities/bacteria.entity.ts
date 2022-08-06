@@ -7,6 +7,6 @@ export class Bacteria extends BaseSoftDeletableEntity {
     @Column({ unique: true })
     bacteriaName: string;
 
-    @OneToMany(() => BacteriaSpecie, entity => entity.bacteria)
+    @OneToMany(() => BacteriaSpecie, entity => entity.bacteria, { cascade: true })
     bacteriaSpecies: BacteriaSpecie[];
 }

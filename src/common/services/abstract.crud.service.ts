@@ -28,6 +28,10 @@ export abstract class CrudService<Entity> implements CrudServiceInterface<Entity
   }
 
   findOne(where: FindOptionsWhere<Entity>) {
+    return this.repository.findOneBy(where);
+  }
+
+  findOneOrFail(where: FindOptionsWhere<Entity>) {
     return this.repository.findOneByOrFail(where);
   }
 

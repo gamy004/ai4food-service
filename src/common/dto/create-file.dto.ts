@@ -1,4 +1,6 @@
-import { IsMimeType, IsNotEmpty, IsUrl } from "class-validator";
+import { Type } from "class-transformer";
+import { IsMimeType, IsNotEmpty, IsOptional, IsUrl, ValidateNested } from "class-validator";
+import { ConnectUserDto } from "~/auth/dto/connect-user.dto";
 
 export class CreateFileDto {
     @IsNotEmpty()
@@ -17,4 +19,9 @@ export class CreateFileDto {
 
     @IsNotEmpty()
     fileSize!: number;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ConnectUserDto)
+    user: ConnectUserDto;
 }
