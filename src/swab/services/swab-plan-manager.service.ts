@@ -20,6 +20,7 @@ import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
+import { SwabRoundService } from './swab-round.service';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -27,6 +28,7 @@ export class SwabPlanManagerService {
         protected readonly facilityItemService: FacilityItemService,
         protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
+        protected readonly swabRoundService: SwabRoundService,
         @InjectRepository(SwabAreaHistory)
         protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
         @InjectRepository(SwabArea)
@@ -163,9 +165,9 @@ export class SwabPlanManagerService {
     }
 
     async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
-        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = 1 } = generateSwabPlanDto;
+        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = "" } = generateSwabPlanDto;
 
-        let fromDate, toDate;
+        let fromDate, toDate, swabRoundNumber = null;
 
         if (fromDateString) {
             fromDate = new Date(fromDateString);
@@ -181,6 +183,15 @@ export class SwabPlanManagerService {
             toDate.setMinutes(0, 0, 0);
 
             toDate = format(toDate, "yyyy-MM-dd");
+        }
+
+        if (roundNumberSwabTest) {
+            const swabRound = await this.swabRoundService.find({ swabRoundNumber: roundNumberSwabTest })
+            if (swabRound.length) {
+                throw new Error("Swab Round Number is already exists");
+            } else {
+                swabRoundNumber = await this.swabRoundService.create({ swabRoundNumber: roundNumberSwabTest })
+            }
         }
 
         // const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
@@ -608,17 +619,22 @@ export class SwabPlanManagerService {
                 swabPeriod,
                 swabTest: null,
                 swabArea,
+                swabRound: null,
                 shift,
                 productLot: ""
             };
 
             if (creteSwabTest) {
                 const swabTestData = SwabTest.create({
-                    swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}/${roundNumberSwabTest}`
+                    swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${roundNumberSwabTest ? '/' + roundNumberSwabTest : ''}`
                 });
 
                 historyData.swabTest = swabTestData;
                 SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1
+
+                if (swabRoundNumber) {
+                    historyData.swabRound = swabRoundNumber
+                }
             }
 
             const swabAreaHistory = SwabAreaHistory.create(historyData);
@@ -753,8 +769,8 @@ export class SwabPlanManagerService {
             await generateHistory(swabAreas, currentDate, dateIndex);
         }
 
-        // await this.swabAreaHistoryRepository.save(swabAreaHistories);
+        await this.swabAreaHistoryRepository.save(swabAreaHistories);
 
-        return await this.swabAreaHistoryRepository.save(swabAreaHistories);
+        return
     }
 }

@@ -9,5 +9,5 @@ export class GenerateSwabPlanDto {
     toDate: string;
 
     @IsNotEmpty()
-    roundNumberSwabTest: number;
+    roundNumberSwabTest: string;
 }

@@ -30,6 +30,8 @@ import { SwabTestService } from './services/swab-test.service';
 import { SwabTestExistsRule } from './validators/swab-test-exists-validator';
 import { SwabAreaHistoryImageService } from './services/swab-area-history-image.service';
 import { SwabLabQueryService } from './services/swab-lab-query.service';
+import { SwabRoundService } from './services/swab-round.service';
+import { SwabRound } from './entities/swab-round.entity';
 
 @Module({
   imports: [
@@ -40,7 +42,8 @@ import { SwabLabQueryService } from './services/swab-lab-query.service';
       SwabPeriod,
       SwabTest,
       SwabEnvironment,
-      SwabProductHistory
+      SwabProductHistory,
+      SwabRound
     ]),
     FacilityModule,
     ProductModule
@@ -63,6 +66,7 @@ import { SwabLabQueryService } from './services/swab-lab-query.service';
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
+    SwabRoundService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
     SwabAreaHistoryExistsRule,
