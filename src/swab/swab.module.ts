@@ -32,6 +32,8 @@ import { SwabAreaHistoryImageService } from './services/swab-area-history-image.
 import { SwabLabQueryService } from './services/swab-lab-query.service';
 import { CommonModule } from '~/common/common.module';
 import { LabModule } from '~/lab/lab.module';
+import { SwabRoundService } from './services/swab-round.service';
+import { SwabRound } from './entities/swab-round.entity';
 
 @Module({
   imports: [
@@ -42,7 +44,8 @@ import { LabModule } from '~/lab/lab.module';
       SwabPeriod,
       SwabTest,
       SwabEnvironment,
-      SwabProductHistory
+      SwabProductHistory,
+      SwabRound
     ]),
     FacilityModule,
     ProductModule,
@@ -67,6 +70,7 @@ import { LabModule } from '~/lab/lab.module';
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
+    SwabRoundService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
     SwabAreaHistoryExistsRule,

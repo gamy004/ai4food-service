@@ -8,6 +8,7 @@ import { SwabAreaHistoryImage } from "./swab-area-history-image.entity";
 import { SwabArea } from "./swab-area.entity";
 import { SwabEnvironment } from "./swab-environment.entity";
 import { SwabPeriod } from "./swab-period.entity";
+import { SwabRound } from "./swab-round.entity";
 import { SwabTest } from "./swab-test.entity";
 
 @Entity()
@@ -82,4 +83,11 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
 
     @ManyToOne(() => User, entity => entity.recordedSwabAreaHistories, { onDelete: 'SET NULL' })
     recordedUser: User;
+
+    @Column({ nullable: true })
+    SwabRoundId?: number;
+
+    @ManyToOne(() => SwabRound, entity => entity.swabAreaHistories)
+    @JoinColumn()
+    swabRound?: SwabRound;
 }
