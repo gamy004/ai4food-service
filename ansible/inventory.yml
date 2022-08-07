@@ -1,0 +1,72 @@
+############# Types: Service, Web App #################
+all:
+  vars:
+    version: "{{ lookup('env', 'VERSION') | default('latest') }}"
+    ansible_connection: local
+    aws_account_id: "{{ lookup('env', 'AWS_ACCOUNT_ID') }}"
+    image_name: "{{ lookup('env', 'IMAGE_NAME') }}"
+    image_tag: "{{ lookup('env', 'IMAGE_TAG') }}"
+    aws_region: ap-southeast-1
+    image_repo_uri: "{{ aws_account_id }}.dkr.ecr.{{ aws_default_region }}.amazonaws.com/{{ image_name }}"
+
+    # key for aws-cli
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    s3_upload_bucket: "{{ lookup('env', 'S3_UPLOAD_BUCKET') }}"
+
+  children:
+    services:
+      children:
+        service:
+          hosts:
+            production-service:
+          vars:
+            git_repo_slug: ai4food-service
+            project_name: ai4food-service
+            task_def_name: ai4food-service-{{ env }}
+            taget_group_name: ai4food-service-{{ env }}
+            container_name: core
+            cpu: 256
+            memory: 512
+            rule_priority: 1
+
+################### Environments: dev, staging, prod #################
+all_envs:
+  vars:
+    cluster: ai4food-{{ env }}
+    elb_name: ai4food-{{ env }}
+    elb_port: 443
+
+    # key for file service
+    s3_access_key: "{{ lookup('env', 'S3_ACCESS_KEY') }}"
+    s3_secret_key: "{{ lookup('env', 'S3_SECRET_KEY') }}"
+    s3_bucket_name: "{{ lookup('env', 'S3_BUCKET_NAME') }}"
+
+    # env variables for services
+    service_database_url: "{{ lookup('env', 'SERVICE_DATABASE_URL') }}"
+    service_database_timezone: "{{ lookup('env', 'SERVICE_DATABASE_TIMEZONE') }}"
+    service_jwt_secret_key: "{{ lookup('env', 'SERVICE_JWT_SECRET_KEY') }}"
+    service_aws_default_region: "{{ lookup('env', 'SERVICE_AWS_DEFAULT_REGION') }}"
+    service_aws_access_key_id: "{{ lookup('env', 'SERVICE_AWS_ACCESS_KEY_ID') }}"
+    service_aws_secret_access_key: "{{ lookup('env', 'SERVICE_AWS_SECRET_ACCESS_KEY') }}"
+
+
+    # database_host: "{{ lookup('env', 'DATABASE_HOST') }}"
+    # database_port: "{{ lookup('env', 'DATABASE_PORT') }}"
+    # database_name: "{{ lookup('env', 'DATABASE_NAME') }}"
+    # database_username: "{{ lookup('env', 'DATABASE_USERNAME') }}"
+    # database_pass: "{{ lookup('env', 'DATABASE_PASSWORD') }}"
+
+  children:
+    env_production:
+      vars:
+        env: production
+        vpc_id: vpc-022fe19f5099a780f
+        subnets_arn:
+          - subnet-0f58325c161f50817
+          - subnet-0b431778171b5c476
+          - subnet-0f073aedc2373871f
+        security_groups_arn:
+          - sg-0905a10b1a32824f4
+      hosts:
+        production-service:

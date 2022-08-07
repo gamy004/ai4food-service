@@ -1,0 +1,12 @@
+---
+# Required
+branch: master
+git_repo_slug: default-repo-slug
+project_name: default-project
+rule_priority: 0
+elb_port: 443
+
+# Optional
+exec_role_arn: arn:aws:iam::430558697501:role/EcsTaskRole
+certificate_arn: arn:aws:acm:ap-southeast-1:430558697501:certificate/4e15debe-278f-4cd9-b589-88f1f7f1920c
+aws_default_region: ap-southeast-1

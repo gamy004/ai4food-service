@@ -1,22 +1,49 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { loggingMiddleware } from './middlewares/logging-middleware';
-// import { softDeleteMiddleware } from './middlewares/soft-delete-middleware';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { UserModule } from './user/user.module';
-import mikroOrmConfig from './config/mikro-orm.config';
+import databaseConfig from './database/config/database.config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ImportTransactionModule } from './import-transaction/import-transaction.module';
+import { ProductScheduleModule } from './product-schedule/product-schedule.module';
+import { ProductModule } from './product/product.module';
+import { DataCollectorModule } from './data-collector/data-collector.module';
+import { AuthModule } from './auth/auth.module';
+import { SwabModule } from './swab/swab.module';
+import { FacilityModule } from './facility/facility.module';
+import { AwsModule } from './aws/aws.module';
+import { AppController } from './app.controller';
+import { CommonModule } from './common/common.module';
+import { LabModule } from './lab/lab.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forRoot({
-      ...mikroOrmConfig,
-      entities: [],
-      entitiesTs: [],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig],
     }),
-    UserModule,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('database'),
+        autoLoadEntities: true,
+      })
+    }),
+    CommonModule,
+    ImportTransactionModule,
+    ProductScheduleModule,
+    ProductModule,
+    DataCollectorModule,
+    AuthModule,
+    SwabModule,
+    FacilityModule,
+    AwsModule,
+    LabModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController
+  ],
+  providers: [
+    AppService
+  ],
 })
 export class AppModule { }

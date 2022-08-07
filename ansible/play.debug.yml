@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - shell: printenv
+      register: env_out
+    - debug: msg="{{ env_out.stdout }}"
+        
