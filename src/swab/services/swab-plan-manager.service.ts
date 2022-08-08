@@ -646,10 +646,10 @@ export class SwabPlanManagerService {
 
                 historyData.swabTest = swabTestData;
                 SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1
+            }
 
-                if (swabRoundNumber) {
-                    historyData.swabRound = swabRoundNumber
-                }
+            if (swabRoundNumber) {
+                historyData.swabRound = swabRoundNumber
             }
 
             const swabAreaHistory = SwabAreaHistory.create(historyData);
