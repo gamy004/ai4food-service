@@ -28,17 +28,19 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('Example')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('example')
-    .build();
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Example')
+      .setDescription('The API description')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .addTag('example')
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('/docs', app, document);
+    SwaggerModule.setup('/docs', app, document);
+  }
 
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();

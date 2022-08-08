@@ -201,9 +201,9 @@ export class SwabPlanManagerService {
         }
 
         if (roundNumberSwabTest) {
-            const swabRound = await this.swabRoundService.find({ swabRoundNumber: roundNumberSwabTest })
-            if (swabRound.length) {
-                throw new Error("Swab Round Number is already exists");
+            const swabRound = await this.swabRoundService.findOne({ swabRoundNumber: roundNumberSwabTest })
+            if (swabRound) {
+                throw new Error("Swab round number already exists, use other number to generate data");
             } else {
                 swabRoundNumber = await this.swabRoundService.create({ swabRoundNumber: roundNumberSwabTest })
             }
