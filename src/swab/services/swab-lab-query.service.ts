@@ -78,4 +78,9 @@ export class SwabLabQueryService {
     });
   }
 
+  queryLabSwabPlanById(
+
+  ) {
+    // get data for update lab
+  }
 }
