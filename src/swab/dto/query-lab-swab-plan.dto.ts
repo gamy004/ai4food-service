@@ -7,6 +7,7 @@ export class QueryLabSwabPlanDto {
     @Validate(DateOnlyRule)
     swabAreaDate?: string;
 
+    @IsOptional()
     @IsNotEmpty()
-    swabTestCode: string;
+    swabTestCode?: string;
 }

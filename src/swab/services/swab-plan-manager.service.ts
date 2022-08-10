@@ -22,10 +22,12 @@ import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
+import { DateTransformer } from '~/common/transformers/date-transformer';
 
 @Injectable()
 export class SwabPlanManagerService {
     constructor(
+        private readonly dateTransformer: DateTransformer,
         protected readonly facilityItemService: FacilityItemService,
         protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
@@ -73,11 +75,7 @@ export class SwabPlanManagerService {
         }
 
         if (productDateString) {
-            const productDate = new Date(productDateString);
-
-            productDate.setMinutes(0, 0, 0);
-
-            swabAreaHistory.productDate = productDate;
+            swabAreaHistory.productDate = this.dateTransformer.toObject(productDateString);
         }
 
         if (productLot) {
@@ -180,38 +178,19 @@ export class SwabPlanManagerService {
     }
 
     async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
-        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = "" } = generateSwabPlanDto;
+        const { fromDate, toDate, roundNumberSwabTest = "" } = generateSwabPlanDto;
 
-        let fromDate, toDate, swabRoundNumber = null;
-
-        if (fromDateString) {
-            fromDate = new Date(fromDateString);
-
-            fromDate.setMinutes(0, 0, 0);
-
-            fromDate = format(fromDate, "yyyy-MM-dd");
-        }
-
-        if (toDateString) {
-            toDate = new Date(toDateString);
-
-            toDate.setMinutes(0, 0, 0);
-
-            toDate = format(toDate, "yyyy-MM-dd");
-        }
+        let swabRoundNumber = null;
 
         if (roundNumberSwabTest) {
-            const swabRound = await this.swabRoundService.findOne({ swabRoundNumber: roundNumberSwabTest })
+            const swabRound = await this.swabRoundService.findOne({ swabRoundNumber: roundNumberSwabTest });
+
             if (swabRound) {
                 throw new Error("Swab round number already exists, use other number to generate data");
             } else {
                 swabRoundNumber = await this.swabRoundService.create({ swabRoundNumber: roundNumberSwabTest })
             }
         }
-
-        // const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
-        //   ? 1
-        //   : differenceInDays(new Date(toDate), new Date(fromDate));
 
         const NUMBER_OF_HISTORY_DAY: number = differenceInDays(new Date(toDate), new Date(fromDate))
 

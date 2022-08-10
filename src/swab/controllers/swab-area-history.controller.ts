@@ -33,15 +33,15 @@ export class SwabAreaHistoryController {
   }
 
   @Authenticated()
-  @Get(":id")
-  queryUpdateSwabPlanById(@Param() queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto) {
-    return this.swabPlanQueryService.queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto);
-  }
-
-  @Authenticated()
   @Get("lab")
   queryLabSwabPlan(@Query() queryLabSwabPlanDto: QueryLabSwabPlanDto) {
     return this.swabLabQueryService.queryLabSwabPlan(queryLabSwabPlanDto);
+  }
+
+  @Authenticated()
+  @Get(":id")
+  queryUpdateSwabPlanById(@Param() queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto) {
+    return this.swabPlanQueryService.queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto);
   }
 
   @Post()

@@ -1,5 +1,5 @@
 import { Controller, ForbiddenException, Body, Param, Put } from '@nestjs/common';
-import { SwabTestService } from '../services/swab-test.service';
+import { SwabLabManagerService } from '../services/swab-lab-manager.service';
 import { BodyUpdateSwabTestDto, ParamUpdateSwabTestDto } from '../dto/command-update-swab-test.dto';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
@@ -7,7 +7,7 @@ import { User } from '~/auth/entities/user.entity';
 
 @Controller('swab-test')
 export class SwabTestController {
-  constructor(private readonly swabTestService: SwabTestService) { }
+  constructor(private readonly swabLabManagerService: SwabLabManagerService) { }
 
   @Authenticated()
   @Put(":id")
@@ -18,7 +18,7 @@ export class SwabTestController {
   ) {
 
     try {
-      await this.swabTestService.commandUpdateBacteriaSpecie(
+      await this.swabLabManagerService.commandUpdateBacteriaSpecie(
         paramCommandUpdateSwabPlanByIdDto.id,
         { ...bodycommandUpdateSwabPlanByIdDto },
         user

@@ -37,6 +37,7 @@ import { SwabRound } from './entities/swab-round.entity';
 import { SwabProductQueryService } from './services/swab-product-query.service';
 import { SwabProductHistoryController } from './controllers/swab-product-history.controller';
 import { SwabProductHistoryService } from './services/swab-product-history.service';
+import { SwabLabManagerService } from './services/swab-lab-manager.service';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { SwabProductHistoryService } from './services/swab-product-history.servi
     SwabPlanQueryService,
     SwabPlanManagerService,
     SwabLabQueryService,
+    SwabLabManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabAreaHistoryImageService,
