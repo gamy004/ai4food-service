@@ -13,6 +13,9 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
     @Column({ type: "timestamp", nullable: true })
     swabTestRecordedAt: Date;
 
+    @Column({ type: 'text', nullable: true })
+    swabTestNote?: string;
+
     @Column({ type: "varchar", length: 36, nullable: true })
     recordedUserId?: string;
 

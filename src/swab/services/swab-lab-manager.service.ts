@@ -24,6 +24,7 @@ export class SwabLabManagerService {
     ): Promise<void> {
         const {
             swabTestRecordedAt,
+            swabTestNote,
             bacteriaSpecies = []
         } = bodycommandUpdateSwabTestDto;
 
@@ -123,6 +124,10 @@ export class SwabLabManagerService {
                 const swabTest = await this.swabTestService.findOne({ id });
 
                 swabTest.swabTestRecordedAt = swabTestRecordedAt;
+
+                if (swabTestNote) {
+                    swabTest.swabTestNote = swabTestNote;
+                }
 
                 swabTest.recordedUser = recordedUser;
 
