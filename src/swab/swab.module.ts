@@ -34,6 +34,9 @@ import { CommonModule } from '~/common/common.module';
 import { LabModule } from '~/lab/lab.module';
 import { SwabRoundService } from './services/swab-round.service';
 import { SwabRound } from './entities/swab-round.entity';
+import { SwabProductQueryService } from './services/swab-product-query.service';
+import { SwabProductHistoryController } from './controllers/swab-product-history.controller';
+import { SwabProductHistoryService } from './services/swab-product-history.service';
 
 @Module({
   imports: [
@@ -58,7 +61,8 @@ import { SwabRound } from './entities/swab-round.entity';
     SwabAreaHistoryController,
     SwabPeriodController,
     SwabEnvironmentController,
-    SwabTestController
+    SwabTestController,
+    SwabProductHistoryController
   ],
   providers: [
     SwabPlanQueryService,
@@ -76,7 +80,9 @@ import { SwabRound } from './entities/swab-round.entity';
     SwabAreaHistoryExistsRule,
     SwabEnvironmentExistsRule,
     SwabAreaHistoryImageExistsRule,
-    SwabTestExistsRule
+    SwabTestExistsRule,
+    SwabProductQueryService,
+    SwabProductHistoryService,
   ]
 })
 export class SwabModule { }
