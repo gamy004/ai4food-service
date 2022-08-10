@@ -34,6 +34,7 @@ import { CommonModule } from '~/common/common.module';
 import { LabModule } from '~/lab/lab.module';
 import { SwabRoundService } from './services/swab-round.service';
 import { SwabRound } from './entities/swab-round.entity';
+import { SwabLabManagerService } from './services/swab-lab-manager.service';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { SwabRound } from './entities/swab-round.entity';
     SwabPlanQueryService,
     SwabPlanManagerService,
     SwabLabQueryService,
+    SwabLabManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabAreaHistoryImageService,
