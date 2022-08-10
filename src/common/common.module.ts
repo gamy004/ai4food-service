@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
 import { FileExistsRule } from './validators/file-exists-validator';
 import { TransactionDatasource } from './datasource/transaction.datasource';
+import { DateTransformer } from './transformers/date-transformer';
 
 @Module({
   imports: [
@@ -16,13 +17,15 @@ import { TransactionDatasource } from './datasource/transaction.datasource';
   providers: [
     FileService,
     FileExistsRule,
-    TransactionDatasource
+    TransactionDatasource,
+    DateTransformer
   ],
 
   exports: [
     FileService,
     FileExistsRule,
-    TransactionDatasource
+    TransactionDatasource,
+    DateTransformer
   ]
 })
 export class CommonModule { }

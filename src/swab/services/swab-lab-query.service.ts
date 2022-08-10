@@ -5,10 +5,12 @@ import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
+import { DateTransformer } from '~/common/transformers/date-transformer';
 
 @Injectable()
 export class SwabLabQueryService {
   constructor(
+    private readonly dateTransformer: DateTransformer,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>
   ) { }
@@ -23,11 +25,7 @@ export class SwabLabQueryService {
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
 
     if (swabAreaDateString) {
-      let swabAreaDate = new Date(swabAreaDateString);
-
-      swabAreaDate.setMinutes(0, 0, 0);
-
-      whereSwabAreaHistory.swabAreaDate = swabAreaDate;
+      whereSwabAreaHistory.swabAreaDate = this.dateTransformer.toObject(swabAreaDateString);
     }
 
     whereSwabAreaHistory.swabTest = whereSwabTest;
