@@ -20,7 +20,7 @@ export class S3ManagerService {
         return await createPresignedPost(
             this.s3Client,
             {
-                Bucket: 'web-upload-prod',
+                Bucket: process.env.AWS_S3_UPLOAD_BUCKET || 'web-upload-dev',
                 Key: createPresignedPostDto.key,
                 Fields: {
                     ContentType: createPresignedPostDto.contentType,
