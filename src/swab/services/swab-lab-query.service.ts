@@ -1,9 +1,7 @@
-import { format } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
-import { SwabTest } from '../entities/swab-test.entity';
-import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 
@@ -18,17 +16,15 @@ export class SwabLabQueryService {
   private async transformLabSwabPlanDto(queryLabSwabPlanDto: QueryLabSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>> {
     let { swabAreaDate: swabAreaDateString, swabTestCode } = queryLabSwabPlanDto;
 
-    const whereSwabTest: FindOptionsWhere<SwabTest> = {
-      swabTestCode
-    };
-
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
+
+    if (swabTestCode) {
+      whereSwabAreaHistory.swabTest = { swabTestCode };
+    }
 
     if (swabAreaDateString) {
       whereSwabAreaHistory.swabAreaDate = this.dateTransformer.toObject(swabAreaDateString);
     }
-
-    whereSwabAreaHistory.swabTest = whereSwabTest;
 
     return whereSwabAreaHistory;
   }
@@ -39,9 +35,15 @@ export class SwabLabQueryService {
     );
 
     return await this.swabAreaHistoryRepository.find({
-      where,
+      where: {
+        ...where,
+        swabAreaSwabedAt: Not(IsNull()),
+        swabTestId: Not(IsNull())
+      },
       relations: {
-        swabTest: true,
+        swabTest: {
+          bacteria: true
+        },
         swabArea: {
           facility: true,
           subSwabAreas: true
@@ -51,18 +53,27 @@ export class SwabLabQueryService {
       select: {
         id: true,
         swabAreaDate: true,
+        swabAreaSwabedAt: true,
         swabTestId: true,
         swabTest: {
           id: true,
-          swabTestCode: true
+          swabTestCode: true,
+          swabTestRecordedAt: true,
+          bacteria: {
+            id: true,
+            bacteriaName: true
+          }
         }
       },
       order: {
         swabTest: {
-          id: {
+          swabTestRecordedAt: {
             direction: 'asc'
           }
-        }
+        },
+        swabAreaSwabedAt: {
+          direction: 'asc',
+        },
       }
     });
   }
