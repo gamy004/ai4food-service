@@ -9,8 +9,8 @@ export class SwabProductHistoryController {
     private readonly SwabProductQueryService: SwabProductQueryService,
   ) { }
 
-  // @Authenticated()
-  @Get("export")
+  @Authenticated()
+  @Get()
   querySwabProduct(@Query() querySwabProductDto: QuerySwabProductDto) {
     return this.SwabProductQueryService.querySwabProduct(querySwabProductDto);
   }
