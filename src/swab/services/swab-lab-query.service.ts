@@ -45,9 +45,9 @@ export class SwabLabQueryService {
           bacteria: true
         },
         swabArea: {
-          facility: true,
-          subSwabAreas: true
+          facility: true
         },
+        facilityItem: true,
         swabPeriod: true
       },
       select: {
@@ -63,6 +63,22 @@ export class SwabLabQueryService {
             id: true,
             bacteriaName: true
           }
+        },
+        swabArea: {
+          id: true,
+          swabAreaName: true,
+          facility: {
+            id: true,
+            facilityName: true
+          }
+        },
+        facilityItem: {
+          id: true,
+          facilityItemName: true
+        },
+        swabPeriod: {
+          id: true,
+          swabPeriodName: true
         }
       },
       order: {
