@@ -151,7 +151,7 @@ export class SwabPlanManagerService {
         const {
             swabProductSwabedAt,
             swabProductDate,
-            swabProductLot,
+            productLot,
             shift,
             product: connectProductDto,
         } = bodyCommandUpdateSwabProductHistoryByIdDto;
@@ -166,8 +166,8 @@ export class SwabPlanManagerService {
             swabProductHistory.product = this.productService.init(connectProductDto);
         }
 
-        if (swabProductLot) {
-            swabProductHistory.swabProductLot = swabProductLot;
+        if (productLot) {
+            swabProductHistory.productLot = productLot;
         }
 
         if (shift) {

@@ -32,7 +32,7 @@ export class BodyCommandUpdateSwabProductHistoryByIdDto {
     product?: ConnectProductDto;
 
     @IsNotEmpty()
-    swabProductLot!: string;
+    productLot!: string;
 
     @IsOptional()
     @ValidateNested({ each: true })

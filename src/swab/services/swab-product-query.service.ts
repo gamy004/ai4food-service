@@ -71,7 +71,7 @@ export class SwabProductQueryService {
                 //     productCode: true,
                 //     alternateProductCode: true
                 // },
-                swabProductLot: true,
+                productLot: true,
                 swabProductDate: true,
                 swabPeriodId: true,
                 // swabPeriod: {
