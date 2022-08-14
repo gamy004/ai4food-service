@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { FacilityService } from './facility.service';
 import { FacilityItemService } from './facility-item.service';
-import { Not, IsNull } from 'typeorm';
+import { Not, IsNull, FindOptionsWhere } from 'typeorm';
 import { QueryFindAllFacilityItemDto } from './dto/query-find-all-facility-item.dto';
+import { FacilityItem } from './entities/facility-item.entity';
 
 @Controller('facility')
 export class FacilityController {
@@ -37,13 +38,15 @@ export class FacilityController {
     });
   }
 
-  @Get(':id/item')
-  findAllFacilityItem(@Param() param: QueryFindAllFacilityItemDto) {
-    return this.facilityItemService.findAll({
-      where: {
-        facilityId: param.id
-      }
-    });
+  @Get('item')
+  findAllFacilityItem(@Query() param: QueryFindAllFacilityItemDto) {
+    const where: FindOptionsWhere<FacilityItem> = {};
+
+    if (param.facilityId) {
+      where.facilityId = param.facilityId;
+    }
+
+    return this.facilityItemService.findAll({ where });
   }
 
   // @Get(':id')
