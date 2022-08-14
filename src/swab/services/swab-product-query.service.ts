@@ -1,6 +1,6 @@
 import { format } from 'date-fns-tz';
 import { Injectable } from "@nestjs/common";
-import { FindOptionsWhere, Raw, Repository, In } from "typeorm";
+import { FindOptionsWhere, Raw, Repository, In, Equal } from "typeorm";
 import { QuerySwabProductDto } from "../dto/query-swab-product.dto";
 import { ResponseSwabProductDto } from "../dto/response-swab-product.dto";
 import { SwabProductHistory } from "../entities/swab-product-history.entity";
@@ -39,8 +39,9 @@ export class SwabProductQueryService {
         }
 
         if (swabProductDate) {
-            where.swabProductDate = Raw(field => `${field} = '${swabProductDateString}'`);
+            where.swabProductDate = Equal(swabProductDate);
         }
+
         return where;
     }
 
