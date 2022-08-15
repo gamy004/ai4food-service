@@ -17,6 +17,11 @@ export class FacilityController {
   //   return this.facilityService.create(createFacilityDto);
   // }
 
+  @Get()
+  findAllFacility() {
+    return this.facilityService.find();
+  }
+
   @Get('swab-item')
   findAllSwabItems() {
     return this.facilityService.find({
