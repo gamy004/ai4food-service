@@ -104,7 +104,7 @@ export class SwabProductQueryService {
             const facilityItemIds = [...new Set(swabProductHistories.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
 
             if (facilityItemIds.length) {
-                facilityItems = await this.facilityItemService.findAll({
+                facilityItems = await this.facilityItemService.find({
                     where: {
                         id: In(facilityItemIds)
                     },
@@ -119,7 +119,7 @@ export class SwabProductQueryService {
             const productIds = [...new Set(swabProductHistories.map(({ productId }) => productId))].filter(Boolean);
 
             if (productIds.length) {
-                products = await this.productService.findAll({
+                products = await this.productService.find({
                     where: {
                         id: In(productIds)
                     },

@@ -71,7 +71,7 @@ export class SwabPlanManagerService {
         swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
 
         if (connectProductDto) {
-            swabAreaHistory.product = this.productService.init(connectProductDto);
+            swabAreaHistory.product = this.productService.make(connectProductDto);
         }
 
         if (productDateString) {
@@ -83,7 +83,7 @@ export class SwabPlanManagerService {
         }
 
         if (connectFacilityItemDto) {
-            swabAreaHistory.facilityItem = this.facilityItemService.init(connectFacilityItemDto);
+            swabAreaHistory.facilityItem = this.facilityItemService.make(connectFacilityItemDto);
         }
 
         if (swabAreaTemperature) {
@@ -120,7 +120,7 @@ export class SwabPlanManagerService {
                 }
 
                 swabAreaHistoryImages.push(
-                    this.swabAreaHistoryImageService.init(upsertSwabAreaHistoryImageData)
+                    this.swabAreaHistoryImageService.make(upsertSwabAreaHistoryImageData)
                 );
             }
         )
@@ -163,7 +163,7 @@ export class SwabPlanManagerService {
         swabProductHistory.swabProductDate = swabProductDate;
 
         if (connectProductDto) {
-            swabProductHistory.product = this.productService.init(connectProductDto);
+            swabProductHistory.product = this.productService.make(connectProductDto);
         }
 
         if (productLot) {
@@ -183,7 +183,7 @@ export class SwabPlanManagerService {
         let swabRoundNumber = null;
 
         if (roundNumberSwabTest) {
-            const swabRound = await this.swabRoundService.findOne({ swabRoundNumber: roundNumberSwabTest });
+            const swabRound = await this.swabRoundService.findOneBy({ swabRoundNumber: roundNumberSwabTest });
 
             if (swabRound) {
                 throw new Error("Swab round number already exists, use other number to generate data");
@@ -199,7 +199,7 @@ export class SwabPlanManagerService {
             { swabPeriodName: "หลัง Super Big Cleaning" }
         ];
 
-        let result_bigClean = await this.swabPeriodService.find([
+        let result_bigClean = await this.swabPeriodService.findBy([
             { swabPeriodName: "ก่อน Super Big Cleaning", deletedAt: null },
             { swabPeriodName: "หลัง Super Big Cleaning", deletedAt: null },
         ]);
@@ -222,7 +222,7 @@ export class SwabPlanManagerService {
             { swabPeriodName: "หลังล้างท้ายกะ" }
         ];
 
-        let result_general = await this.swabPeriodService.find([
+        let result_general = await this.swabPeriodService.findBy([
             { swabPeriodName: "หลังประกอบเครื่อง", deletedAt: null },
             { swabPeriodName: "ก่อนล้างระหว่างงาน", deletedAt: null },
             { swabPeriodName: "หลังล้างระหว่างงาน", deletedAt: null },
