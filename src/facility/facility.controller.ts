@@ -17,19 +17,9 @@ export class FacilityController {
   //   return this.facilityService.create(createFacilityDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.facilityService.findAll();
-  // }
-
-  // @Get('items')
-  // findAllItems() {
-  //   return this.facilityItemService.findAll();
-  // }
-
   @Get('swab-item')
   findAllSwabItems() {
-    return this.facilityService.findAll({
+    return this.facilityService.find({
       where: {
         swabAreas: {
           id: Not(IsNull())
@@ -46,21 +36,6 @@ export class FacilityController {
       where.facilityId = param.facilityId;
     }
 
-    return this.facilityItemService.findAll({ where });
+    return this.facilityItemService.find({ where });
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.facilityService.findOne({ id });
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateFacilityDto: UpdateFacilityDto) {
-  //   return this.facilityService.update({ id }, updateFacilityDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.facilityService.remove({ id });
-  // }
 }

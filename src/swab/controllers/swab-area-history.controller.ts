@@ -4,6 +4,7 @@ import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
 import { ParamCommandUpdateSwabPlanByIdDto, BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
+import { ParamLabSwabPlanByIdDto } from '../dto/param-lab-swab-plan-by-id.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
@@ -36,6 +37,12 @@ export class SwabAreaHistoryController {
   @Get("lab")
   queryLabSwabPlan(@Query() queryLabSwabPlanDto: QueryLabSwabPlanDto) {
     return this.swabLabQueryService.queryLabSwabPlan(queryLabSwabPlanDto);
+  }
+
+  @Authenticated()
+  @Get(":id/lab")
+  queryLabSwabPlanById(@Param() paramLabSwabPlanByIdDto: ParamLabSwabPlanByIdDto) {
+    return this.swabLabQueryService.queryLabSwabPlanById(paramLabSwabPlanByIdDto);
   }
 
   @Authenticated()

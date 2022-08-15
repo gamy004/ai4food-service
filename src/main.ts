@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import { EntityNotFoundExceptionFilter } from './common/exceptions/entity-notfound-exception.filter';
 // import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -41,6 +42,8 @@ async function bootstrap() {
 
     SwaggerModule.setup('/docs', app, document);
   }
+
+  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
 
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();

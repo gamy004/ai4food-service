@@ -14,7 +14,7 @@ export class FileController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.fileService.findOne({ id });
+    return this.fileService.findOneBy({ id });
   }
 
   @Patch(':id')
