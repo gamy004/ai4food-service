@@ -38,6 +38,7 @@ import { SwabProductQueryService } from './services/swab-product-query.service';
 import { SwabProductHistoryController } from './controllers/swab-product-history.controller';
 import { SwabProductHistoryService } from './services/swab-product-history.service';
 import { SwabLabManagerService } from './services/swab-lab-manager.service';
+import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { SwabLabManagerService } from './services/swab-lab-manager.service';
     SwabAreaHistoryExistsRule,
     SwabEnvironmentExistsRule,
     SwabAreaHistoryImageExistsRule,
+    SwabProductHistoryExistsRule,
     SwabTestExistsRule,
     SwabProductQueryService,
     SwabProductHistoryService,
