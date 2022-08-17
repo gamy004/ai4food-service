@@ -15,8 +15,10 @@ export class EntityNotFoundExceptionFilter implements ExceptionFilter {
             .status(HttpStatus.NOT_FOUND)
             .json({
                 statusCode: HttpStatus.NOT_FOUND,
-                timestamp: new Date().toISOString(),
-                message: "Entity not found"
+                error: "Not Found",
+                message: [
+                    "entity doesn't exists"
+                ],
             });
     }
 }
