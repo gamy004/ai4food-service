@@ -13,14 +13,14 @@ export class SwabTestController {
   @Put(":id")
   async commandUpdateSwabTest(
     @AuthUser() user: User,
-    @Param() paramCommandUpdateSwabPlanByIdDto: ParamUpdateSwabTestDto,
-    @Body() bodycommandUpdateSwabPlanByIdDto: BodyUpdateSwabTestDto
+    @Param() paramUpdateSwabTestDto: ParamUpdateSwabTestDto,
+    @Body() bodyUpdateSwabTestDto: BodyUpdateSwabTestDto
   ) {
 
     try {
       await this.swabLabManagerService.commandUpdateBacteriaSpecie(
-        paramCommandUpdateSwabPlanByIdDto.id,
-        { ...bodycommandUpdateSwabPlanByIdDto },
+        paramUpdateSwabTestDto.id,
+        { ...bodyUpdateSwabTestDto },
         user
       );
     } catch (error) {

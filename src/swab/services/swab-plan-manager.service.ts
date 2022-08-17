@@ -15,7 +15,6 @@ import { SwabEnvironment } from "../entities/swab-environment.entity";
 import { SwabTest } from "../entities/swab-test.entity";
 import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
-import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
@@ -141,40 +140,6 @@ export class SwabPlanManagerService {
         }
 
         await this.swabAreaHistoryRepository.save(swabAreaHistory);
-    }
-
-    async commandUpdateSwabProductHistoryById(
-        id: string,
-        bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto,
-        recordedUser: User
-    ): Promise<void> {
-        const {
-            swabProductSwabedAt,
-            swabProductDate,
-            productLot,
-            shift,
-            product: connectProductDto,
-        } = bodyCommandUpdateSwabProductHistoryByIdDto;
-
-        const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
-
-        swabProductHistory.recordedUser = recordedUser;
-        swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
-        swabProductHistory.swabProductDate = swabProductDate;
-
-        if (connectProductDto) {
-            swabProductHistory.product = this.productService.make(connectProductDto);
-        }
-
-        if (productLot) {
-            swabProductHistory.productLot = productLot;
-        }
-
-        if (shift) {
-            swabProductHistory.shift = shift;
-        }
-
-        await this.swabProductHistoryRepository.save(swabProductHistory);
     }
 
     async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
