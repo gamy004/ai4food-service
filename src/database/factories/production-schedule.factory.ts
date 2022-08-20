@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { format } from "date-fns";
 import { setSeederFactory } from 'typeorm-extension';
 import { ProductSchedule } from '~/product-schedule/entities/product-schedule.entity';
 
@@ -8,13 +9,17 @@ export default setSeederFactory(ProductSchedule, (faker) => {
     productSchedule.id = v4();
     productSchedule.productScheduleAmount = faker.datatype.number({ min: 1000, max: 2000 });
 
-    productSchedule.productScheduleDate = faker.date.recent();
-    productSchedule.productScheduleEndedAt = productSchedule.productScheduleDate;
-    productSchedule.productScheduleStartedAt = new Date(
+    const date = faker.date.recent();
+
+    productSchedule.productScheduleDate = date;
+    productSchedule.productScheduleEndedAt = format(date, "HH:mm");
+    productSchedule.productScheduleStartedAt = format(
         new Date(
-            productSchedule.productScheduleEndedAt
-        ).setHours(productSchedule.productScheduleEndedAt.getHours() - 1)
-    ); // end date was set as start date plus 1 hour ahead
+            new Date(
+                productSchedule.productScheduleEndedAt
+            ).setHours(date.getHours() - 1)
+        )
+        , "HH:mm"); // end date was set as start date plus 1 hour ahead
 
     return productSchedule;
 })

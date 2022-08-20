@@ -17,13 +17,13 @@ export class TimeGreaterThanRule implements ValidatorConstraintInterface {
 
       const testedValue = parse(
         `${mockDateString} ${value}`,
-        "yyyy-MM-dd HH:mm",
+        "yyyy-MM-dd HH:mm:ss",
         new Date()
       );
 
       const testedCompareValue = parse(
         `${mockDateString} ${comparedValue}`,
-        "yyyy-MM-dd HH:mm",
+        "yyyy-MM-dd HH:mm:ss",
         new Date()
       );
 

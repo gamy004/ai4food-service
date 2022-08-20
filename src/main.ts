@@ -26,24 +26,34 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      exceptionFactory: (errors: ValidationError[]) => {
-        console.log(errors);
+      // exceptionFactory: (errors: ValidationError[]) => {
+      //   let messages = [];
 
-        return new UnprocessableEntityException({
-          "statusCode": HttpStatus.UNPROCESSABLE_ENTITY,
-          "error": "Unprocessable Entity",
-          "message": errors.reduce((acc, error) => {
-            if (error.constraints) {
-              acc = [
-                ...acc,
-                ...Object.values(error.constraints)
-              ];
-            }
+      //   function extractError(errors) {
+      //     console.log(errors);
 
-            return acc;
-          }, [])
-        });
-      },
+      //     errors.forEach(error => {
+      //       if (error.constraints) {
+      //         messages = [
+      //           ...messages,
+      //           ...Object.values(error.constraints)
+      //         ];
+      //       }
+
+      //       if (error.children) {
+      //         extractError(error.children);
+      //       }
+      //     })
+      //   }
+
+      //   extractError(errors);
+
+      //   return new UnprocessableEntityException({
+      //     "statusCode": HttpStatus.UNPROCESSABLE_ENTITY,
+      //     "error": "Unprocessable Entity",
+      //     "message": [...new Set(messages)]
+      //   });
+      // },
     }),
   );
 
