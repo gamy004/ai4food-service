@@ -8,6 +8,10 @@ import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { User } from '~/auth/entities/user.entity';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { BodyCommandUpdateSwabProductByIdDto } from "../dto/command-update-swab-product-history-by-id.dto";
+import { BodyCommandCreateSwabProductByIdDto } from "../dto/command-create-swab-product-history.dto";
+import { RunningNumberService } from "~/common/services/running-number.service";
+import { format } from 'date-fns-tz';
+import { SwabTest } from "../entities/swab-test.entity";
 
 @Injectable()
 export class SwabProductManagerService {
@@ -18,8 +22,30 @@ export class SwabProductManagerService {
         protected readonly swabPeriodService: SwabPeriodService,
         @InjectRepository(SwabProductHistory)
         protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
+        private readonly runningNumberService: RunningNumberService
 
     ) { }
+
+    async commandCreateSwabProductHistory(body: BodyCommandCreateSwabProductByIdDto, recordedUser: User): Promise<SwabProductHistory> {
+        const swabProductHistoryData = SwabProductHistory.create(body)
+
+        if (recordedUser) {
+            swabProductHistoryData.recordedUser = recordedUser;
+        }
+
+        const swabTestCodeDate = format(new Date, "yyyyMMdd")
+        const runningNumberSwabCode = await this.runningNumberService.generate({ key: swabTestCodeDate })
+
+        if (runningNumberSwabCode) {
+            const swabTestData = SwabTest.create({
+                swabTestCode: `${runningNumberSwabCode}/${swabTestCodeDate}`
+            });
+
+            swabProductHistoryData.swabTest = swabTestData;
+        }
+
+        return await this.swabProductHistoryRepository.save(swabProductHistoryData)
+    }
 
     async commandUpdateSwabProductHistoryById(
         id: string,

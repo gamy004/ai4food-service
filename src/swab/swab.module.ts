@@ -40,7 +40,6 @@ import { SwabProductHistoryController } from './controllers/swab-product-history
 import { SwabProductHistoryService } from './services/swab-product-history.service';
 import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
-import { SwabProductManagerService } from './services/swab-product-manager.service';
 
 @Module({
   imports: [
