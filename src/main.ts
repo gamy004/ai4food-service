@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
-import { useContainer } from 'class-validator';
+import { HttpStatus, UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
+import { useContainer, ValidationError } from 'class-validator';
+import { EntityNotFoundExceptionFilter } from './common/exceptions/entity-notfound-exception.filter';
 // import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -24,7 +25,25 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true
+      whitelist: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        console.log(errors);
+
+        return new UnprocessableEntityException({
+          "statusCode": HttpStatus.UNPROCESSABLE_ENTITY,
+          "error": "Unprocessable Entity",
+          "message": errors.reduce((acc, error) => {
+            if (error.constraints) {
+              acc = [
+                ...acc,
+                ...Object.values(error.constraints)
+              ];
+            }
+
+            return acc;
+          }, [])
+        });
+      },
     }),
   );
 
@@ -41,6 +60,8 @@ async function bootstrap() {
 
     SwaggerModule.setup('/docs', app, document);
   }
+
+  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
 
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();

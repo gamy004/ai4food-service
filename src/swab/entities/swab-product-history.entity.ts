@@ -15,17 +15,23 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
     @ManyToOne(() => Product, entity => entity.swabProductHistories)
     product!: Product;
 
-    @Column()
-    swabProductLot!: string;
+    @Column({ type: 'date', nullable: true })
+    productDate?: Date;
 
-    @Column({ type: "enum", enum: Shift, nullable: true })
-    shift?: Shift;
+    @Column()
+    productLot!: string;
 
     @Column({ type: 'date' })
     swabProductDate!: Date;
 
     @Column({ type: 'time', nullable: true })
     swabProductSwabedAt?: string;
+
+    @Column({ type: 'text', nullable: true })
+    swabProductNote?: string;
+
+    @Column({ type: "enum", enum: Shift, nullable: true })
+    shift?: Shift;
 
     @Column()
     swabTestId!: number;

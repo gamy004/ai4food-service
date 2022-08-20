@@ -1,55 +1,73 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "~/auth/entities/user.entity";
-import { FacilityItemService } from "~/facility/facility-item.service";
-import { ProductService } from "~/product/product.service";
-import { BodyCommandUpdateSwabProductHistoryByIdDto } from "../dto/command-update-swab-product-history-by-id.dto";
-import { SwabProductHistory } from "../entities/swab-product-history.entity";
+import { SwabPeriodService } from "./swab-period.service";
+import { ProductService } from '~/product/product.service';
+import { FacilityItemService } from '~/facility/facility-item.service';
+import { SwabProductHistory } from '../entities/swab-product-history.entity';
+import { User } from '~/auth/entities/user.entity';
+import { DateTransformer } from '~/common/transformers/date-transformer';
+import { BodyCommandUpdateSwabProductByIdDto } from "../dto/command-update-swab-product-history-by-id.dto";
 
-Injectable()
+@Injectable()
 export class SwabProductManagerService {
     constructor(
-        protected readonly productService: ProductService,
+        private readonly dateTransformer: DateTransformer,
         protected readonly facilityItemService: FacilityItemService,
+        protected readonly productService: ProductService,
+        protected readonly swabPeriodService: SwabPeriodService,
         @InjectRepository(SwabProductHistory)
         protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
+
     ) { }
 
     async commandUpdateSwabProductHistoryById(
         id: string,
-        bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto,
+        body: BodyCommandUpdateSwabProductByIdDto,
         recordedUser: User
     ): Promise<void> {
         const {
             swabProductSwabedAt,
             swabProductDate,
-            swabProductLot,
             shift,
             product: connectProductDto,
-            facilityItem: connectFacilityItemDto,
-        } = bodyCommandUpdateSwabProductHistoryByIdDto;
+            productDate,
+            productLot,
+            facilityItem: connectFacilityItemDto
+        } = body;
 
         const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
 
-        swabProductHistory.recordedUser = recordedUser;
-        swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
-        swabProductHistory.swabProductDate = swabProductDate;
+        if (recordedUser) {
+            swabProductHistory.recordedUser = recordedUser;
+        }
+
+        if (swabProductDate) {
+            swabProductHistory.swabProductDate = this.dateTransformer.toObject(swabProductDate);
+        }
+
+        if (swabProductSwabedAt) {
+            swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
+        }
 
         if (connectProductDto) {
-            swabProductHistory.product = this.productService.init(connectProductDto);
+            swabProductHistory.product = this.productService.make(connectProductDto);
         }
 
-        if (connectFacilityItemDto) {
-            swabProductHistory.facilityItem = this.facilityItemService.init(connectFacilityItemDto);
+        if (productDate) {
+            swabProductHistory.productDate = this.dateTransformer.toObject(productDate);
         }
 
-        if (swabProductLot) {
-            swabProductHistory.swabProductLot = swabProductLot;
+        if (productLot) {
+            swabProductHistory.productLot = productLot;
         }
 
         if (shift) {
             swabProductHistory.shift = shift;
+        }
+
+        if (connectFacilityItemDto) {
+            swabProductHistory.facilityItem = this.facilityItemService.make(connectFacilityItemDto);
         }
 
         await this.swabProductHistoryRepository.save(swabProductHistory);

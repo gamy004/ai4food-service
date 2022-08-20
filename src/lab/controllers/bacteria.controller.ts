@@ -7,6 +7,6 @@ export class BacteriaController {
 
     @Get()
     findAll() {
-        return this.BacteriaService.findAll();
+        return this.BacteriaService.find();
     }
 }

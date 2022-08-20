@@ -18,7 +18,7 @@ export class ProductScheduleController {
 
   @Post('import')
   async importProductSchedule(@Body() importProductScheduleDto: ImportProductScheduleDto): Promise<void> {
-    const importTransaction = await this.importTransactionService.findOne(
+    const importTransaction = await this.importTransactionService.findOneBy(
       importProductScheduleDto.importTransaction
     );
 

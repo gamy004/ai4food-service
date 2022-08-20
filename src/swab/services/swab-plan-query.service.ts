@@ -59,7 +59,7 @@ export class SwabPlanQueryService {
       querySwabPlanDto
     );
 
-    const swabPeriods = await this.swabPeriodService.findAll({
+    const swabPeriods = await this.swabPeriodService.find({
       select: {
         id: true,
         swabPeriodName: true
@@ -119,7 +119,7 @@ export class SwabPlanQueryService {
         const facilityIds = [...new Set(swabAreas.map(({ facilityId }) => facilityId))].filter(Boolean);
 
         if (facilityIds.length) {
-          facilities = await this.facilityService.findAll({
+          facilities = await this.facilityService.find({
             where: {
               id: In(facilityIds)
             },
@@ -149,7 +149,7 @@ export class SwabPlanQueryService {
 
     let swabAreaDate = this.dateTransformer.toObject(swabAreaDateString);
 
-    const swabPeriod = await this.swabPeriodService.findOne({ id: swabPeriodId });
+    const swabPeriod = await this.swabPeriodService.findOneBy({ id: swabPeriodId });
 
     if (!swabPeriod.dependsOnShift) {
       shift = null;
