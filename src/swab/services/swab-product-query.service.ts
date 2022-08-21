@@ -24,7 +24,7 @@ export class SwabProductQueryService {
     ) { }
 
     private transformQuerySwabProductDto(querySwabProductDto: QuerySwabProductDto): FindOptionsWhere<SwabProductHistory> {
-        const { swabProductDate: swabProductDateString } = querySwabProductDto;
+        const { swabProductDate: swabProductDateString, shift } = querySwabProductDto;
 
         const where: FindOptionsWhere<SwabProductHistory> = {};
 
@@ -40,6 +40,10 @@ export class SwabProductQueryService {
 
         if (swabProductDate) {
             where.swabProductDate = Equal(swabProductDate);
+        }
+
+        if (shift) {
+            where.shift = shift;
         }
 
         return where;
