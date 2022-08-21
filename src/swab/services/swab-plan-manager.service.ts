@@ -17,7 +17,6 @@ import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
-import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
@@ -40,8 +39,6 @@ export class SwabPlanManagerService {
         @InjectRepository(SwabAreaHistoryImage)
         protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
         protected readonly swabAreaHistoryImageService: SwabAreaHistoryImageService,
-        @InjectRepository(SwabProductHistory)
-        protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
 
     ) { }
 

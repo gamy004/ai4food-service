@@ -1,7 +1,8 @@
-import { Body, Controller, ForbiddenException, Get, Param, Put, Query } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
+import { BodyCommandCreateSwabProductByIdDto } from '../dto/command-create-swab-product-history.dto';
 import { ParamCommandUpdateSwabProductByIdDto, BodyCommandUpdateSwabProductByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 import { ParamQuerySwabProductByIdDto } from '../dto/param-query-swab-product-by-id.dto';
 import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
@@ -25,6 +26,26 @@ export class SwabProductHistoryController {
   @Get(":id")
   querySwabProductById(@Param() paramQuerySwabProductByIdDto: ParamQuerySwabProductByIdDto) {
     return this.swabProductQueryService.querySwabProductById(paramQuerySwabProductByIdDto.id);
+  }
+
+  @Post()
+  async commandCreateSwabProductHistoryById(
+    @AuthUser() user: User,
+    @Body() body: BodyCommandCreateSwabProductByIdDto) {
+    let res;
+    try {
+      res = await this.swabProductManagerService.commandCreateSwabProductHistory(
+        body,
+        user
+      );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return {
+      data: res,
+      message: 'create swab product success'
+    };
   }
 
   @Authenticated()
