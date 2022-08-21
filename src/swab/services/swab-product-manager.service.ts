@@ -56,8 +56,10 @@ export class SwabProductManagerService {
         const {
             swabProductSwabedAt,
             swabProductDate,
+            swabProductNote,
             shift,
             product: connectProductDto,
+            swabPeriod: connectSwabPeriodDto,
             productDate,
             productLot,
             facilityItem: connectFacilityItemDto
@@ -77,8 +79,16 @@ export class SwabProductManagerService {
             swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
         }
 
+        if (swabProductNote) {
+            swabProductHistory.swabProductNote = swabProductNote;
+        }
+
         if (connectProductDto) {
             swabProductHistory.product = this.productService.make(connectProductDto);
+        }
+
+        if (connectSwabPeriodDto) {
+            swabProductHistory.swabPeriod = this.swabPeriodService.make(connectSwabPeriodDto);
         }
 
         if (productDate) {

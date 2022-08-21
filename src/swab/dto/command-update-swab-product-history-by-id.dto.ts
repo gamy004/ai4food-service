@@ -7,6 +7,7 @@ import { TimeOnlyRule } from "~/common/validators/time-only-validator";
 import { ConnectFacilityItemDto } from "~/facility/dto/connect-facility-item.dto";
 import { ConnectProductDto } from "~/product/dto/connect-product.dto";
 import { SwabProductHistoryExistsRule } from "../validators/swab-product-history-exists-validator";
+import { ConnectSwabPeriodDto } from "./connect-swab-period.dto";
 
 export class ParamCommandUpdateSwabProductByIdDto {
     @IsUUID()
@@ -24,6 +25,9 @@ export class BodyCommandUpdateSwabProductByIdDto {
     @IsNotEmpty()
     @Validate(DateOnlyRule)
     swabProductDate?: string;
+
+    @IsOptional()
+    swabProductNote?: string;
 
     @IsOptional()
     @IsNotEmpty()
@@ -47,6 +51,11 @@ export class BodyCommandUpdateSwabProductByIdDto {
     @ValidateNested()
     @Type(() => ConnectFacilityItemDto)
     facilityItem?: ConnectFacilityItemDto;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => ConnectSwabPeriodDto)
+    swabPeriod?: ConnectSwabPeriodDto;
 
     @IsOptional()
     @ValidateNested()
