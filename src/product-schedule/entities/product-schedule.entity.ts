@@ -12,10 +12,10 @@ export class ProductSchedule extends BaseSoftDeletableEntity {
     productScheduleDate!: Date;
 
     @Column({ type: 'time' })
-    productScheduleStartedAt!: Date;
+    productScheduleStartedAt!: string;
 
     @Column({ type: 'time' })
-    productScheduleEndedAt!: Date;
+    productScheduleEndedAt!: string;
 
     @Column({ type: "varchar", length: 36 })
     productId!: string;

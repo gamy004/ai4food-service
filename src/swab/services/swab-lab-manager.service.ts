@@ -50,7 +50,10 @@ export class SwabLabManagerService {
 
                         // find existing bacteria name
                         if (!existsBacteriaMapping[bacteriaName]) {
-                            const bacteria = await this.bacteriaService.findOneBy({ bacteriaName });
+                            const bacteria = await this.bacteriaService.findOne({
+                                where: { bacteriaName },
+                                transaction: true
+                            });
 
                             if (bacteria) {
                                 existsBacteriaMapping[bacteriaName] = bacteria.id;
@@ -64,7 +67,7 @@ export class SwabLabManagerService {
                             // if new bacteria have not already inserted
                             if (!newBacteriaMapping[bacteriaName]) {
                                 const newBacteria: Bacteria = await queryRunnerManger.save(
-                                    this.bacteriaService.make({ bacteriaName })
+                                    this.bacteriaService.make({ bacteriaName }),
                                 );
 
                                 newBacteriaMapping[bacteriaName] = newBacteria.id;
@@ -81,7 +84,10 @@ export class SwabLabManagerService {
                     if (bacteriaSpecies[index].bacteriaId && !bacteriaSpecieId && bacteriaSpecieName) {
                         // find existing bacteria specie name
                         if (!existsBacteriaSpecieMapping[bacteriaSpecieName]) {
-                            const bacteriaSpecie = await this.bacteriaSpecieService.findOneBy({ bacteriaSpecieName });
+                            const bacteriaSpecie = await this.bacteriaSpecieService.findOne({
+                                where: { bacteriaSpecieName },
+                                transaction: true
+                            });
 
                             if (bacteriaSpecie) {
                                 existsBacteriaSpecieMapping[bacteriaSpecieName] = bacteriaSpecie.id;
@@ -121,7 +127,10 @@ export class SwabLabManagerService {
                 }
 
                 // Update swab test relation
-                const swabTest = await this.swabTestService.findOneBy({ id });
+                const swabTest = await this.swabTestService.findOne({
+                    where: { id },
+                    transaction: true
+                });
 
                 swabTest.swabTestRecordedAt = swabTestRecordedAt;
 
@@ -131,9 +140,13 @@ export class SwabLabManagerService {
 
                 swabTest.recordedUser = recordedUser;
 
-                swabTest.bacteria = Object.keys(swabTestBacteria).map(id => this.bacteriaService.make({ id }));
+                swabTest.bacteria = Object.keys(swabTestBacteria).map(
+                    id => this.bacteriaService.make({ id })
+                );
 
-                swabTest.bacteriaSpecies = Object.keys(swabTestBacteriaSpecie).map(id => this.bacteriaSpecieService.make({ id }));
+                swabTest.bacteriaSpecies = Object.keys(swabTestBacteriaSpecie).map(
+                    id => this.bacteriaSpecieService.make({ id })
+                );
 
                 await queryRunnerManger.save(swabTest);
             }

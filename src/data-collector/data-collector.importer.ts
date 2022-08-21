@@ -1,3 +1,4 @@
+import { FindOptionsWhere } from "typeorm";
 import { CommonRepositoryInterface } from "~/common/interface/common.repository.interface";
 import { DataCollectorImporterInterface } from "~/data-collector/interface/data-collector-importer-interface";
 import { ImportTransaction, ImportType } from "~/import-transaction/entities/import-transaction.entity";
@@ -14,14 +15,51 @@ export abstract class DataCollectorImporter<Entity> implements DataCollectorImpo
 
     abstract importType: ImportType;
 
+    abstract mappingKeys: string[];
+
     /**
-     * Method to check exist records, the exist records must be returned
+     * Method to set value of record that will be filtered out
+     * 
+     * @param records The new record that will be imported
+     * 
+     * @return FindOptionsWhere<Entity>
+     */
+    abstract filterRecordBy(record: Entity): FindOptionsWhere<Entity>;
+
+    private getMappingKey(record) {
+        return this.mappingKeys.map(mappingKey => record[mappingKey]).join("_");
+    }
+
+    /**
+     * Method to pre-process the data before inserting to db
      * 
      * @param records The new records that will be imported
      * 
-     * @return Promise<CheckOutput<Entity>>
+     * @return Promise<Entity[]>
      */
-    abstract check(records: Entity[]): Promise<CheckOutput<Entity>>;
+    private async preProcess(records: Entity[]): Promise<Entity[]> {
+
+
+        const filteredRecordMapping = {};
+
+        const filteredRecords = await this.repository.findBy(
+            records.map(this.filterRecordBy)
+        );
+
+        if (filteredRecords.length) {
+            filteredRecords.forEach(filteredRecord => {
+                filteredRecordMapping[this.getMappingKey(filteredRecord)] = true;
+            });
+        }
+
+        console.log(filteredRecordMapping);
+
+        const savedRecords = records.filter(
+            record => !filteredRecordMapping[this.getMappingKey(record)]
+        );
+
+        return savedRecords;
+    }
 
     async import(importTransaction: ImportTransaction, records: Entity[]): Promise<void> {
         const entities = records.map(entity => ({
@@ -29,16 +67,8 @@ export abstract class DataCollectorImporter<Entity> implements DataCollectorImpo
             importTransaction
         }));
 
-        const {
-            // newRecords = [],
-            existRecords = []
-        } = await this.check(entities);
+        const savedRecords = await this.preProcess(entities);
 
-        if (existRecords.length) {
-            this.repository.softRemove(existRecords);
-        }
-        // console.log(newRecords, existRecords);
-
-        await this.repository.save(entities);
+        await this.repository.save(savedRecords);
     }
 }

@@ -17,39 +17,42 @@ export class RunningNumberService extends CrudService<RunningNumber> {
   }
 
   async generate(dto: GenerateRunningNumberDto): Promise<number | null> {
-    const { key } = dto;
+    const { key, offset = 1 } = dto;
 
     let latestRunningNumber = null;
 
     await this.transaction.execute(
       async (queryRunnerManger) => {
-        const runningNumber = await queryRunnerManger.getRepository(RunningNumber)
-          .createQueryBuilder("runningNumber")
-          .useTransaction(true)
-          .setLock("pessimistic_write")
-          .where("`runningNumber`.`key` = :key", { key })
-          .getOne();
+        const repository = queryRunnerManger.getRepository(RunningNumber);
+
+        const runningNumber = await repository.findOne({
+          where: { key },
+          lock: {
+            mode: "pessimistic_write",
+          },
+          transaction: true
+        });
 
         if (!runningNumber) {
           latestRunningNumber = 1;
 
           console.log(`Insert running number key: ${key} with latest running number: ${latestRunningNumber}`);
 
-          await queryRunnerManger.getRepository(RunningNumber)
-            .createQueryBuilder('insertRunningNumber')
-            .insert()
-            .values({ key, latestRunningNumber })
-            .execute();
+          await repository.save(
+            { key, latestRunningNumber },
+            { transaction: true }
+          );
         } else {
-          latestRunningNumber = runningNumber.latestRunningNumber + 1;
+          runningNumber.latestRunningNumber += offset;
+
+          latestRunningNumber = runningNumber.latestRunningNumber;
 
           console.log(`Update running number key: ${key} with latest running number: ${latestRunningNumber}`);
 
-          await queryRunnerManger.getRepository(RunningNumber)
-            .createQueryBuilder('updateRunningNumber')
-            .update()
-            .set({ latestRunningNumber })
-            .execute();
+          await repository.save(
+            runningNumber,
+            { transaction: true }
+          );
         }
       }
     );

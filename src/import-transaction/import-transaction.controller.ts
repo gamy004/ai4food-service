@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Put } from '@nestjs/common';
 import { ImportTransactionService } from './import-transaction.service';
 import { CreateImportTransactionDto } from './dto/create-import-transaction.dto';
-import { UpdateImportTransactionDto } from './dto/update-import-transaction.dto';
-import { ImportStatus } from './entities/import-transaction.entity';
-import { ConnectImportTransactionDto } from './dto/connect-import-transaction.dto';
 import { ParamImportTransactionDto } from './dto/param-import-transaction.dto';
+import { Authenticated } from '~/auth/decorators/authenticated.decortator';
+import { AuthUser } from '~/auth/decorators/auth-user.decorator';
+import { User } from '~/auth/entities/user.entity';
 
 @Controller('import-transaction')
 export class ImportTransactionController {
@@ -12,17 +12,23 @@ export class ImportTransactionController {
     private readonly importTransactionService: ImportTransactionService
   ) { }
 
+  @Authenticated()
   @Post()
-  create(@Body() createImportTransactionDto: CreateImportTransactionDto) {
+  create(
+    @AuthUser() importedUser: User,
+    @Body() createImportTransactionDto: CreateImportTransactionDto
+  ) {
+    createImportTransactionDto.importedUser = importedUser;
+
     return this.importTransactionService.create(createImportTransactionDto);
   }
 
-  @Patch(':id/complete')
+  @Put(':id/complete')
   complete(@Param() params: ParamImportTransactionDto) {
     return this.importTransactionService.complete(params.id);
   }
 
-  @Patch(':id/cancel')
+  @Put(':id/cancel')
   cancel(@Param() params: ParamImportTransactionDto) {
     return this.importTransactionService.cancel(params.id);
   }

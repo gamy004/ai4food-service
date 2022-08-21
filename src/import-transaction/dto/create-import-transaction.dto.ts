@@ -19,6 +19,7 @@ export class CreateImportTransactionDto {
     @IsNotEmpty()
     importedFileName?: string;
 
+    @IsOptional()
     @ValidateNested()
     @Type(() => ConnectUserDto)
     importedUser?: ConnectUserDto;
