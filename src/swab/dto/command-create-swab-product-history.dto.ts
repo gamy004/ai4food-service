@@ -6,6 +6,7 @@ import { DateOnlyRule } from "~/common/validators/date-only-validator";
 import { TimeOnlyRule } from "~/common/validators/time-only-validator";
 import { ConnectFacilityItemDto } from "~/facility/dto/connect-facility-item.dto";
 import { ConnectProductDto } from "~/product/dto/connect-product.dto";
+import { ConnectSwabPeriodDto } from "./connect-swab-period.dto";
 
 export class BodyCommandCreateSwabProductByIdDto {
     @IsOptional()
@@ -41,8 +42,16 @@ export class BodyCommandCreateSwabProductByIdDto {
     @Type(() => ConnectFacilityItemDto)
     facilityItem?: ConnectFacilityItemDto;
 
+    // @IsOptional()
+    // @ValidateNested()
+    // @Type(() => ConnectUserDto)
+    // recordedUser: ConnectUserDto;
+
     @IsOptional()
     @ValidateNested()
-    @Type(() => ConnectUserDto)
-    recordedUser: ConnectUserDto;
+    @Type(() => ConnectSwabPeriodDto)
+    swabPeriod?: ConnectSwabPeriodDto;
+
+    @IsOptional()
+    swabProductNote?: string;
 }

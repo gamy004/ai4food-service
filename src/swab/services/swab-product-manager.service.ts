@@ -28,6 +28,7 @@ export class SwabProductManagerService {
 
     async commandCreateSwabProductHistory(body: BodyCommandCreateSwabProductByIdDto, recordedUser: User): Promise<SwabProductHistory> {
         const swabProductHistoryData = SwabProductHistory.create(body)
+        const SWAB_TEST_CODE_PREFIX = "AI";
 
         if (recordedUser) {
             swabProductHistoryData.recordedUser = recordedUser;
@@ -38,7 +39,7 @@ export class SwabProductManagerService {
 
         if (runningNumberSwabCode) {
             const swabTestData = SwabTest.create({
-                swabTestCode: `${runningNumberSwabCode}/${swabTestCodeDate}`
+                swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${runningNumberSwabCode}/${swabTestCodeDate}`
             });
 
             swabProductHistoryData.swabTest = swabTestData;
