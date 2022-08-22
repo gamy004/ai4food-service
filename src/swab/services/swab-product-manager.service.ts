@@ -12,6 +12,7 @@ import { BodyCommandCreateSwabProductByIdDto } from "../dto/command-create-swab-
 import { RunningNumberService } from "~/common/services/running-number.service";
 import { format } from 'date-fns-tz';
 import { SwabTest } from "../entities/swab-test.entity";
+import { SwabProductHistoryService } from "./swab-product-history.service";
 
 @Injectable()
 export class SwabProductManagerService {
@@ -20,8 +21,7 @@ export class SwabProductManagerService {
         protected readonly facilityItemService: FacilityItemService,
         protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
-        @InjectRepository(SwabProductHistory)
-        protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
+        protected readonly swabProductHistoryService: SwabProductHistoryService,
         private readonly runningNumberService: RunningNumberService
 
     ) { }
@@ -45,7 +45,7 @@ export class SwabProductManagerService {
             swabProductHistoryData.swabTest = swabTestData;
         }
 
-        return await this.swabProductHistoryRepository.save(swabProductHistoryData)
+        return await this.swabProductHistoryService.create(swabProductHistoryData)
     }
 
     async commandUpdateSwabProductHistoryById(
@@ -65,7 +65,7 @@ export class SwabProductManagerService {
             facilityItem: connectFacilityItemDto
         } = body;
 
-        const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
+        const swabProductHistory = await this.swabProductHistoryService.findOneBy({ id });
 
         if (recordedUser) {
             swabProductHistory.recordedUser = recordedUser;
@@ -107,6 +107,21 @@ export class SwabProductManagerService {
             swabProductHistory.facilityItem = this.facilityItemService.make(connectFacilityItemDto);
         }
 
-        await this.swabProductHistoryRepository.save(swabProductHistory);
+        await this.swabProductHistoryService.save(swabProductHistory);
+    }
+
+    async commandDeleteSwabProductHistoryById(
+        id: string,
+    ): Promise<void> {
+        const swabProductHistory = await this.swabProductHistoryService.findOne(
+            {
+                where: { id },
+                relations: {
+                    swabTest: true
+                }
+            }
+        );
+
+        await this.swabProductHistoryService.removeOne(swabProductHistory);
     }
 }

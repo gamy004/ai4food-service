@@ -23,7 +23,9 @@ export class FileController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove({ id });
+  async remove(@Param('id') id: string) {
+    const deletedFile = await this.fileService.findOneBy({ id });
+
+    return this.fileService.removeOne(deletedFile);
   }
 }

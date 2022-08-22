@@ -1,7 +1,7 @@
 // import { EntityRepository, FilterQuery, FindOneOptions, FindOptions } from '@mikro-orm/core';
 
 import { Injectable } from '@nestjs/common';
-import { DeepPartial, FindManyOptions, FindOneOptions, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
+import { DeepPartial, FindManyOptions, FindOneOptions, FindOptionsWhere, Repository, SaveOptions, UpdateResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { CrudServiceInterface } from '../interface/crud.service.interface';
 
@@ -43,11 +43,19 @@ export abstract class CrudService<Entity> implements CrudServiceInterface<Entity
     return this.repository.findOneByOrFail(where);
   }
 
+  save(entity: Entity, options?: SaveOptions): Promise<DeepPartial<Entity> & Entity> {
+    return this.repository.save(entity, options);
+  }
+
   update(where: FindOptionsWhere<Entity>, updateDto: QueryDeepPartialEntity<Entity>): Promise<UpdateResult> {
     return this.repository.update(where, updateDto);
   }
 
-  remove(where: FindOptionsWhere<Entity>): Promise<UpdateResult> {
-    return this.repository.softDelete(where);
+  removeOne(entity: Entity, options?: SaveOptions): Promise<Entity> {
+    return this.repository.softRemove(entity, options);
+  }
+
+  removeMany(entities: Entity[], options?: SaveOptions): Promise<Entity[]> {
+    return this.repository.softRemove(entities, options);
   }
 }

@@ -129,10 +129,15 @@ export class SwabPlanManagerService {
             removeSwabAreaHistoryImageCondition.id = Not(In([...new Set(currentSwabAreaHistoryImageIds)]))
         }
 
-        await this.swabAreaHistoryImageService.remove(removeSwabAreaHistoryImageCondition);
+        const deletedswabAreaHistoryImages = await this.swabAreaHistoryImageService.findBy(
+            removeSwabAreaHistoryImageCondition
+        );
+
+        if (deletedswabAreaHistoryImages.length) {
+            await this.swabAreaHistoryImageService.removeMany(deletedswabAreaHistoryImages);
+        }
 
         if (swabAreaHistoryImages.length) {
-
             swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
         }
 
