@@ -4,6 +4,8 @@ export interface CrudServiceInterface<T> {
 
     create(t: T | any): Promise<T | any>;
 
+    save(t: T | any, options?: object): Promise<T | any>;
+
     update(t: T | any, data: object): Promise<T | any>;
 
     find(options?: any): Promise<T[] | any[]>;
@@ -18,5 +20,7 @@ export interface CrudServiceInterface<T> {
 
     findOneByOrFail(options?: T | T[] | any | any[]): Promise<T | any>;
 
-    remove(options?: T | any): Promise<T | any>;
+    removeOne(entity: T | any, options?: object): Promise<T | any>;
+
+    removeMany(entities: T[] | any[], options?: object): Promise<T[] | any[]>;
 }

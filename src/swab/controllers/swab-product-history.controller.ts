@@ -1,9 +1,10 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
 import { BodyCommandCreateSwabProductByIdDto } from '../dto/command-create-swab-product-history.dto';
 import { ParamCommandUpdateSwabProductByIdDto, BodyCommandUpdateSwabProductByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
+import { ParamCommandDeleteSwabProductByIdDto } from '../dto/param-command-delete-swab-product-history-by-id.dto';
 import { ParamQuerySwabProductByIdDto } from '../dto/param-query-swab-product-by-id.dto';
 import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
 import { SwabProductManagerService } from '../services/swab-product-manager.service';
@@ -69,6 +70,26 @@ export class SwabProductHistoryController {
     return {
       ok: true,
       message: 'update swab product success'
+    };
+  }
+
+  @Authenticated()
+  @Delete(":id")
+  async commandDeleteSwabProductHistoryById(
+    @Param() param: ParamCommandDeleteSwabProductByIdDto
+  ) {
+
+    try {
+      await this.swabProductManagerService.commandDeleteSwabProductHistoryById(
+        param.id
+      );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return {
+      ok: true,
+      message: 'delete swab product success'
     };
   }
 }
