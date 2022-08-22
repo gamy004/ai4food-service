@@ -9,6 +9,6 @@ export class SwabPeriodController {
 
   @Get()
   findAll() {
-    return this.swabPeriodService.findAll();
+    return this.swabPeriodService.find();
   }
 }

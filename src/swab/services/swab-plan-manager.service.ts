@@ -15,17 +15,17 @@ import { SwabEnvironment } from "../entities/swab-environment.entity";
 import { SwabTest } from "../entities/swab-test.entity";
 import { SwabPeriodService } from "./swab-period.service";
 import { ProductService } from '~/product/product.service';
-import { BodyCommandUpdateSwabProductHistoryByIdDto } from '../dto/command-update-swab-product-history-by-id.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
-import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
+import { DateTransformer } from '~/common/transformers/date-transformer';
 
 @Injectable()
 export class SwabPlanManagerService {
     constructor(
+        private readonly dateTransformer: DateTransformer,
         protected readonly facilityItemService: FacilityItemService,
         protected readonly productService: ProductService,
         protected readonly swabPeriodService: SwabPeriodService,
@@ -39,8 +39,6 @@ export class SwabPlanManagerService {
         @InjectRepository(SwabAreaHistoryImage)
         protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
         protected readonly swabAreaHistoryImageService: SwabAreaHistoryImageService,
-        @InjectRepository(SwabProductHistory)
-        protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
 
     ) { }
 
@@ -69,15 +67,11 @@ export class SwabPlanManagerService {
         swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
 
         if (connectProductDto) {
-            swabAreaHistory.product = this.productService.init(connectProductDto);
+            swabAreaHistory.product = this.productService.make(connectProductDto);
         }
 
         if (productDateString) {
-            const productDate = new Date(productDateString);
-
-            productDate.setMinutes(0, 0, 0);
-
-            swabAreaHistory.productDate = productDate;
+            swabAreaHistory.productDate = this.dateTransformer.toObject(productDateString);
         }
 
         if (productLot) {
@@ -85,7 +79,7 @@ export class SwabPlanManagerService {
         }
 
         if (connectFacilityItemDto) {
-            swabAreaHistory.facilityItem = this.facilityItemService.init(connectFacilityItemDto);
+            swabAreaHistory.facilityItem = this.facilityItemService.make(connectFacilityItemDto);
         }
 
         if (swabAreaTemperature) {
@@ -122,7 +116,7 @@ export class SwabPlanManagerService {
                 }
 
                 swabAreaHistoryImages.push(
-                    this.swabAreaHistoryImageService.init(upsertSwabAreaHistoryImageData)
+                    this.swabAreaHistoryImageService.make(upsertSwabAreaHistoryImageData)
                 );
             }
         )
@@ -135,83 +129,35 @@ export class SwabPlanManagerService {
             removeSwabAreaHistoryImageCondition.id = Not(In([...new Set(currentSwabAreaHistoryImageIds)]))
         }
 
-        await this.swabAreaHistoryImageService.remove(removeSwabAreaHistoryImageCondition);
+        const deletedswabAreaHistoryImages = await this.swabAreaHistoryImageService.findBy(
+            removeSwabAreaHistoryImageCondition
+        );
+
+        if (deletedswabAreaHistoryImages.length) {
+            await this.swabAreaHistoryImageService.removeMany(deletedswabAreaHistoryImages);
+        }
 
         if (swabAreaHistoryImages.length) {
-
             swabAreaHistory.swabAreaHistoryImages = swabAreaHistoryImages;
         }
 
         await this.swabAreaHistoryRepository.save(swabAreaHistory);
     }
 
-    async commandUpdateSwabProductHistoryById(
-        id: string,
-        bodyCommandUpdateSwabProductHistoryByIdDto: BodyCommandUpdateSwabProductHistoryByIdDto,
-        recordedUser: User
-    ): Promise<void> {
-        const {
-            swabProductSwabedAt,
-            swabProductDate,
-            swabProductLot,
-            shift,
-            product: connectProductDto,
-        } = bodyCommandUpdateSwabProductHistoryByIdDto;
-
-        const swabProductHistory = await this.swabProductHistoryRepository.findOneBy({ id });
-
-        swabProductHistory.recordedUser = recordedUser;
-        swabProductHistory.swabProductSwabedAt = swabProductSwabedAt;
-        swabProductHistory.swabProductDate = swabProductDate;
-
-        if (connectProductDto) {
-            swabProductHistory.product = this.productService.init(connectProductDto);
-        }
-
-        if (swabProductLot) {
-            swabProductHistory.swabProductLot = swabProductLot;
-        }
-
-        if (shift) {
-            swabProductHistory.shift = shift;
-        }
-
-        await this.swabProductHistoryRepository.save(swabProductHistory);
-    }
-
     async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
-        const { fromDate: fromDateString, toDate: toDateString, roundNumberSwabTest = "" } = generateSwabPlanDto;
+        const { fromDate, toDate, roundNumberSwabTest = "" } = generateSwabPlanDto;
 
-        let fromDate, toDate, swabRoundNumber = null;
-
-        if (fromDateString) {
-            fromDate = new Date(fromDateString);
-
-            fromDate.setMinutes(0, 0, 0);
-
-            fromDate = format(fromDate, "yyyy-MM-dd");
-        }
-
-        if (toDateString) {
-            toDate = new Date(toDateString);
-
-            toDate.setMinutes(0, 0, 0);
-
-            toDate = format(toDate, "yyyy-MM-dd");
-        }
+        let swabRoundNumber = null;
 
         if (roundNumberSwabTest) {
-            const swabRound = await this.swabRoundService.findOne({ swabRoundNumber: roundNumberSwabTest })
+            const swabRound = await this.swabRoundService.findOneBy({ swabRoundNumber: roundNumberSwabTest });
+
             if (swabRound) {
                 throw new Error("Swab round number already exists, use other number to generate data");
             } else {
                 swabRoundNumber = await this.swabRoundService.create({ swabRoundNumber: roundNumberSwabTest })
             }
         }
-
-        // const NUMBER_OF_HISTORY_DAY: number = fromDateString === toDateString
-        //   ? 1
-        //   : differenceInDays(new Date(toDate), new Date(fromDate));
 
         const NUMBER_OF_HISTORY_DAY: number = differenceInDays(new Date(toDate), new Date(fromDate))
 
@@ -220,7 +166,7 @@ export class SwabPlanManagerService {
             { swabPeriodName: "หลัง Super Big Cleaning" }
         ];
 
-        let result_bigClean = await this.swabPeriodService.find([
+        let result_bigClean = await this.swabPeriodService.findBy([
             { swabPeriodName: "ก่อน Super Big Cleaning", deletedAt: null },
             { swabPeriodName: "หลัง Super Big Cleaning", deletedAt: null },
         ]);
@@ -243,7 +189,7 @@ export class SwabPlanManagerService {
             { swabPeriodName: "หลังล้างท้ายกะ" }
         ];
 
-        let result_general = await this.swabPeriodService.find([
+        let result_general = await this.swabPeriodService.findBy([
             { swabPeriodName: "หลังประกอบเครื่อง", deletedAt: null },
             { swabPeriodName: "ก่อนล้างระหว่างงาน", deletedAt: null },
             { swabPeriodName: "หลังล้างระหว่างงาน", deletedAt: null },

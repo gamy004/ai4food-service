@@ -34,6 +34,12 @@ import { CommonModule } from '~/common/common.module';
 import { LabModule } from '~/lab/lab.module';
 import { SwabRoundService } from './services/swab-round.service';
 import { SwabRound } from './entities/swab-round.entity';
+import { SwabProductQueryService } from './services/swab-product-query.service';
+import { SwabProductManagerService } from './services/swab-product-manager.service';
+import { SwabProductHistoryController } from './controllers/swab-product-history.controller';
+import { SwabProductHistoryService } from './services/swab-product-history.service';
+import { SwabLabManagerService } from './services/swab-lab-manager.service';
+import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 
 @Module({
   imports: [
@@ -58,12 +64,14 @@ import { SwabRound } from './entities/swab-round.entity';
     SwabAreaHistoryController,
     SwabPeriodController,
     SwabEnvironmentController,
-    SwabTestController
+    SwabTestController,
+    SwabProductHistoryController
   ],
   providers: [
     SwabPlanQueryService,
     SwabPlanManagerService,
     SwabLabQueryService,
+    SwabLabManagerService,
     SwabAreaService,
     SwabAreaHistoryService,
     SwabAreaHistoryImageService,
@@ -76,7 +84,11 @@ import { SwabRound } from './entities/swab-round.entity';
     SwabAreaHistoryExistsRule,
     SwabEnvironmentExistsRule,
     SwabAreaHistoryImageExistsRule,
-    SwabTestExistsRule
+    SwabProductHistoryExistsRule,
+    SwabTestExistsRule,
+    SwabProductQueryService,
+    SwabProductHistoryService,
+    SwabProductManagerService
   ]
 })
 export class SwabModule { }

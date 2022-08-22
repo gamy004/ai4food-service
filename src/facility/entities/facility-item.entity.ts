@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { SwabAreaHistory } from "~/swab/entities/swab-area-history.entity";
 import { SwabArea } from "~/swab/entities/swab-area.entity";
+import { SwabProductHistory } from "~/swab/entities/swab-product-history.entity";
 import { Facility } from "./facility.entity";
 import { Room } from "./room.entity";
 import { Zone } from "./zone.entity";
@@ -31,4 +32,7 @@ export class FacilityItem extends BaseSoftDeletableEntity {
 
     @OneToMany(() => SwabAreaHistory, entity => entity.facilityItem)
     swabAreaHistories: SwabAreaHistory[];
+
+    @OneToMany(() => SwabProductHistory, entity => entity.facilityItem)
+    swabProductHistories: SwabProductHistory[];
 }

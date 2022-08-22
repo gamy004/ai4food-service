@@ -10,10 +10,12 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { FacilityService } from '~/facility/facility.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
+import { DateTransformer } from '~/common/transformers/date-transformer';
 
 @Injectable()
 export class SwabPlanQueryService {
   constructor(
+    private readonly dateTransformer: DateTransformer,
     protected readonly facilityService: FacilityService,
     protected readonly swabPeriodService: SwabPeriodService,
     @InjectRepository(SwabAreaHistory)
@@ -23,28 +25,18 @@ export class SwabPlanQueryService {
   ) { }
 
   private transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
-    const { fromDate: fromDateString, toDate: toDateString } = querySwabPlanDto;
+    const { fromDate, toDate: toDateString } = querySwabPlanDto;
 
     const where: FindOptionsWhere<SwabAreaHistory> = {};
 
-    let fromDate, toDate;
-
-    if (fromDateString) {
-      fromDate = new Date(fromDateString);
-
-      fromDate.setMinutes(0, 0, 0);
-
-      fromDate = format(fromDate, "yyyy-MM-dd");
-    }
+    let toDate;
 
     if (toDateString) {
-      toDate = new Date(toDateString);
+      toDate = this.dateTransformer.toObject(toDateString);
 
       toDate.setDate(toDate.getDate() + 1);
 
-      toDate.setMinutes(0, 0, 0);
-
-      toDate = format(toDate, "yyyy-MM-dd");
+      toDate = this.dateTransformer.toString(toDate);
     }
 
     if (fromDate && toDate) {
@@ -67,7 +59,7 @@ export class SwabPlanQueryService {
       querySwabPlanDto
     );
 
-    const swabPeriods = await this.swabPeriodService.findAll({
+    const swabPeriods = await this.swabPeriodService.find({
       select: {
         id: true,
         swabPeriodName: true
@@ -127,7 +119,7 @@ export class SwabPlanQueryService {
         const facilityIds = [...new Set(swabAreas.map(({ facilityId }) => facilityId))].filter(Boolean);
 
         if (facilityIds.length) {
-          facilities = await this.facilityService.findAll({
+          facilities = await this.facilityService.find({
             where: {
               id: In(facilityIds)
             },
@@ -155,11 +147,9 @@ export class SwabPlanQueryService {
   private async transformQueryUpdateSwabPlanDto(querySwabPlanDto: QueryUpdateSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>[]> {
     let { swabAreaDate: swabAreaDateString, shift, facilityId, mainSwabAreaId, swabPeriodId } = querySwabPlanDto;
 
-    let swabAreaDate = new Date(swabAreaDateString);
+    let swabAreaDate = this.dateTransformer.toObject(swabAreaDateString);
 
-    swabAreaDate.setMinutes(0, 0, 0);
-
-    const swabPeriod = await this.swabPeriodService.findOne({ id: swabPeriodId });
+    const swabPeriod = await this.swabPeriodService.findOneBy({ id: swabPeriodId });
 
     if (!swabPeriod.dependsOnShift) {
       shift = null;

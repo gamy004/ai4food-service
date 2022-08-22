@@ -9,6 +9,6 @@ export class SwabEnvironmentController {
 
   @Get()
   findAll() {
-    return this.swabEnvironmentService.findAll();
+    return this.swabEnvironmentService.find();
   }
 }

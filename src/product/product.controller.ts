@@ -16,7 +16,7 @@ export class ProductController {
 
   @Get()
   findAll() {
-    return this.productService.findAll();
+    return this.productService.find();
   }
 
   @Post()
@@ -28,19 +28,4 @@ export class ProductController {
   verify(@Body() checkProductDto: CheckProductDto) {
     return this.productService.check(checkProductDto);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.productService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-  //   return this.productService.update(+id, updateProductDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.productService.remove(+id);
-  // }
 }
