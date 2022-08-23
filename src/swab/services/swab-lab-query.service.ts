@@ -106,14 +106,14 @@ export class SwabLabQueryService {
         ...DEFAULT_SELECT
       },
       order: {
-        // swabTest: {
-        //   swabTestRecordedAt: {
-        //     direction: 'asc'
-        //   }
-        // },
-        swabAreaSwabedAt: {
-          direction: 'asc',
+        swabTest: {
+          id: {
+            direction: 'asc'
+          }
         },
+        // swabAreaSwabedAt: {
+        //   direction: 'asc',
+        // },
       }
     });
   }
