@@ -14,6 +14,7 @@ import { AwsModule } from './aws/aws.module';
 import { AppController } from './app.controller';
 import { CommonModule } from './common/common.module';
 import { LabModule } from './lab/lab.module';
+import { IotModule } from './iot/iot.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { LabModule } from './lab/lab.module';
     SwabModule,
     FacilityModule,
     AwsModule,
-    LabModule
+    LabModule,
+    IotModule
   ],
   controllers: [
     AppController
