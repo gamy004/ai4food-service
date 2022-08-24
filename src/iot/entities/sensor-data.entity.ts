@@ -3,7 +3,7 @@ import { BaseEntity as TypeOrmBaseEntity, PrimaryGeneratedColumn, CreateDateColu
 @Entity()
 export class SensorData extends TypeOrmBaseEntity {
     @PrimaryColumn({ type: "varchar", length: 20 })
-    nodeId: string;
+    nodeNo: string;
 
     @PrimaryColumn({ type: "datetime" })
     timeSend?: Date;
