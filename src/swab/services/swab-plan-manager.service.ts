@@ -570,7 +570,7 @@ export class SwabPlanManagerService {
             swabAreas.push(fetchSwabAreas)
         }
 
-        async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, creteSwabTest = true) {
+        async function generateSwabAreaHistory(swabAreaDate, swabArea, swabPeriod, shift = null, createSwabTest = true) {
             const historyData = {
                 swabAreaDate: format(swabAreaDate, "yyyy-MM-dd"),
                 swabAreaSwabedAt: null,
@@ -585,7 +585,7 @@ export class SwabPlanManagerService {
                 productLot: ""
             };
 
-            if (creteSwabTest) {
+            if (createSwabTest) {
                 const swabTestData = SwabTest.create({
                     swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${roundNumberSwabTest ? '/' + roundNumberSwabTest : ''}`
                 });
