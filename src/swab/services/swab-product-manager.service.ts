@@ -320,7 +320,7 @@ export class SwabProductManagerService {
 
                     if (facilityItem) {
 
-                        return facilityItem
+                        return { ...facilityItem }
                     }
                 }
             ));
@@ -385,11 +385,6 @@ export class SwabProductManagerService {
                         }
                     }
                 }
-
-                for (let index = 0; index < generalSwabPeriodsTemplate.length; index++) {
-                    const swabPeriod = generalSwabPeriods[generalSwabPeriodsTemplate[index].swabPeriodName];
-
-                }
                 shiftKeys = [Object.keys(Shift)[1]]
             }
 
@@ -439,8 +434,8 @@ export class SwabProductManagerService {
             await generateHistory(facilityItems, currentDate, dateIndex);
         }
 
-        // await this.swabProductHistoryRepository.save(swabProductHistories);
+        await this.swabProductHistoryRepository.save(swabProductHistories);
 
-        return swabProductHistories
+        return
     }
 }
