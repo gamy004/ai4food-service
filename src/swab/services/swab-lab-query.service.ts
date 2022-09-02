@@ -6,6 +6,7 @@ import { DateTransformer } from '~/common/transformers/date-transformer';
 import { SwabTest } from '../entities/swab-test.entity';
 import { ParamLabSwabPlanByIdDto } from '../dto/param-lab-swab-plan-by-id.dto';
 import { SwabAreaHistoryService } from './swab-area-history.service';
+import { SwabPeriod } from '../entities/swab-period.entity';
 
 export const DEFAULT_RELATIONS = {
   swabTest: {
@@ -60,7 +61,7 @@ export class SwabLabQueryService {
   private async transformLabSwabPlanDto(
     queryLabSwabPlanDto: QueryLabSwabPlanDto
   ): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate: swabAreaDateString, swabTestCode, swabTestId, id } = queryLabSwabPlanDto;
+    let { mainSwabAreaId, facilityId, swabPeriodId, shift, swabAreaDate: swabAreaDateString, swabTestCode, swabTestId, id } = queryLabSwabPlanDto;
 
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
     const whereSwabTest: FindOptionsWhere<SwabTest> = {};
@@ -71,6 +72,27 @@ export class SwabLabQueryService {
 
     if (swabTestId) {
       whereSwabTest.id = swabTestId;
+    }
+
+    if (shift) {
+      whereSwabAreaHistory.shift = shift;
+    }
+
+    if (swabPeriodId) {
+      whereSwabAreaHistory.swabPeriodId = swabPeriodId;
+    }
+
+    if (facilityId) {
+      whereSwabAreaHistory.swabArea = {
+        id: mainSwabAreaId,
+        facilityId
+      };
+    }
+
+    if (mainSwabAreaId) {
+      whereSwabAreaHistory.swabArea = {
+        id: mainSwabAreaId
+      };
     }
 
     if (Object.keys(whereSwabTest).length) {
