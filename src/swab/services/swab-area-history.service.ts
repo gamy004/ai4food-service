@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
@@ -58,8 +58,8 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       whereSwabAreaHistory.swabAreaId = swabAreaId;
     }
 
-    if (swabTestCode) {
-      whereSwabTest.swabTestCode = swabTestCode;
+    if (swabTestCode && swabTestCode.length) {
+      whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
     }
 
     if (facilityId) {

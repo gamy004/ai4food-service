@@ -23,6 +23,7 @@ export const DEFAULT_RELATIONS = {
 
 export const DEFAULT_SELECT = {
   id: true,
+  shift: true,
   swabAreaDate: true,
   swabAreaSwabedAt: true,
   swabTestId: true,
