@@ -13,6 +13,7 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
 export const DEFAULT_RELATIONS = {
   swabTest: {
     bacteria: true,
+    bacteriaSpecies: true,
   },
   swabArea: {
     facility: true,
@@ -34,6 +35,10 @@ export const DEFAULT_SELECT = {
     bacteria: {
       id: true,
       bacteriaName: true,
+    },
+    bacteriaSpecies: {
+      id: true,
+      bacteriaSpecieName: true,
     },
   },
   swabArea: {
