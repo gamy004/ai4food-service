@@ -41,6 +41,7 @@ export class SwabProductHistoryController {
     return this.swabProductQueryService.querySwabProduct(querySwabProductDto);
   }
 
+  @Authenticated()
   @Get('lab')
   queryLabSwabProduct(@Query() queryLabSwabProductDto: QueryLabSwabProductDto) {
     return this.swabLabQueryService.queryLabSwabProduct(queryLabSwabProductDto);
