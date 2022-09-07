@@ -20,7 +20,9 @@ import {
 import { GenerateSwabProductPlanDto } from '../dto/generate-swab-product-plan.dto';
 import { ParamCommandDeleteSwabProductByIdDto } from '../dto/param-command-delete-swab-product-history-by-id.dto';
 import { ParamQuerySwabProductByIdDto } from '../dto/param-query-swab-product-by-id.dto';
+import { QueryLabSwabProductDto } from '../dto/query-lab-swab-product-dto';
 import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
+import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabProductManagerService } from '../services/swab-product-manager.service';
 import { SwabProductQueryService } from '../services/swab-product-query.service';
 
@@ -29,12 +31,20 @@ export class SwabProductHistoryController {
   constructor(
     private readonly swabProductQueryService: SwabProductQueryService,
     private readonly swabProductManagerService: SwabProductManagerService,
-  ) {}
+    private readonly swabLabQueryService: SwabLabQueryService,
+
+  ) { }
 
   @Authenticated()
   @Get()
   querySwabProduct(@Query() querySwabProductDto: QuerySwabProductDto) {
     return this.swabProductQueryService.querySwabProduct(querySwabProductDto);
+  }
+
+  @Authenticated()
+  @Get('lab')
+  queryLabSwabProduct(@Query() queryLabSwabProductDto: QueryLabSwabProductDto) {
+    return this.swabLabQueryService.queryLabSwabProduct(queryLabSwabProductDto);
   }
 
   @Authenticated()
