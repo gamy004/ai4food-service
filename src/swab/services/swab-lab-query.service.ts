@@ -91,7 +91,7 @@ export class SwabLabQueryService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(FacilityItem)
     protected readonly facilityItemRepository: Repository<FacilityItem>,
-  ) { }
+  ) {}
 
   async queryLabSwabPlan(
     queryLabSwabPlanDto: QueryLabSwabPlanDto,
@@ -248,8 +248,18 @@ export class SwabLabQueryService {
     });
   }
 
-  private async transformQueryLabSwabProduct(transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto): Promise<FindOptionsWhere<SwabProductHistory>> {
-    const { id, swabProductDate, swabTestCode, facilityItemId, facilityId, swabTestId, swabPeriodId } = transformFilterSwabProductHistoryDto;
+  private async transformQueryLabSwabProduct(
+    transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
+  ): Promise<FindOptionsWhere<SwabProductHistory>> {
+    const {
+      id,
+      swabProductDate,
+      swabTestCode,
+      facilityItemId,
+      facilityId,
+      swabTestId,
+      swabPeriodId,
+    } = transformFilterSwabProductHistoryDto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
     const whereSwabTest: FindOptionsWhere<SwabTest> = {};
@@ -293,26 +303,29 @@ export class SwabLabQueryService {
     return where;
   }
 
-  async queryLabSwabProduct(queryLabSwabProductDto: QueryLabSwabProductDto): Promise<ResponseQueryLabSwabProductDto> {
+  async queryLabSwabProduct(
+    queryLabSwabProductDto: QueryLabSwabProductDto,
+  ): Promise<ResponseQueryLabSwabProductDto> {
     const where: FindOptionsWhere<SwabProductHistory> =
       await this.transformQueryLabSwabProduct(queryLabSwabProductDto);
 
     const swabProductHistories = await this.swabProductHistoryService.find({
       where: {
         ...where,
-        swabTestId: Not(IsNull())
+        swabTestId: Not(IsNull()),
       },
       select: {
         id: true,
         swabProductDate: true,
         swabProductSwabedAt: true,
+        shift: true,
         productId: true,
         productLot: true,
         productDate: true,
         swabTestId: true,
         swabPeriodId: true,
         facilityItemId: true,
-      }
+      },
     });
 
     let facilities = [];
@@ -322,36 +335,50 @@ export class SwabLabQueryService {
     let swabPeriods = [];
 
     if (swabProductHistories.length) {
-      const facilityItemIds = [...new Set(swabProductHistories.map(({ facilityItemId }) => facilityItemId))].filter(Boolean);
-      const productIds = [...new Set(swabProductHistories.map(({ productId }) => productId))].filter(Boolean);
-      const swabTestIds = [...new Set(swabProductHistories.map(({ swabTestId }) => swabTestId))].filter(Boolean);
-      const swabPeriodIds = [...new Set(swabProductHistories.map(({ swabPeriodId }) => swabPeriodId))].filter(Boolean);
+      const facilityItemIds = [
+        ...new Set(
+          swabProductHistories.map(({ facilityItemId }) => facilityItemId),
+        ),
+      ].filter(Boolean);
+      const productIds = [
+        ...new Set(swabProductHistories.map(({ productId }) => productId)),
+      ].filter(Boolean);
+      const swabTestIds = [
+        ...new Set(swabProductHistories.map(({ swabTestId }) => swabTestId)),
+      ].filter(Boolean);
+      const swabPeriodIds = [
+        ...new Set(
+          swabProductHistories.map(({ swabPeriodId }) => swabPeriodId),
+        ),
+      ].filter(Boolean);
 
       if (facilityItemIds.length) {
         facilityItems = await this.facilityItemRepository.find({
           where: {
-            id: In(facilityItemIds)
+            id: In(facilityItemIds),
           },
           select: {
             id: true,
             facilityItemName: true,
-            facilityId: true
-          }
+            facilityId: true,
+          },
         });
       }
 
       if (facilityItems.length) {
-        const facilityIds = [...new Set(facilityItems.map(({ facilityId }) => facilityId))].filter(Boolean);
+        const facilityIds = [
+          ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
+        ].filter(Boolean);
 
         if (facilityIds.length) {
           facilities = await this.facilityService.find({
             where: {
-              id: In(facilityIds)
+              id: In(facilityIds),
             },
             select: {
               id: true,
-              facilityName: true
-            }
+              facilityName: true,
+            },
           });
         }
       }
@@ -359,42 +386,42 @@ export class SwabLabQueryService {
       if (productIds.length) {
         products = await this.productService.find({
           where: {
-            id: In(productIds)
+            id: In(productIds),
           },
           select: {
             id: true,
             productName: true,
-          }
-        })
+          },
+        });
       }
 
       if (swabTestIds.length) {
         swabTests = await this.swabTestService.find({
           where: {
-            id: In(swabTestIds)
+            id: In(swabTestIds),
           },
           relations: {
             bacteria: true,
-            bacteriaSpecies: true
+            bacteriaSpecies: true,
           },
           select: {
             id: true,
             swabTestCode: true,
             swabTestRecordedAt: true,
             swabTestNote: true,
-          }
-        })
+          },
+        });
       }
 
       if (swabPeriodIds.length) {
         swabPeriods = await this.swabPeriodService.find({
           where: {
-            id: In(swabPeriodIds)
+            id: In(swabPeriodIds),
           },
           select: {
             id: true,
-            swabPeriodName: true
-          }
+            swabPeriodName: true,
+          },
         });
       }
     }
@@ -405,7 +432,7 @@ export class SwabLabQueryService {
       facilityItems,
       facilities,
       swabTests,
-      swabPeriods
-    }
+      swabPeriods,
+    };
   }
 }
