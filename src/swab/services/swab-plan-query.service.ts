@@ -1,4 +1,3 @@
-import { format } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
@@ -22,9 +21,11 @@ export class SwabPlanQueryService {
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
     protected readonly swabAreaRepository: Repository<SwabArea>,
-  ) { }
+  ) {}
 
-  private transformQuerySwabPlanDto(querySwabPlanDto: QuerySwabPlanDto): FindOptionsWhere<SwabAreaHistory> {
+  private transformQuerySwabPlanDto(
+    querySwabPlanDto: QuerySwabPlanDto,
+  ): FindOptionsWhere<SwabAreaHistory> {
     const { fromDate, toDate: toDateString } = querySwabPlanDto;
 
     const where: FindOptionsWhere<SwabAreaHistory> = {};
@@ -40,39 +41,42 @@ export class SwabPlanQueryService {
     }
 
     if (fromDate && toDate) {
-      where.swabAreaDate = Raw(field => `${field} >= '${fromDate}' and ${field} < '${toDate}'`);
+      where.swabAreaDate = Raw(
+        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+      );
     } else {
       if (fromDate) {
-        where.swabAreaDate = Raw(field => `${field} >= '${fromDate}'`);
+        where.swabAreaDate = Raw((field) => `${field} >= '${fromDate}'`);
       }
 
       if (toDate) {
-        where.swabAreaDate = Raw(field => `${field} < '${toDate}'`);
+        where.swabAreaDate = Raw((field) => `${field} < '${toDate}'`);
       }
     }
 
     return where;
   }
 
-  async querySwabPlan(querySwabPlanDto: QuerySwabPlanDto): Promise<ResponseSwabPlanDto> {
-    const where: FindOptionsWhere<SwabAreaHistory> = this.transformQuerySwabPlanDto(
-      querySwabPlanDto
-    );
+  async querySwabPlan(
+    querySwabPlanDto: QuerySwabPlanDto,
+  ): Promise<ResponseSwabPlanDto> {
+    const where: FindOptionsWhere<SwabAreaHistory> =
+      this.transformQuerySwabPlanDto(querySwabPlanDto);
 
     const swabPeriods = await this.swabPeriodService.find({
       select: {
         id: true,
-        swabPeriodName: true
-      }
+        swabPeriodName: true,
+      },
     });
 
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where: {
         ...where,
-        swabTestId: Not(IsNull())
+        swabTestId: Not(IsNull()),
       },
       relations: {
-        swabTest: true
+        swabTest: true,
       },
       select: {
         id: true,
@@ -83,55 +87,59 @@ export class SwabPlanQueryService {
         swabTestId: true,
         swabTest: {
           id: true,
-          swabTestCode: true
-        }
+          swabTestCode: true,
+        },
       },
       order: {
         swabTest: {
           id: {
-            direction: 'asc'
-          }
-        }
-      }
+            direction: 'asc',
+          },
+        },
+      },
     });
 
     let facilities = [];
     let swabAreas = [];
 
     if (swabAreaHistories.length) {
-      const swabAreaIds = [...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId))].filter(Boolean);
+      const swabAreaIds = [
+        ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
+      ].filter(Boolean);
 
       if (swabAreaIds.length) {
         swabAreas = await this.swabAreaRepository.find({
           where: {
-            id: In(swabAreaIds)
+            id: In(swabAreaIds),
           },
           select: {
             id: true,
             swabAreaName: true,
             mainSwabAreaId: true,
-            facilityId: true
-          }
+            facilityId: true,
+          },
         });
       }
 
       if (swabAreas.length) {
-        const facilityIds = [...new Set(swabAreas.map(({ facilityId }) => facilityId))].filter(Boolean);
+        const facilityIds = [
+          ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
+        ].filter(Boolean);
 
         if (facilityIds.length) {
           facilities = await this.facilityService.find({
             where: {
-              id: In(facilityIds)
+              id: In(facilityIds),
             },
             select: {
               id: true,
               facilityName: true,
-              facilityType: true
+              facilityType: true,
             },
             order: {
               facilityType: 'asc',
-              facilityName: 'asc'
-            }
+              facilityName: 'asc',
+            },
           });
         }
       }
@@ -140,20 +148,30 @@ export class SwabPlanQueryService {
       swabPeriods,
       swabAreaHistories,
       swabAreas,
-      facilities
+      facilities,
     };
   }
 
-  private async transformQueryUpdateSwabPlanDto(querySwabPlanDto: QueryUpdateSwabPlanDto): Promise<FindOptionsWhere<SwabAreaHistory>[]> {
-    let { swabAreaDate: swabAreaDateString, shift, facilityId, mainSwabAreaId, swabPeriodId } = querySwabPlanDto;
+  private async transformQueryUpdateSwabPlanDto(
+    querySwabPlanDto: QueryUpdateSwabPlanDto,
+  ): Promise<FindOptionsWhere<SwabAreaHistory>[]> {
+    let {
+      swabAreaDate: swabAreaDateString,
+      shift,
+      facilityId,
+      mainSwabAreaId,
+      swabPeriodId,
+    } = querySwabPlanDto;
 
     let swabAreaDate = this.dateTransformer.toObject(swabAreaDateString);
 
-    const swabPeriod = await this.swabPeriodService.findOneBy({ id: swabPeriodId });
+    // const swabPeriod = await this.swabPeriodService.findOneBy({
+    //   id: swabPeriodId,
+    // });
 
-    if (!swabPeriod.dependsOnShift) {
-      shift = null;
-    }
+    // if (!swabPeriod.dependsOnShift) {
+    //   shift = null;
+    // }
 
     const where: FindOptionsWhere<SwabAreaHistory>[] = [
       {
@@ -162,8 +180,8 @@ export class SwabPlanQueryService {
         swabPeriodId,
         swabArea: {
           id: mainSwabAreaId,
-          facilityId
-        }
+          facilityId,
+        },
       },
       {
         swabAreaDate,
@@ -171,18 +189,19 @@ export class SwabPlanQueryService {
         swabPeriodId,
         swabArea: {
           mainSwabAreaId,
-          facilityId
-        }
+          facilityId,
+        },
       },
     ];
 
     return where;
   }
 
-  async queryUpdateSwabPlan(queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto): Promise<SwabAreaHistory[]> {
-    const where: FindOptionsWhere<SwabAreaHistory>[] = await this.transformQueryUpdateSwabPlanDto(
-      queryUpdateSwabPlanDto
-    );
+  async queryUpdateSwabPlan(
+    queryUpdateSwabPlanDto: QueryUpdateSwabPlanDto,
+  ): Promise<SwabAreaHistory[]> {
+    const where: FindOptionsWhere<SwabAreaHistory>[] =
+      await this.transformQueryUpdateSwabPlanDto(queryUpdateSwabPlanDto);
 
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where,
@@ -190,9 +209,9 @@ export class SwabPlanQueryService {
         swabTest: true,
         swabArea: true,
         swabAreaHistoryImages: {
-          file: true
+          file: true,
         },
-        swabEnvironments: true
+        swabEnvironments: true,
       },
       select: {
         id: true,
@@ -212,7 +231,7 @@ export class SwabPlanQueryService {
           id: true,
           swabAreaName: true,
           facilityId: true,
-          mainSwabAreaId: true
+          mainSwabAreaId: true,
         },
         swabTest: {
           id: true,
@@ -224,29 +243,31 @@ export class SwabPlanQueryService {
           file: {
             id: true,
             fileKey: true,
-            fileSource: true
-          }
+            fileSource: true,
+          },
         },
         swabEnvironments: {
           id: true,
-          swabEnvironmentName: true
-        }
+          swabEnvironmentName: true,
+        },
       },
       order: {
         swabTest: {
           id: {
-            direction: 'asc'
-          }
-        }
-      }
+            direction: 'asc',
+          },
+        },
+      },
     });
 
     return swabAreaHistories;
   }
 
-  async queryUpdateSwabPlanById(queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto): Promise<SwabAreaHistory> {
+  async queryUpdateSwabPlanById(
+    queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto,
+  ): Promise<SwabAreaHistory> {
     const where: FindOptionsWhere<SwabAreaHistory> = {
-      id: queryUpdateSwabPlanByIdDto.id
+      id: queryUpdateSwabPlanByIdDto.id,
     };
 
     const swabAreaHistory = await this.swabAreaHistoryRepository.findOne({
@@ -255,13 +276,13 @@ export class SwabPlanQueryService {
         swabTest: true,
         swabArea: {
           facility: true,
-          subSwabAreas: true
+          subSwabAreas: true,
         },
         swabPeriod: true,
         swabAreaHistoryImages: {
-          file: true
+          file: true,
         },
-        swabEnvironments: true
+        swabEnvironments: true,
       },
       select: {
         id: true,
@@ -290,12 +311,12 @@ export class SwabPlanQueryService {
           mainSwabAreaId: true,
           facility: {
             id: true,
-            facilityName: true
-          }
+            facilityName: true,
+          },
         },
         swabPeriod: {
           id: true,
-          swabPeriodName: true
+          swabPeriodName: true,
         },
         swabAreaHistoryImages: {
           id: true,
@@ -304,21 +325,21 @@ export class SwabPlanQueryService {
           file: {
             id: true,
             fileKey: true,
-            fileSource: true
-          }
+            fileSource: true,
+          },
         },
         swabEnvironments: {
           id: true,
-          swabEnvironmentName: true
-        }
+          swabEnvironmentName: true,
+        },
       },
       order: {
         swabAreaHistoryImages: {
           createdAt: {
-            direction: 'desc'
-          }
-        }
-      }
+            direction: 'desc',
+          },
+        },
+      },
     });
 
     return swabAreaHistory;

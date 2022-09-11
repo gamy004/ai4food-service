@@ -1,6 +1,6 @@
 import { format } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere, Repository, In, Equal } from 'typeorm';
+import { FindOptionsWhere, Repository, In, Equal, Like } from 'typeorm';
 import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
 import { ResponseSwabProductDto } from '../dto/response-swab-product.dto';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
@@ -11,10 +11,15 @@ import { ProductService } from '~/product/product.service';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { Product } from '~/product/entities/product.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { DateTransformer } from '~/common/transformers/date-transformer';
+import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
+import { SwabTest } from '../entities/swab-test.entity';
+import { Facility } from '~/facility/entities/facility.entity';
 
 @Injectable()
 export class SwabProductQueryService {
   constructor(
+    private readonly dateTransformer: DateTransformer,
     protected readonly facilityService: FacilityService,
     protected readonly facilityItemService: FacilityItemService,
     protected readonly swabPeriodService: SwabPeriodService,
@@ -24,33 +29,79 @@ export class SwabProductQueryService {
   ) {}
 
   private transformQuerySwabProductDto(
-    querySwabProductDto: QuerySwabProductDto,
+    transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
   ): FindOptionsWhere<SwabProductHistory> {
-    const { swabProductDate: swabProductDateString, shift } =
-      querySwabProductDto;
+    const {
+      swabProductDate,
+      shift,
+      facilityItemId,
+      facilityId,
+      swabPeriodId,
+      productId,
+    } = transformFilterSwabProductHistoryDto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
-
-    let swabProductDate;
-
-    if (swabProductDateString) {
-      swabProductDate = new Date(swabProductDateString);
-
-      swabProductDate.setMinutes(0, 0, 0);
-
-      swabProductDate = format(swabProductDate, 'yyyy-MM-dd');
-    }
-
-    if (swabProductDate) {
-      where.swabProductDate = Equal(swabProductDate);
-    }
+    const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
 
     if (shift) {
       where.shift = shift;
     }
 
+    if (swabProductDate) {
+      where.swabProductDate = this.dateTransformer.toObject(swabProductDate);
+    }
+
+    if (facilityItemId) {
+      where.facilityItemId = facilityItemId;
+    }
+
+    if (productId) {
+      where.productId = productId;
+    }
+
+    if (facilityId) {
+      whereFacilityItem.facilityId = facilityId;
+    }
+
+    if (swabPeriodId) {
+      where.swabPeriodId = swabPeriodId;
+    }
+
+    if (Object.keys(whereFacilityItem).length) {
+      where.facilityItem = whereFacilityItem;
+    }
+
     return where;
   }
+
+  // private transformQuerySwabProductDto(
+  //   querySwabProductDto: QuerySwabProductDto,
+  // ): FindOptionsWhere<SwabProductHistory> {
+  //   const { swabProductDate: swabProductDateString, shift } =
+  //     querySwabProductDto;
+
+  //   const where: FindOptionsWhere<SwabProductHistory> = {};
+
+  //   let swabProductDate;
+
+  //   if (swabProductDateString) {
+  //     swabProductDate = new Date(swabProductDateString);
+
+  //     swabProductDate.setMinutes(0, 0, 0);
+
+  //     swabProductDate = format(swabProductDate, 'yyyy-MM-dd');
+  //   }
+
+  //   if (swabProductDate) {
+  //     where.swabProductDate = Equal(swabProductDate);
+  //   }
+
+  //   if (shift) {
+  //     where.shift = shift;
+  //   }
+
+  //   return where;
+  // }
 
   async querySwabProduct(
     querySwabProductDto: QuerySwabProductDto,
@@ -60,6 +111,7 @@ export class SwabProductQueryService {
 
     let products: Product[] = [];
     let facilityItems: FacilityItem[] = [];
+    let facilities: Facility[] = [];
 
     const swabProductHistories = await this.swabProductHistoryRepository.find({
       where: {
@@ -130,6 +182,24 @@ export class SwabProductQueryService {
         });
       }
 
+      if (facilityItems.length) {
+        const facilityIds = [
+          ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
+        ].filter(Boolean);
+
+        if (facilityIds.length) {
+          facilities = await this.facilityService.find({
+            where: {
+              id: In(facilityIds),
+            },
+            select: {
+              id: true,
+              facilityName: true,
+            },
+          });
+        }
+      }
+
       const productIds = [
         ...new Set(swabProductHistories.map(({ productId }) => productId)),
       ].filter(Boolean);
@@ -152,6 +222,7 @@ export class SwabProductQueryService {
     return {
       swabProductHistories,
       products,
+      facilities,
       facilityItems,
     };
   }

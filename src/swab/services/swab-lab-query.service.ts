@@ -22,6 +22,7 @@ import { SwabTestService } from './swab-test.service';
 import { ProductService } from '~/product/product.service';
 import { SwabProductHistoryService } from './swab-product-history.service';
 import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
+import { Shift } from '~/common/enums/shift';
 
 export const DEFAULT_RELATIONS = {
   swabTest: {
@@ -253,12 +254,14 @@ export class SwabLabQueryService {
   ): Promise<FindOptionsWhere<SwabProductHistory>> {
     const {
       id,
+      shift,
       swabProductDate,
       swabTestCode,
       facilityItemId,
       facilityId,
       swabTestId,
       swabPeriodId,
+      productId,
     } = transformFilterSwabProductHistoryDto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
@@ -269,8 +272,12 @@ export class SwabLabQueryService {
       where.id = id;
     }
 
+    if (shift) {
+      where.shift = shift;
+    }
+
     if (swabProductDate) {
-      where.productDate = this.dateTransformer.toObject(swabProductDate);
+      where.swabProductDate = this.dateTransformer.toObject(swabProductDate);
     }
 
     if (swabTestCode && swabTestCode.length) {
@@ -279,6 +286,10 @@ export class SwabLabQueryService {
 
     if (facilityItemId) {
       where.facilityItemId = facilityItemId;
+    }
+
+    if (productId) {
+      where.productId = productId;
     }
 
     if (facilityId) {
@@ -300,6 +311,7 @@ export class SwabLabQueryService {
     if (Object.keys(whereSwabTest).length) {
       where.swabTest = whereSwabTest;
     }
+
     return where;
   }
 
