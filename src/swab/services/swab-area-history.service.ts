@@ -19,9 +19,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
     super(repository);
   }
 
-  toFilter(
-    transformFilterSwabAreaHistoryDto: FilterSwabAreaHistoryDto,
-  ): FindOptionsWhere<SwabAreaHistory> {
+  toFilter(dto: FilterSwabAreaHistoryDto): FindOptionsWhere<SwabAreaHistory> {
     let {
       swabAreaId,
       facilityId,
@@ -32,7 +30,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       swabTestCode,
       swabTestId,
       id,
-    } = transformFilterSwabAreaHistoryDto;
+    } = dto;
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
     const whereSwabArea: FindOptionsWhere<SwabArea> = {};
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
