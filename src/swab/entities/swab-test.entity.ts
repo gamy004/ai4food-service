@@ -13,6 +13,12 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
   @Column({ type: 'timestamp', nullable: true })
   swabTestRecordedAt: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  bacteriaRecordedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  bacteriaSpecieRecordedAt: Date;
+
   @Column({ type: 'text', nullable: true })
   swabTestNote?: string;
 
@@ -23,6 +29,22 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
     onDelete: 'SET NULL',
   })
   recordedUser: User;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  bacteriaRecordedUserId?: string;
+
+  @ManyToOne(() => User, (entity) => entity.recordedSwabTests, {
+    onDelete: 'SET NULL',
+  })
+  bacteriaRecordedUser: User;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  bacteriaSpecieRecordedUserId?: string;
+
+  @ManyToOne(() => User, (entity) => entity.recordedSwabTests, {
+    onDelete: 'SET NULL',
+  })
+  bacteriaSpecieRecordedUser: User;
 
   @ManyToMany(() => Bacteria, { cascade: ['insert', 'update'] })
   @JoinTable()
