@@ -4,6 +4,7 @@ import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { FilterSwabAreaHistoryDto } from '../dto/filter-swab-area-history.dto';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabArea } from '../entities/swab-area.entity';
@@ -29,12 +30,14 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       swabAreaDate: swabAreaDateString,
       swabTestCode,
       swabTestId,
+      bacteriaName,
       id,
     } = dto;
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
     const whereSwabArea: FindOptionsWhere<SwabArea> = {};
     const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> = {};
     const whereSwabTest: FindOptionsWhere<SwabTest> = {};
+    const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
     if (id) {
       whereSwabAreaHistory.id = id;
@@ -58,6 +61,11 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
 
     if (swabTestCode && swabTestCode.length) {
       whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
+    }
+
+    if (bacteriaName) {
+      whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
+      whereSwabTest.bacteria = whereBacteria;
     }
 
     if (facilityId) {

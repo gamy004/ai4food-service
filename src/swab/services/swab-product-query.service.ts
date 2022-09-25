@@ -15,6 +15,7 @@ import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
 import { SwabTest } from '../entities/swab-test.entity';
 import { Facility } from '~/facility/entities/facility.entity';
+import { Bacteria } from '~/lab/entities/bacteria.entity';
 
 @Injectable()
 export class SwabProductQueryService {
@@ -26,7 +27,7 @@ export class SwabProductQueryService {
     protected readonly productService: ProductService,
     @InjectRepository(SwabProductHistory)
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
-  ) {}
+  ) { }
 
   private transformQuerySwabProductDto(
     transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
@@ -38,10 +39,14 @@ export class SwabProductQueryService {
       facilityId,
       swabPeriodId,
       productId,
+      swabTestCode,
+      bacteriaName
     } = transformFilterSwabProductHistoryDto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
+    const whereSwabTest: FindOptionsWhere<SwabTest> = {};
+    const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
     if (shift) {
       where.shift = shift;
@@ -67,8 +72,21 @@ export class SwabProductQueryService {
       where.swabPeriodId = swabPeriodId;
     }
 
+    if (swabTestCode && swabTestCode.length) {
+      whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
+    }
+
+    if (bacteriaName) {
+      whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
+      whereSwabTest.bacteria = whereBacteria;
+    }
+
     if (Object.keys(whereFacilityItem).length) {
       where.facilityItem = whereFacilityItem;
+    }
+
+    if (Object.keys(whereSwabTest).length) {
+      where.swabTest = whereSwabTest;
     }
 
     return where;

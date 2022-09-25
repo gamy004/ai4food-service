@@ -57,4 +57,8 @@ export class FilterSwabProductHistoryDto {
   @IsUUID()
   @Validate(ProductExistsRule)
   productId?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  bacteriaName?: string;
 }

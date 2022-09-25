@@ -92,7 +92,7 @@ export class SwabLabQueryService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(FacilityItem)
     protected readonly facilityItemRepository: Repository<FacilityItem>,
-  ) {}
+  ) { }
 
   async queryLabSwabPlan(
     queryLabSwabPlanDto: QueryLabSwabPlanDto,

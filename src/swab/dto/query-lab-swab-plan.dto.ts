@@ -9,4 +9,5 @@ export class QueryLabSwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
   'facilityId',
   'facilityItemId',
   'swabAreaId',
-]) {}
+  'bacteriaName'
+]) { }

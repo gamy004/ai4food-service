@@ -57,4 +57,8 @@ export class FilterSwabAreaHistoryDto {
   @IsUUID()
   @Validate(SwabAreaExistsRule)
   swabAreaId?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  bacteriaName?: string;
 }
