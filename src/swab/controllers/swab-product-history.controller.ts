@@ -32,8 +32,7 @@ export class SwabProductHistoryController {
     private readonly swabProductQueryService: SwabProductQueryService,
     private readonly swabProductManagerService: SwabProductManagerService,
     private readonly swabLabQueryService: SwabLabQueryService,
-
-  ) { }
+  ) {}
 
   @Authenticated()
   @Get()
@@ -111,22 +110,22 @@ export class SwabProductHistoryController {
     };
   }
 
-  @Authenticated()
-  @Delete(':id')
-  async commandDeleteSwabProductHistoryById(
-    @Param() param: ParamCommandDeleteSwabProductByIdDto,
-  ) {
-    try {
-      await this.swabProductManagerService.commandDeleteSwabProductHistoryById(
-        param.id,
-      );
-    } catch (error) {
-      throw new ForbiddenException(error.message);
-    }
+  // @Authenticated()
+  // @Delete(':id')
+  // async commandDeleteSwabProductHistoryById(
+  //   @Param() param: ParamCommandDeleteSwabProductByIdDto,
+  // ) {
+  //   try {
+  //     await this.swabProductManagerService.commandDeleteSwabProductHistoryById(
+  //       param.id,
+  //     );
+  //   } catch (error) {
+  //     throw new ForbiddenException(error.message);
+  //   }
 
-    return {
-      ok: true,
-      message: 'delete swab product success',
-    };
-  }
+  //   return {
+  //     ok: true,
+  //     message: 'delete swab product success',
+  //   };
+  // }
 }
