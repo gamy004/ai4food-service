@@ -24,7 +24,6 @@ export class SwabAreaService extends CrudService<SwabArea> {
   async createSwabArea(createSwabAreaDto: CreateSwabAreaDto): Promise<SwabArea> {
     const { swabAreaName = "", subSwabAreas = [], facility } = createSwabAreaDto;
 
-
     let mainSwabAreaData;
     let swabAreaData;
 
@@ -59,7 +58,10 @@ export class SwabAreaService extends CrudService<SwabArea> {
           mainSwabArea: Not(IsNull()),
         },
         relations: {
-          subSwabAreas: true,
+          subSwabAreas: {
+            mainSwabArea: true,
+            facility: true
+          },
           facility: true
         },
         select: {
@@ -68,6 +70,15 @@ export class SwabAreaService extends CrudService<SwabArea> {
           subSwabAreas: {
             id: true,
             swabAreaName: true,
+            mainSwabArea: {
+              id: true,
+              swabAreaName: true,
+            },
+            facility: {
+              id: true,
+              facilityName: true,
+              facilityType: true,
+            }
           },
           facility: {
             id: true,
