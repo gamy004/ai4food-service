@@ -10,4 +10,13 @@ export class SwabAreaController {
   findAllMainArea() {
     return this.swabAreaService.findAllMainArea();
   }
+
+  @Post()
+  createSwabArea(
+    @Body() createSwabAreaDto: CreateSwabAreaDto,
+  ) {
+    return this.swabAreaService.createSwabArea(
+      createSwabAreaDto,
+    );
+  }
 }
