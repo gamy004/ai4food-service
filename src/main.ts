@@ -9,6 +9,7 @@ import {
 import { useContainer, ValidationError } from 'class-validator';
 import { EntityNotFoundExceptionFilter } from './common/exceptions/entity-notfound-exception.filter';
 import * as basicAuth from 'express-basic-auth';
+import { ContextInterceptor } from './common/interceptors/context.interceptor';
 // import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -89,6 +90,8 @@ async function bootstrap() {
   SwaggerModule.setup('/docs', app, document);
 
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+
+  app.useGlobalInterceptors(new ContextInterceptor());
 
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();

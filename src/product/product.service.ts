@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { CheckProductDto } from './dto/check-product.dto';
 import { Product } from './entities/product.entity';
 
@@ -11,7 +9,7 @@ import { Product } from './entities/product.entity';
 export class ProductService extends CrudService<Product> {
   constructor(
     @InjectRepository(Product)
-    repository: Repository<Product>
+    repository: Repository<Product>,
   ) {
     super(repository);
   }
@@ -22,7 +20,9 @@ export class ProductService extends CrudService<Product> {
     const where: FindOptionsWhere<Product> = {};
 
     if (checkProductDto.productCodes) {
-      checkProductDto.productCodes.forEach(productCode => result[productCode] = null);
+      checkProductDto.productCodes.forEach(
+        (productCode) => (result[productCode] = null),
+      );
 
       where.productCode = In(checkProductDto.productCodes);
     }
@@ -31,11 +31,11 @@ export class ProductService extends CrudService<Product> {
       where,
       select: {
         id: true,
-        productCode: true
-      }
+        productCode: true,
+      },
     });
 
-    products.forEach(product => {
+    products.forEach((product) => {
       result[product.productCode] = product.id;
     });
 
