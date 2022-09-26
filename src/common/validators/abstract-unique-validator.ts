@@ -1,36 +1,47 @@
-import { ValidationArguments, ValidatorConstraintInterface } from 'class-validator';
-import { Connection, EntitySchema, FindOptionsWhere, ObjectType } from 'typeorm';
-import { CommonRepositoryInterface } from '../interface/common.repository.interface';
+import {
+  ValidationArguments,
+  ValidatorConstraintInterface,
+} from 'class-validator';
+import {
+  DataSource,
+  EntitySchema,
+  FindOptionsWhere,
+  ObjectType,
+} from 'typeorm';
 
 interface UniqueValidationArguments<E> extends ValidationArguments {
-    constraints: [
-        ObjectType<E> | EntitySchema<E> | string,
-        ((validationArguments: ValidationArguments) => FindOptionsWhere<any>) | keyof E,
-    ];
+  constraints: [
+    ObjectType<E> | EntitySchema<E> | string,
+    (
+      | ((validationArguments: ValidationArguments) => FindOptionsWhere<any>)
+      | keyof E
+    ),
+  ];
 }
 
-export abstract class UniqueValidator<E> implements ValidatorConstraintInterface {
-    protected constructor(
-        protected readonly repository: CommonRepositoryInterface<E>
-    ) { }
+export abstract class UniqueValidator implements ValidatorConstraintInterface {
+  protected constructor(protected readonly dataSource: DataSource) {}
 
-    public async validate<E>(value: string, args: UniqueValidationArguments<E>) {
-        const [_, findCondition = args.property] = args.constraints;
-        return (
-            (await this.repository.count({
-                where:
-                    typeof findCondition === 'function'
-                        ? findCondition(args)
-                        : {
-                            [findCondition || args.property]: value,
-                        },
-            })) <= 0
-        );
-    }
+  public async validate<E>(value: string, args: UniqueValidationArguments<E>) {
+    const [EntityClass, findCondition = args.property] = args.constraints;
 
-    public defaultMessage(args: ValidationArguments) {
-        const [EntityClass] = args.constraints;
-        const entity = EntityClass.name || 'Entity';
-        return `${entity} with the same '${args.property}' already exist`;
-    }
+    const repository = this.dataSource.getRepository(EntityClass);
+
+    return (
+      (await repository.count({
+        where:
+          typeof findCondition === 'function'
+            ? findCondition(args)
+            : {
+                [findCondition || args.property]: value,
+              },
+      })) <= 0
+    );
+  }
+
+  public defaultMessage(args: ValidationArguments) {
+    const [EntityClass] = args.constraints;
+    const entity = EntityClass.name || 'Entity';
+    return `${entity} with the same '${args.property}' already exist`;
+  }
 }

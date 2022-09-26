@@ -9,34 +9,28 @@ import { DateTransformer } from './transformers/date-transformer';
 import { RunningNumberService } from './services/running-number.service';
 import { RunningNumberController } from './controllers/running-number.controller';
 import { RunningNumber } from './entities/running-number.entity';
-
+import { Unique } from './validators/unique-validator';
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      File,
-      RunningNumber
-    ])
-  ],
+  imports: [TypeOrmModule.forFeature([File, RunningNumber])],
 
-  controllers: [
-    FileController,
-    RunningNumberController
-  ],
+  controllers: [FileController, RunningNumberController],
 
   providers: [
     FileService,
     FileExistsRule,
     RunningNumberService,
     TransactionDatasource,
-    DateTransformer
+    Unique,
+    DateTransformer,
   ],
 
   exports: [
     FileService,
     FileExistsRule,
+    Unique,
     RunningNumberService,
     TransactionDatasource,
-    DateTransformer
-  ]
+    DateTransformer,
+  ],
 })
-export class CommonModule { }
+export class CommonModule {}

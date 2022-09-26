@@ -1,16 +1,53 @@
-import { Type } from "class-transformer";
-import { IsNotEmpty, ValidateNested } from "class-validator"
-import { ConnectFacilityDto } from "~/facility/dto/connect-facility.dto";
-import { SwabArea } from "../entities/swab-area.entity";
+import { PickType } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsOptional,
+  Validate,
+  //   IsUUID,
+  //   Validate,
+  ValidateNested,
+} from 'class-validator';
+import { UniqueFieldRecordRule } from '~/common/validators/unique-field-record-validator';
+import { Unique } from '~/common/validators/unique-validator';
+import { ConnectFacilityDto } from '~/facility/dto/connect-facility.dto';
+import { SwabArea } from '../entities/swab-area.entity';
+// import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 
 export class CreateSwabAreaDto {
-    @IsNotEmpty()
-    swabAreaName!: string;
+  //   @IsOptional()
+  //   @IsUUID()
+  //   @Validate(SwabAreaExistsRule)
+  //   id?: string;
 
-    @IsNotEmpty()
-    subSwabAreas!: SwabArea[];
+  @IsNotEmpty()
+  @Validate(Unique, [
+    SwabArea,
+    ({
+      object: { swabAreaName, facility },
+    }: {
+      object: Partial<SwabArea>;
+    }) => ({
+      swabAreaName,
+      facilityId: facility.id,
+      mainSwabAreaId: null,
+    }),
+  ])
+  swabAreaName!: string;
 
-    @ValidateNested()
-    @Type(() => ConnectFacilityDto)
-    facility?: ConnectFacilityDto;
+  @IsOptional()
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => InsertSubSwabAreaDto)
+  @Validate(UniqueFieldRecordRule, ['swabAreaName'])
+  subSwabAreas?: InsertSubSwabAreaDto[];
+
+  @ValidateNested()
+  @Type(() => ConnectFacilityDto)
+  facility!: ConnectFacilityDto;
+}
+
+export class InsertSubSwabAreaDto {
+  @IsNotEmpty()
+  swabAreaName!: string;
 }
