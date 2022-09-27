@@ -32,6 +32,7 @@ export class SwabAreaService extends CrudService<SwabArea> {
       select: {
         id: true,
         swabAreaName: true,
+        facilityId: true,
         subSwabAreas: {
           id: true,
           swabAreaName: true,
