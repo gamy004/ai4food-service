@@ -18,17 +18,18 @@ export class SwabAreaService extends CrudService<SwabArea> {
   }
 
   findAllMainArea(dto: FindAllSwabAreaQuery): Promise<SwabArea[]> {
-    const { include } = dto;
-    const relations: FindOptionsRelations<SwabArea> = include;
-    console.log(include?.subSwabAreas)
+    const { subSwabAreas = false, facility = false } = dto;
+
+    const relations: FindOptionsRelations<SwabArea> = {
+      subSwabAreas,
+      facility,
+    };
+
     return this.repository.find({
       where: {
         mainSwabAreaId: IsNull(),
       },
-      relations:{
-        ...relations,
-        facility: true
-      },
+      relations,
       select: {
         id: true,
         swabAreaName: true,
@@ -46,53 +47,52 @@ export class SwabAreaService extends CrudService<SwabArea> {
     });
   }
 
-
   async createSwabArea(
-  createSwabAreaDto: CreateSwabAreaDto,
-): Promise < SwabArea > {
-  const {
-    swabAreaName = '',
-    subSwabAreas: insertedSubSwabAreas = [],
-    facility,
-  } = createSwabAreaDto;
-
-  const mainSwabArea = this.repository.create({ swabAreaName, facility });
-
-  const subSwabAreas = insertedSubSwabAreas.map((insertedSubSwabArea) =>
-    this.repository.create({
-      swabAreaName: insertedSubSwabArea.swabAreaName,
+    createSwabAreaDto: CreateSwabAreaDto,
+  ): Promise<SwabArea> {
+    const {
+      swabAreaName = '',
+      subSwabAreas: insertedSubSwabAreas = [],
       facility,
-    }),
-  );
+    } = createSwabAreaDto;
 
-  if(subSwabAreas.length) {
-  mainSwabArea.subSwabAreas = subSwabAreas;
-}
+    const mainSwabArea = this.repository.create({ swabAreaName, facility });
 
-const insertedMainSwabArea = await this.repository.save(mainSwabArea);
+    const subSwabAreas = insertedSubSwabAreas.map((insertedSubSwabArea) =>
+      this.repository.create({
+        swabAreaName: insertedSubSwabArea.swabAreaName,
+        facility,
+      }),
+    );
 
-return await this.repository.findOne({
-  where: {
-    id: insertedMainSwabArea.id,
-  },
-  relations: {
-    subSwabAreas: true,
-    facility: true,
-  },
-  select: {
-    id: true,
-    swabAreaName: true,
-    subSwabAreas: {
-      id: true,
-      swabAreaName: true,
-      mainSwabAreaId: true,
-    },
-    facility: {
-      id: true,
-      facilityName: true,
-      facilityType: true,
-    },
-  },
-});
+    if (subSwabAreas.length) {
+      mainSwabArea.subSwabAreas = subSwabAreas;
+    }
+
+    const insertedMainSwabArea = await this.repository.save(mainSwabArea);
+
+    return await this.repository.findOne({
+      where: {
+        id: insertedMainSwabArea.id,
+      },
+      relations: {
+        subSwabAreas: true,
+        facility: true,
+      },
+      select: {
+        id: true,
+        swabAreaName: true,
+        subSwabAreas: {
+          id: true,
+          swabAreaName: true,
+          mainSwabAreaId: true,
+        },
+        facility: {
+          id: true,
+          facilityName: true,
+          facilityType: true,
+        },
+      },
+    });
   }
 }
