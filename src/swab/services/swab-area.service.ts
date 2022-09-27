@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SwabArea } from '../entities/swab-area.entity';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { IsNull } from 'typeorm';
+import { Not,IsNull } from 'typeorm';
+import { FindAllSwabAreaQueryDto } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
 
 @Injectable()
@@ -15,9 +16,37 @@ export class SwabAreaService extends CrudService<SwabArea> {
     super(repository);
   }
 
-  findAllMainArea(): Promise<SwabArea[]> {
-    return this.repository.findBy({ mainSwabAreaId: IsNull() });
+  findAllMainArea(findAllSwabAreaQueryDto: FindAllSwabAreaQueryDto,): Promise<SwabArea[]> {
+    if (findAllSwabAreaQueryDto.subSwabAreas === true){
+      return this.repository.find({
+        where: {
+          mainSwabAreaId: IsNull(),
+        },
+        relations: {
+          subSwabAreas: true,
+          facility: true,
+        },
+        select: {
+          id: true,
+          swabAreaName: true,
+          subSwabAreas: {
+            id: true,
+            swabAreaName: true,
+            mainSwabAreaId: true,
+          },
+          facility: {
+            id: true,
+            facilityName: true,
+            facilityType: true,
+          },
+        },
+      });
+    }
+    else{
+      return this.repository.findBy({ mainSwabAreaId: IsNull() });
+    }
   }
+
 
   async createSwabArea(
     createSwabAreaDto: CreateSwabAreaDto,
