@@ -1,4 +1,3 @@
-import { relations } from './../../lab/dto/find-all-bacteria-query.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SwabArea } from '../entities/swab-area.entity';
