@@ -9,17 +9,18 @@ import {
   Query,
 } from '@nestjs/common';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
-import { FindAllSwabAreaQueryDto } from '../dto/find-all-swab-area-query.dto';
+import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
+import { query } from 'express';
 
 @Controller('swab/area')
 export class SwabAreaController {
   constructor(private readonly swabAreaService: SwabAreaService) {}
 
   @Get('main')
-  findAllMainArea(@Query() findAllSwabAreaQueryDto: FindAllSwabAreaQueryDto) {
-    return this.swabAreaService.findAllMainArea(findAllSwabAreaQueryDto);
+  findAllMainArea(@Query() query: FindAllSwabAreaQuery) {
+    return this.swabAreaService.findAllMainArea(query);
   }  
 
   // @Authenticated()
