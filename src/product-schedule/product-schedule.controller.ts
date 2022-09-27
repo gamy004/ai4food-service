@@ -7,24 +7,28 @@ import { ImportTransaction } from '~/import-transaction/entities/import-transact
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
+import { ApiTags } from '@nestjs/swagger';
 // Infra Layer
 @Controller('product-schedule')
+@ApiTags('Product')
 export class ProductScheduleController {
   constructor(
     private readonly importTransactionService: ImportTransactionService,
     @Inject('DataCollectorImporterInterface<ProductSchedule>')
-    private readonly productScheduleImporter: DataCollectorImporterInterface<ProductSchedule>
-  ) { }
+    private readonly productScheduleImporter: DataCollectorImporterInterface<ProductSchedule>,
+  ) {}
 
   @Post('import')
-  async importProductSchedule(@Body() importProductScheduleDto: ImportProductScheduleDto): Promise<void> {
+  async importProductSchedule(
+    @Body() importProductScheduleDto: ImportProductScheduleDto,
+  ): Promise<void> {
     const importTransaction = await this.importTransactionService.findOneBy(
-      importProductScheduleDto.importTransaction
+      importProductScheduleDto.importTransaction,
     );
 
     return this.productScheduleImporter.import(
       importTransaction,
-      ProductSchedule.create<ProductSchedule>(importProductScheduleDto.records)
+      ProductSchedule.create<ProductSchedule>(importProductScheduleDto.records),
     );
   }
 }

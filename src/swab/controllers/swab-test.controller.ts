@@ -17,11 +17,11 @@ import { CommandUpdateSwabTestBacteriaSpecieDto } from '../dto/command-update-sw
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('swab-test')
+@ApiTags('Swab')
 export class SwabTestController {
   constructor(private readonly swabLabManagerService: SwabLabManagerService) {}
 
   @Authenticated()
-  @ApiTags('Swab')
   @Put(':id')
   async commandUpdateSwabTest(
     @AuthUser() user: User,
@@ -45,7 +45,6 @@ export class SwabTestController {
   }
 
   @Authenticated()
-  @ApiTags('Swab')
   @Put(':id/bacteria-specie')
   async commandUpdateSwabTestBacteriaSpecie(
     @AuthUser() user: User,

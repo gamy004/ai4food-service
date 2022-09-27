@@ -51,5 +51,5 @@ export class BodyUpdateProductDto extends ContextAwareDto {
       id: Not(context.params.id),
     }),
   ])
-  productName: string;
+  productName!: string;
 }

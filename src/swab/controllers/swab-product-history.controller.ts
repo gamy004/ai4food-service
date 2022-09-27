@@ -9,6 +9,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
@@ -27,6 +28,7 @@ import { SwabProductManagerService } from '../services/swab-product-manager.serv
 import { SwabProductQueryService } from '../services/swab-product-query.service';
 
 @Controller('swab/product-history')
+@ApiTags('Swab')
 export class SwabProductHistoryController {
   constructor(
     private readonly swabProductQueryService: SwabProductQueryService,

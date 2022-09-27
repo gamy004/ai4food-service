@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { FacilityService } from './facility.service';
 import { FacilityItemService } from './facility-item.service';
 import { Not, IsNull, FindOptionsWhere } from 'typeorm';
 import { QueryFindAllFacilityItemDto } from './dto/query-find-all-facility-item.dto';
 import { FacilityItem } from './entities/facility-item.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('facility')
+@ApiTags('Facility')
 export class FacilityController {
   constructor(
     private readonly facilityService: FacilityService,
     private readonly facilityItemService: FacilityItemService,
-  ) { }
+  ) {}
 
   // @Post()
   // create(@Body() createFacilityDto: CreateFacilityDto) {
@@ -27,9 +38,9 @@ export class FacilityController {
     return this.facilityService.find({
       where: {
         swabAreas: {
-          id: Not(IsNull())
-        }
-      }
+          id: Not(IsNull()),
+        },
+      },
     });
   }
 
