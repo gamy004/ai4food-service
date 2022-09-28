@@ -6,4 +6,7 @@ export class CreateProductDto {
 
     @IsNotEmpty()
     productName: string;
+
+    @IsNotEmpty()
+    alternateProductCode: string;
 }
