@@ -1,22 +1,12 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsUUID,
   Validate,
-  ValidateNested,
 } from 'class-validator';
 import { BacteriaExistsRule } from '../validators/bacteria-exists-validator';
-
-export const relations = ['bacteriaSpecies'];
-
-export class BacteriaRelation {
-  @IsOptional()
-  @IsBoolean()
-  @Type(() => Boolean)
-  bacteriaSpecies?: boolean;
-}
 
 export class FindAllBacteriaQuery {
   @Validate(BacteriaExistsRule)
@@ -29,7 +19,7 @@ export class FindAllBacteriaQuery {
   bacteriaName?: string;
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => BacteriaRelation)
-  include?: BacteriaRelation;
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  bacteriaSpecies?: boolean;
 }
