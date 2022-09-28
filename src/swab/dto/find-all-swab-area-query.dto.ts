@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type,Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsOptional,
@@ -8,16 +8,14 @@ import {
 
 export const relations = ['subSwabAreas'];
 
-export class SwabAreaQueryRelation {
-  @IsBoolean()
-  @Type(() => Boolean)
-  subSwabAreas?: boolean;
-}
-
 export class FindAllSwabAreaQuery {
   @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => SwabAreaQueryRelation)
-  include?: SwabAreaQueryRelation;
+  @IsBoolean()
+  @Transform(({value}) => value === 'true')
+  subSwabAreas?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({value}) => value === 'true')
+  facility?: boolean;
 }

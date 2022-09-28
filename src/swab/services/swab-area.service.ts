@@ -18,16 +18,13 @@ export class SwabAreaService extends CrudService<SwabArea> {
   }
 
   findAllMainArea(dto: FindAllSwabAreaQuery): Promise<SwabArea[]> {
-    const { include } = dto;
-    const relations: FindOptionsRelations<SwabArea> = include;
-    console.log(include?.subSwabAreas)
     return this.repository.find({
       where: {
         mainSwabAreaId: IsNull(),
       },
       relations:{
-        ...relations,
-        facility: true
+        subSwabAreas: dto.subSwabAreas??dto.subSwabAreas,
+        facility: dto.facility??dto.facility
       },
       select: {
         id: true,
