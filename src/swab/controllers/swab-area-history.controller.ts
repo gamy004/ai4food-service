@@ -8,6 +8,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
@@ -26,6 +27,7 @@ import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
 import { SwabPlanQueryService } from '../services/swab-plan-query.service';
 
 @Controller('swab/area-history')
+@ApiTags('Swab')
 export class SwabAreaHistoryController {
   constructor(
     private readonly swabPlanQueryService: SwabPlanQueryService,

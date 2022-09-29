@@ -5,18 +5,20 @@ import { ParamImportTransactionDto } from './dto/param-import-transaction.dto';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { User } from '~/auth/entities/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('import-transaction')
+@ApiTags('Importing')
 export class ImportTransactionController {
   constructor(
-    private readonly importTransactionService: ImportTransactionService
-  ) { }
+    private readonly importTransactionService: ImportTransactionService,
+  ) {}
 
   @Authenticated()
   @Post()
   create(
     @AuthUser() importedUser: User,
-    @Body() createImportTransactionDto: CreateImportTransactionDto
+    @Body() createImportTransactionDto: CreateImportTransactionDto,
   ) {
     createImportTransactionDto.importedUser = importedUser;
 

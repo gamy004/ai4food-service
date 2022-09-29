@@ -83,6 +83,13 @@ async function bootstrap() {
     .addBearerAuth()
     .addTag('Swab')
     .addTag('Lab')
+    .addTag('Product')
+    .addTag('Common')
+    .addTag('File')
+    .addTag('Importing')
+    .addTag('Facility')
+    .addTag('Auth')
+    .addTag('AWS')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
