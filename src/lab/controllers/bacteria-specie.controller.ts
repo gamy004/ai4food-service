@@ -4,11 +4,11 @@ import { FindAllBacteriaSpecieQuery } from '../dto/find-all-bacteria-specie-quer
 import { BacteriaSpecieService } from '../services/bacteria-specie.service';
 
 @Controller('bacteria-specie')
+@ApiTags('Lab')
 export class BacteriaSpecieController {
   constructor(private readonly BacteriaSpecieService: BacteriaSpecieService) {}
 
   @Get()
-  @ApiTags('Lab')
   findAll(@Query() findAllBacteriaSpecieQuery: FindAllBacteriaSpecieQuery) {
     return this.BacteriaSpecieService.find({
       where: findAllBacteriaSpecieQuery,

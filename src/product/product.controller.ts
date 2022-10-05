@@ -9,8 +9,10 @@ import {
   BodyUpdateProductDto,
   ParamUpdateProductDto,
 } from './dto/update-product.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('product')
+@ApiTags('Product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 

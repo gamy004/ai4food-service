@@ -8,12 +8,14 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
 import { BodyUpdateSwabAreaDto, ParamUpdateSwabAreaDto } from '../dto/update-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
 
 @Controller('swab/area')
+@ApiTags('Swab')
 export class SwabAreaController {
   constructor(private readonly swabAreaService: SwabAreaService) { }
 
