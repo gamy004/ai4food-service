@@ -6,14 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
+import { BodyUpdateSwabAreaDto, ParamUpdateSwabAreaDto } from '../dto/update-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
 
 @Controller('swab/area')
 export class SwabAreaController {
-  constructor(private readonly swabAreaService: SwabAreaService) {}
+  constructor(private readonly swabAreaService: SwabAreaService) { }
 
   @Get('main')
   findAllMainArea() {
@@ -24,5 +26,14 @@ export class SwabAreaController {
   @Post()
   createSwabArea(@Body() createSwabAreaDto: CreateSwabAreaDto) {
     return this.swabAreaService.createSwabArea(createSwabAreaDto);
+  }
+
+  // @Authenticated()
+  @Put(':id')
+  async update(
+    @Param() param: ParamUpdateSwabAreaDto,
+    @Body() body: BodyUpdateSwabAreaDto,
+  ) {
+    return this.swabAreaService.updateSwabArea(param, body);
   }
 }
