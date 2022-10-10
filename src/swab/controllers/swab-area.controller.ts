@@ -38,4 +38,11 @@ export class SwabAreaController {
   ) {
     return this.swabAreaService.updateSwabArea(param, body);
   }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    const deletedSwabArea = await this.swabAreaService.findOneBy({ id });
+
+    return this.swabAreaService.removeOne(deletedSwabArea);
+  }
 }
