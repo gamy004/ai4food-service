@@ -10,6 +10,7 @@ export class CreateProductDto {
     Product,
     ({ object: { productCode } }: { object: Partial<Product> }) => ({
       productCode,
+      deletedAt: null,
     }),
   ])
   productCode!: string;
@@ -19,6 +20,7 @@ export class CreateProductDto {
     Product,
     ({ object: { alternateProductCode } }: { object: Partial<Product> }) => ({
       alternateProductCode,
+      deletedAt: null,
     }),
   ])
   alternateProductCode!: string;
@@ -28,6 +30,7 @@ export class CreateProductDto {
     Product,
     ({ object: { productName } }: { object: Partial<Product> }) => ({
       productName,
+      deletedAt: null,
     }),
   ])
   productName!: string;

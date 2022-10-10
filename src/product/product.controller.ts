@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Put, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Put,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 // import { UpdateProductDto } from './dto/update-product.dto';
@@ -10,6 +18,11 @@ import {
   ParamUpdateProductDto,
 } from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ParamDeleteProductDto } from './dto/delete-product.dto';
+import {
+  ParamGetProductDeletePermissionDto,
+  ResponseGetProductDeletePermissionDto,
+} from './dto/get-product-delete-permission.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -18,7 +31,18 @@ export class ProductController {
 
   @Get()
   findAll() {
-    return this.productService.find();
+    return this.productService.find({
+      order: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
+  @Get(':id/delete-permission')
+  getDeletePermission(
+    @Param() param: ParamGetProductDeletePermissionDto,
+  ): Promise<ResponseGetProductDeletePermissionDto> {
+    return this.productService.getDeletePermission(param);
   }
 
   @Post()
@@ -47,5 +71,21 @@ export class ProductController {
     product.productName = productName;
 
     return this.productService.save(product);
+  }
+
+  @Delete(':id')
+  async delete(@Param() param: ParamDeleteProductDto) {
+    const { id } = param;
+    // Todo: should validate with getDeletePermission ?
+    const product = await this.productService.findOneOrFail({
+      where: { id },
+      relations: {
+        productSchedules: true,
+        swabAreaHistories: true,
+        swabProductHistories: true,
+      },
+    });
+
+    return this.productService.removeOne(product);
   }
 }
