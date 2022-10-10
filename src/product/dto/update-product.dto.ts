@@ -21,6 +21,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       productCode,
       id: Not(context.params.id),
+      deletedAt: null,
     }),
   ])
   productCode!: string;
@@ -35,6 +36,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       alternateProductCode,
       id: Not(context.params.id),
+      deletedAt: null,
     }),
   ])
   alternateProductCode!: string;
@@ -49,6 +51,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       productName,
       id: Not(context.params.id),
+      deletedAt: null,
     }),
   ])
   productName!: string;
