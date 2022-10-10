@@ -6,7 +6,10 @@ import { CrudService } from '~/common/services/abstract.crud.service';
 import { FindOptionsRelations, IsNull } from 'typeorm';
 import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
-import { BodyUpdateSwabAreaDto, ParamUpdateSwabAreaDto } from '../dto/update-swab-area.dto';
+import {
+  BodyUpdateSwabAreaDto,
+  ParamUpdateSwabAreaDto,
+} from '../dto/update-swab-area.dto';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {
@@ -44,6 +47,9 @@ export class SwabAreaService extends CrudService<SwabArea> {
           facilityName: true,
           facilityType: true,
         },
+      },
+      order: {
+        createdAt: 'asc',
       },
     });
   }
@@ -101,7 +107,6 @@ export class SwabAreaService extends CrudService<SwabArea> {
     param: ParamUpdateSwabAreaDto,
     body: BodyUpdateSwabAreaDto,
   ): Promise<SwabArea> {
-
     const {
       swabAreaName = '',
       subSwabAreas: insertedSubSwabAreas = [],
@@ -125,14 +130,14 @@ export class SwabAreaService extends CrudService<SwabArea> {
           id: insertedSubSwabArea.id,
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
-        })
+        });
       } else {
         subSwabArea = this.repository.create({
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
-        })
+        });
       }
-      return subSwabArea
+      return subSwabArea;
     });
 
     if (subSwabAreas.length) {
