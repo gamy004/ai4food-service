@@ -31,6 +31,7 @@ export class CreateSwabAreaDto {
       swabAreaName,
       facilityId: facility.id,
       mainSwabAreaId: null,
+      deletedAt: null,
     }),
   ])
   swabAreaName!: string;
