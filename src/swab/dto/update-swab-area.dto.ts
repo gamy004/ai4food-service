@@ -4,7 +4,7 @@ import { ContextAwareDto } from '~/common/dto/context-aware.dto';
 import { ConnectSwabAreaDto } from './connect-swab-area.dto';
 import { Unique } from '~/common/validators/unique-validator';
 import { SwabArea } from '../entities/swab-area.entity';
-import { Not } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 import { Type } from 'class-transformer';
 import { UniqueFieldRecordRule } from '~/common/validators/unique-field-record-validator';
 import { ConnectFacilityDto } from '~/facility/dto/connect-facility.dto';
@@ -25,7 +25,7 @@ export class BodyUpdateSwabAreaDto extends ContextAwareDto {
         }) => ({
             swabAreaName,
             facility,
-            mainSwabAreaId: null,
+            mainSwabAreaId: IsNull(),
             id: Not(context.params.id),
         }),
     ])
