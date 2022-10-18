@@ -23,10 +23,11 @@ export class BodyUpdateSwabAreaDto extends ContextAwareDto {
         }: {
             object: Partial<SwabArea> & ContextAwareDto;
         }) => ({
+            id: Not(context.params.id),
             swabAreaName,
             facility,
             mainSwabAreaId: IsNull(),
-            id: Not(context.params.id),
+            deletedAt: IsNull()
         }),
     ])
     swabAreaName!: string;
