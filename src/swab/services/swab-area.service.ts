@@ -10,6 +10,7 @@ import {
   BodyUpdateSwabAreaDto,
   ParamUpdateSwabAreaDto,
 } from '../dto/update-swab-area.dto';
+import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {
@@ -169,5 +170,44 @@ export class SwabAreaService extends CrudService<SwabArea> {
         },
       },
     });
+  }
+
+  async getDeletePermission(
+    param: ParamGetSwabAreaDeletePermissionDto,
+  ): Promise<ResponseGetSwabAreaDeletePermissionDto> {
+    let canDelete = true;
+    let message = '';
+
+    const swabAreaWithRelations = await this.repository.findOneOrFail({
+      where: { id: param.id },
+      relations: {
+        swabAreaHistories: true
+      },
+      select: {
+        id: true,
+        swabAreaHistories: {
+          id: true,
+        }
+      },
+    });
+
+    const {
+      swabAreaHistories = [],
+    } = swabAreaWithRelations;
+
+    const countSwabAreaHistories = swabAreaHistories.length;
+
+    const hasRelations = countSwabAreaHistories > 0;
+
+    if (hasRelations) {
+      canDelete = false;
+      message = 'Cannot delete, entity has related data.';
+    }
+
+    return {
+      canDelete,
+      message,
+      countSwabAreaHistories
+    };
   }
 }

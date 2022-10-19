@@ -17,6 +17,7 @@ import {
   ParamUpdateSwabAreaDto,
 } from '../dto/update-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
+import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
 
 @Controller('swab/area')
 @ApiTags('Swab')
@@ -27,6 +28,14 @@ export class SwabAreaController {
   @Get('main')
   findAllMainArea(@Query() query: FindAllSwabAreaQuery) {
     return this.swabAreaService.findAllMainArea(query);
+  }
+
+  @Authenticated()
+  @Get(':id/delete-permission')
+  getDeletePermission(
+    @Param() param: ParamGetSwabAreaDeletePermissionDto,
+  ): Promise<ResponseGetSwabAreaDeletePermissionDto> {
+    return this.swabAreaService.getDeletePermission(param);
   }
 
   @Authenticated()
