@@ -17,7 +17,32 @@ export class SwabAreaService extends CrudService<SwabArea> {
   }
 
   findAllMainArea(): Promise<SwabArea[]> {
-    return this.repository.findBy({ mainSwabAreaId: IsNull() });
+    return this.repository.find({
+      where: {
+        mainSwabAreaId: IsNull(),
+      },
+      relations: {
+        subSwabAreas: true,
+        facility: true,
+      },
+      select: {
+        id: true,
+        swabAreaName: true,
+        subSwabAreas: {
+          id: true,
+          swabAreaName: true,
+          mainSwabAreaId: true,
+        },
+        facility: {
+          id: true,
+          facilityName: true,
+          facilityType: true,
+        },
+      },
+      order: {
+        createdAt: 'asc',
+      },
+    });
   }
 
   async createSwabArea(
