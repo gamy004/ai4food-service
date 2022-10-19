@@ -8,6 +8,7 @@ import {
   //   Validate,
   ValidateNested,
 } from 'class-validator';
+import { IsNull } from 'typeorm';
 import { UniqueFieldRecordRule } from '~/common/validators/unique-field-record-validator';
 import { Unique } from '~/common/validators/unique-validator';
 import { ConnectFacilityDto } from '~/facility/dto/connect-facility.dto';
@@ -30,7 +31,8 @@ export class CreateSwabAreaDto {
     }) => ({
       swabAreaName,
       facilityId: facility.id,
-      mainSwabAreaId: null,
+      mainSwabAreaId: IsNull(),
+      deletedAt: IsNull(),
     }),
   ])
   swabAreaName!: string;

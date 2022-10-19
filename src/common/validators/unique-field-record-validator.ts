@@ -34,6 +34,6 @@ export class UniqueFieldRecordRule implements ValidatorConstraintInterface {
     }
 
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} duplicate on fields '${args.constraints.join(",")}'`;
+        return `${args.property} has duplicated value by fields '${args.constraints.join(",")}'`;
     }
 }

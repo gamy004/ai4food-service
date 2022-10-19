@@ -3,9 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SwabArea } from '../entities/swab-area.entity';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { IsNull } from 'typeorm';
+import { FindOptionsRelations, IsNull } from 'typeorm';
+import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
-import { BodyUpdateSwabAreaDto, ParamUpdateSwabAreaDto } from '../dto/update-swab-area.dto';
+import {
+  BodyUpdateSwabAreaDto,
+  ParamUpdateSwabAreaDto,
+} from '../dto/update-swab-area.dto';
+import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {
@@ -16,18 +21,23 @@ export class SwabAreaService extends CrudService<SwabArea> {
     super(repository);
   }
 
-  findAllMainArea(): Promise<SwabArea[]> {
+  findAllMainArea(dto: FindAllSwabAreaQuery): Promise<SwabArea[]> {
+    const { subSwabAreas = false, facility = false } = dto;
+
+    const relations: FindOptionsRelations<SwabArea> = {
+      subSwabAreas,
+      facility,
+    };
+
     return this.repository.find({
       where: {
         mainSwabAreaId: IsNull(),
       },
-      relations: {
-        subSwabAreas: true,
-        facility: true,
-      },
+      relations,
       select: {
         id: true,
         swabAreaName: true,
+        facilityId: true,
         subSwabAreas: {
           id: true,
           swabAreaName: true,
@@ -98,7 +108,6 @@ export class SwabAreaService extends CrudService<SwabArea> {
     param: ParamUpdateSwabAreaDto,
     body: BodyUpdateSwabAreaDto,
   ): Promise<SwabArea> {
-
     const {
       swabAreaName = '',
       subSwabAreas: insertedSubSwabAreas = [],
@@ -122,14 +131,14 @@ export class SwabAreaService extends CrudService<SwabArea> {
           id: insertedSubSwabArea.id,
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
-        })
+        });
       } else {
         subSwabArea = this.repository.create({
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
-        })
+        });
       }
-      return subSwabArea
+      return subSwabArea;
     });
 
     if (subSwabAreas.length) {
@@ -161,5 +170,44 @@ export class SwabAreaService extends CrudService<SwabArea> {
         },
       },
     });
+  }
+
+  async getDeletePermission(
+    param: ParamGetSwabAreaDeletePermissionDto,
+  ): Promise<ResponseGetSwabAreaDeletePermissionDto> {
+    let canDelete = true;
+    let message = '';
+
+    const swabAreaWithRelations = await this.repository.findOneOrFail({
+      where: { id: param.id },
+      relations: {
+        swabAreaHistories: true
+      },
+      select: {
+        id: true,
+        swabAreaHistories: {
+          id: true,
+        }
+      },
+    });
+
+    const {
+      swabAreaHistories = [],
+    } = swabAreaWithRelations;
+
+    const countSwabAreaHistories = swabAreaHistories.length;
+
+    const hasRelations = countSwabAreaHistories > 0;
+
+    if (hasRelations) {
+      canDelete = false;
+      message = 'Cannot delete, entity has related data.';
+    }
+
+    return {
+      canDelete,
+      message,
+      countSwabAreaHistories
+    };
   }
 }

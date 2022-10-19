@@ -3,34 +3,48 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Query,
   Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
+import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
-import { BodyUpdateSwabAreaDto, ParamUpdateSwabAreaDto } from '../dto/update-swab-area.dto';
+import {
+  BodyUpdateSwabAreaDto,
+  ParamUpdateSwabAreaDto,
+} from '../dto/update-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
+import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
 
 @Controller('swab/area')
 @ApiTags('Swab')
 export class SwabAreaController {
-  constructor(private readonly swabAreaService: SwabAreaService) { }
+  constructor(private readonly swabAreaService: SwabAreaService) {}
 
+  @Authenticated()
   @Get('main')
-  findAllMainArea() {
-    return this.swabAreaService.findAllMainArea();
+  findAllMainArea(@Query() query: FindAllSwabAreaQuery) {
+    return this.swabAreaService.findAllMainArea(query);
   }
 
-  // @Authenticated()
+  @Authenticated()
+  @Get(':id/delete-permission')
+  getDeletePermission(
+    @Param() param: ParamGetSwabAreaDeletePermissionDto,
+  ): Promise<ResponseGetSwabAreaDeletePermissionDto> {
+    return this.swabAreaService.getDeletePermission(param);
+  }
+
+  @Authenticated()
   @Post()
   createSwabArea(@Body() createSwabAreaDto: CreateSwabAreaDto) {
     return this.swabAreaService.createSwabArea(createSwabAreaDto);
   }
 
-  // @Authenticated()
+  @Authenticated()
   @Put(':id')
   async update(
     @Param() param: ParamUpdateSwabAreaDto,
@@ -39,6 +53,7 @@ export class SwabAreaController {
     return this.swabAreaService.updateSwabArea(param, body);
   }
 
+  @Authenticated()
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const deletedSwabArea = await this.swabAreaService.findOneBy({ id });

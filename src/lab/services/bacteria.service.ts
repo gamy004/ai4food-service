@@ -20,10 +20,12 @@ export class BacteriaService extends CrudService<Bacteria> {
   }
 
   toFilter(dto: FindAllBacteriaQuery): FindManyOptions<Bacteria> {
-    const { bacteriaName, include } = dto;
+    const { bacteriaName, bacteriaSpecies = false } = dto;
 
     const where: FindOptionsWhere<Bacteria> = {};
-    const relations: FindOptionsRelations<Bacteria> = include;
+    const relations: FindOptionsRelations<Bacteria> = {
+      bacteriaSpecies,
+    };
 
     if (bacteriaName) {
       where.bacteriaName = bacteriaName;
