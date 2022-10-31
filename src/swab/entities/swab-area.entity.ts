@@ -18,7 +18,7 @@ export class SwabArea extends BaseSoftDeletableEntity {
     @OneToMany(() => SwabArea, entity => entity.mainSwabArea, { cascade: true })
     subSwabAreas: SwabArea[];
 
-    @OneToMany(() => SwabAreaHistory, entity => entity.swabArea)
+    @OneToMany(() => SwabAreaHistory, entity => entity.swabArea, { cascade: true })
     swabAreaHistories: SwabAreaHistory[];
 
     // @Column({ nullable: true })

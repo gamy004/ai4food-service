@@ -40,6 +40,7 @@ import { SwabProductHistoryController } from './controllers/swab-product-history
 import { SwabProductHistoryService } from './services/swab-product-history.service';
 import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
+import { FacilityItem } from '~/facility/entities/facility-item.entity';
 
 @Module({
   imports: [
@@ -51,7 +52,8 @@ import { SwabProductHistoryExistsRule } from './validators/swab-product-history-
       SwabTest,
       SwabEnvironment,
       SwabProductHistory,
-      SwabRound
+      SwabRound,
+      FacilityItem
     ]),
     FacilityModule,
     ProductModule,
