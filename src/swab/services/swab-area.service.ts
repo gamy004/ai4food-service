@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SwabArea } from '../entities/swab-area.entity';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { FindOptionsRelations, IsNull } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere, In, IsNull, Not } from 'typeorm';
 import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
 import {
@@ -123,10 +123,14 @@ export class SwabAreaService extends CrudService<SwabArea> {
     if (facility) {
       swabArea.facility = facility;
     }
+    const currentSubSwabAreaIds = [];
 
     const subSwabAreas = insertedSubSwabAreas.map((insertedSubSwabArea) => {
       let subSwabArea;
+
       if (insertedSubSwabArea.id) {
+        currentSubSwabAreaIds.push(insertedSubSwabArea.id);
+        
         subSwabArea = this.repository.create({
           id: insertedSubSwabArea.id,
           swabAreaName: insertedSubSwabArea.swabAreaName,
@@ -140,6 +144,31 @@ export class SwabAreaService extends CrudService<SwabArea> {
       }
       return subSwabArea;
     });
+
+    // Need to validate with swab area history that can delete only!
+    const removeSubSwabAreaCondition: FindOptionsWhere<SwabArea> =
+      {
+        mainSwabAreaId: swabArea.id,
+      };
+
+    if (currentSubSwabAreaIds.length) {
+      removeSubSwabAreaCondition.id = Not(
+        In([...new Set(currentSubSwabAreaIds)]),
+      );
+    }
+
+    const deletedSubSwabAreas =
+      await this.repository.find({
+        where: removeSubSwabAreaCondition,
+        // relations: { // Need to think first!
+        // },
+      });
+
+    if (deletedSubSwabAreas.length) {
+      await this.repository.softRemove(
+        deletedSubSwabAreas
+      );
+    }
 
     if (subSwabAreas.length) {
       swabArea.subSwabAreas = subSwabAreas;

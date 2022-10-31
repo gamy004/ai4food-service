@@ -56,7 +56,21 @@ export class SwabAreaController {
   @Authenticated()
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    const deletedSwabArea = await this.swabAreaService.findOneBy({ id });
+    const deletedSwabArea = await this.swabAreaService.findOne({
+      where: { id },
+      relations: {
+        subSwabAreas: true,
+        swabAreaHistories: true
+      },
+      select: {
+        subSwabAreas: {
+          id: true
+        },
+        swabAreaHistories: {
+          id: true
+        }
+      }
+    });
 
     return this.swabAreaService.removeOne(deletedSwabArea);
   }
