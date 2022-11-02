@@ -2,7 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabPeriodService } from './swab-period.service';
-import { FindOptionsWhere, In, IsNull, Not, Raw, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+  Raw,
+  Repository,
+} from 'typeorm';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { ResponseSwabPlanDto } from '../dto/response-swab-plan.dto';
 import { SwabArea } from '../entities/swab-area.entity';
@@ -10,13 +18,19 @@ import { FacilityService } from '~/facility/facility.service';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
+import { SwabAreaHistoryService } from './swab-area-history.service';
+import { ResponseQueryUpdateSwabPlanV2Dto } from '../dto/response-query-update-swab-plan-v2.dto';
+import { FacilityItemService } from '~/facility/facility-item.service';
+import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 
 @Injectable()
 export class SwabPlanQueryService {
   constructor(
     private readonly dateTransformer: DateTransformer,
     protected readonly facilityService: FacilityService,
+    protected readonly facilityItemService: FacilityItemService,
     protected readonly swabPeriodService: SwabPeriodService,
+    protected readonly swabAreaHistoryService: SwabAreaHistoryService,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
@@ -57,7 +71,7 @@ export class SwabPlanQueryService {
     return where;
   }
 
-  async querySwabPlan(
+  async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
     const where: FindOptionsWhere<SwabAreaHistory> =
@@ -261,6 +275,191 @@ export class SwabPlanQueryService {
     });
 
     return swabAreaHistories;
+  }
+
+  private async transformQueryUpdateSwabPlanV2Dto(
+    querySwabPlanDto: QueryUpdateSwabPlanV2Dto,
+  ): Promise<FindOptionsWhere<SwabAreaHistory>> {
+    let { swabAreaDate, shift, facilityId, mainSwabAreaId, swabPeriodId } =
+      querySwabPlanDto;
+
+    const where: FindOptionsWhere<SwabAreaHistory> =
+      this.swabAreaHistoryService.toFilter({
+        swabAreaId: mainSwabAreaId,
+        swabAreaDate,
+        shift,
+        facilityId,
+        swabPeriodId,
+      });
+
+    return where;
+  }
+
+  async queryUpdateSwabPlanV2(
+    queryUpdateSwabPlanDto: QueryUpdateSwabPlanV2Dto,
+  ): Promise<ResponseQueryUpdateSwabPlanV2Dto> {
+    const where: FindOptionsWhere<SwabAreaHistory> =
+      await this.transformQueryUpdateSwabPlanV2Dto(queryUpdateSwabPlanDto);
+
+    const params: FindManyOptions<SwabAreaHistory> = {
+      where: {
+        ...where,
+        swabTestId: Not(IsNull()),
+      },
+      relations: {
+        swabTest: true,
+      },
+      select: {
+        id: true,
+        swabAreaDate: true,
+        swabAreaSwabedAt: true,
+        swabPeriodId: true,
+        swabAreaId: true,
+        shift: true,
+        swabTestId: true,
+        facilityItemId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+      },
+      order: {
+        swabTest: {
+          id: {
+            direction: 'asc',
+          },
+        },
+      },
+    };
+
+    const paginationParams: FindManyOptions<SwabAreaHistory> = {};
+
+    if (queryUpdateSwabPlanDto.skip) {
+      paginationParams.skip = queryUpdateSwabPlanDto.skip;
+    }
+
+    if (queryUpdateSwabPlanDto.take) {
+      paginationParams.take = queryUpdateSwabPlanDto.take;
+    }
+
+    const swabAreaHistories = await this.swabAreaHistoryRepository.find({
+      ...params,
+      ...paginationParams,
+    });
+
+    let total;
+
+    if (paginationParams.skip || paginationParams.take) {
+      total = await this.swabAreaHistoryRepository.count(params);
+    } else {
+      total = swabAreaHistories.length;
+    }
+
+    let facilities = [];
+    let facilityItems = [];
+    let swabAreas = [];
+    let subSwabAreaHistories = [];
+
+    if (swabAreaHistories.length) {
+      let facilityIds = [];
+
+      const swabAreaIds = [
+        ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
+      ].filter(Boolean);
+
+      const facilityitemIds = [
+        ...new Set(
+          swabAreaHistories.map(({ facilityItemId }) => facilityItemId),
+        ),
+      ].filter(Boolean);
+
+      if (swabAreaIds.length) {
+        swabAreas = await this.swabAreaRepository.find({
+          where: {
+            id: In(swabAreaIds),
+          },
+          select: {
+            id: true,
+            swabAreaName: true,
+            mainSwabAreaId: true,
+            facilityId: true,
+          },
+        });
+
+        subSwabAreaHistories = await this.swabAreaHistoryRepository.find({
+          where: {
+            ...where,
+            swabAreaId: In(swabAreaIds),
+          },
+          select: {
+            id: true,
+            swabAreaDate: true,
+            swabAreaSwabedAt: true,
+            swabPeriodId: true,
+            swabAreaId: true,
+            shift: true,
+            facilityItemId: true,
+          },
+        });
+
+        // console.log(subSwabAreaHistories);
+
+        if (swabAreas.length) {
+          facilityIds = [
+            ...facilityIds,
+            ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
+          ].filter(Boolean);
+        }
+      }
+
+      if (facilityitemIds.length) {
+        facilityItems = await this.facilityItemService.find({
+          where: {
+            id: In(facilityitemIds),
+          },
+          select: {
+            id: true,
+            facilityItemName: true,
+            facilityId: true,
+          },
+        });
+
+        if (facilityItems.length) {
+          facilityIds = [
+            ...facilityIds,
+            ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
+          ].filter(Boolean);
+        }
+      }
+
+      facilityIds = [...new Set(facilityIds)].filter(Boolean);
+
+      if (facilityIds.length) {
+        facilities = await this.facilityService.find({
+          where: {
+            id: In(facilityIds),
+          },
+          select: {
+            id: true,
+            facilityName: true,
+            facilityType: true,
+          },
+          order: {
+            facilityType: 'asc',
+            facilityName: 'asc',
+          },
+        });
+      }
+    }
+
+    return {
+      total,
+      swabAreaHistories,
+      subSwabAreaHistories,
+      swabAreas,
+      facilities,
+      facilityItems,
+    };
   }
 
   async queryUpdateSwabPlanById(

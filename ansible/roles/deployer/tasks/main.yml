@@ -40,22 +40,24 @@
 - set_fact:
     default_task_env:
       - name: PORT
-        value: "80"
+        value: '80'
       - name: DATABASE_URL
-        value: "{{ service_database_url }}"
+        value: '{{ service_database_url }}'
       - name: DATABASE_TIMEZONE
-        value: "{{ service_database_timezone }}"
+        value: '{{ service_database_timezone }}'
       - name: JWT_SECRET_KEY
-        value: "{{ service_jwt_secret_key }}"
+        value: '{{ service_jwt_secret_key }}'
       - name: AWS_DEFAULT_REGION
-        value: "{{ service_aws_default_region }}"
+        value: '{{ service_aws_default_region }}'
       - name: AWS_ACCESS_KEY_ID
-        value: "{{ service_aws_access_key_id }}"
+        value: '{{ service_aws_access_key_id }}'
       - name: AWS_SECRET_ACCESS_KEY
-        value: "{{ service_aws_secret_access_key }}"
+        value: '{{ service_aws_secret_access_key }}'
+      - name: AWS_S3_UPLOAD_BUCKET
+        value: '{{ service_aws_s3_upload_bucket }}'
   # no_log: true
 - set_fact:
-    task_env: "{{ default_task_env + additional_task_env | default([]) }}"
+    task_env: '{{ default_task_env + additional_task_env | default([]) }}'
   # no_log: true
 #### Log group
 - name: Create a CloudWatch log group
@@ -66,47 +68,46 @@
 #### ECS Task Definition
 - name: Create the task definition
   ecs_taskdefinition:
-    family: "{{ task_def_name }}"
+    family: '{{ task_def_name }}'
     state: present
     force_create: yes
     network_mode: awsvpc
-    cpu: "{{ cpu | default(256) }}"
-    memory: "{{ memory | default(512) }}"
-    task_role_arn: "{{ exec_role_arn }}"
-    execution_role_arn: "{{ exec_role_arn }}"
+    cpu: '{{ cpu | default(256) }}'
+    memory: '{{ memory | default(512) }}'
+    task_role_arn: '{{ exec_role_arn }}'
+    execution_role_arn: '{{ exec_role_arn }}'
     launch_type: FARGATE
     containers:
-      - name: "{{ container_name }}"
-        image: "{{ image_repo_uri }}:{{ image_tag }}"
+      - name: '{{ container_name }}'
+        image: '{{ image_repo_uri }}:{{ image_tag }}'
         cpu: 0
         portMappings:
           - containerPort: 80
             hostPort: 80
             protocol: tcp
         essential: true
-        environment: "{{ task_env }}"
+        environment: '{{ task_env }}'
         logConfiguration:
           logDriver: awslogs
           options:
             awslogs-group: ecs/ai4food-service-{{ env }}
-            awslogs-region: "{{ aws_default_region }}"
-            awslogs-stream-prefix: "{{ image_tag }}"
+            awslogs-region: '{{ aws_default_region }}'
+            awslogs-stream-prefix: '{{ image_tag }}'
 
   register: task_definition_output
 - set_fact:
-    task_definition_arn: "{{ task_definition_output.taskdefinition.taskDefinitionArn }}"
+    task_definition_arn: '{{ task_definition_output.taskdefinition.taskDefinitionArn }}'
   no_log: true
 
 #### ECS Cluster
 - name: Ensure the cluster exists
   ecs_cluster:
-    name: "{{ cluster }}"
+    name: '{{ cluster }}'
     state: present
   register: cluster_output
 - set_fact:
-    cluster_arn: "{{ cluster_output.cluster.clusterArn }}"
+    cluster_arn: '{{ cluster_output.cluster.clusterArn }}'
   no_log: true
-
 #### ELB Target Group
 # - name: Ensure the target group exists
 #   elb_target_group:
