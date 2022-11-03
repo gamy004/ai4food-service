@@ -430,14 +430,8 @@ export class SwabPlanQueryService {
               ...where,
               swabAreaId: In(subSwabAreaIds),
             },
-            select: {
-              id: true,
-              swabAreaDate: true,
-              swabAreaSwabedAt: true,
-              swabPeriodId: true,
-              swabAreaId: true,
-              shift: true,
-              facilityItemId: true,
+            relations: {
+              swabEnvironments: true,
             },
           });
         }
