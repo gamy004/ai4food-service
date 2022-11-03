@@ -308,21 +308,41 @@ export class SwabPlanQueryService {
       },
       relations: {
         swabTest: true,
-      },
-      select: {
-        id: true,
-        swabAreaDate: true,
-        swabAreaSwabedAt: true,
-        swabPeriodId: true,
-        swabAreaId: true,
-        shift: true,
-        swabTestId: true,
-        facilityItemId: true,
-        swabTest: {
-          id: true,
-          swabTestCode: true,
+        swabAreaHistoryImages: {
+          file: true,
         },
+        swabEnvironments: true,
       },
+      // select: {
+      //   id: true,
+      //   swabAreaDate: true,
+      //   swabAreaSwabedAt: true,
+      //   swabPeriodId: true,
+      //   swabAreaId: true,
+      //   shift: true,
+      //   swabTestId: true,
+      //   facilityItemId: true,
+      //   productDate: true,
+      //   productId: true,
+      //   swabAreaHistoryImages: {
+      //     id: true,
+      //     swabAreaHistoryId: true,
+      //     createdAt: true,
+      //     file: {
+      //       id: true,
+      //       fileKey: true,
+      //       fileSource: true,
+      //     },
+      //   },
+      //   swabEnvironments: {
+      //     id: true,
+      //     swabEnvironmentName: true,
+      //   },
+      //   swabTest: {
+      //     id: true,
+      //     swabTestCode: true,
+      //   },
+      // },
       order: {
         swabTest: {
           id: {
@@ -386,21 +406,41 @@ export class SwabPlanQueryService {
           },
         });
 
-        subSwabAreaHistories = await this.swabAreaHistoryRepository.find({
+        const subSwabAreas = await this.swabAreaRepository.find({
           where: {
-            ...where,
-            swabAreaId: In(swabAreaIds),
+            mainSwabAreaId: In(swabAreaIds),
           },
           select: {
             id: true,
-            swabAreaDate: true,
-            swabAreaSwabedAt: true,
-            swabPeriodId: true,
-            swabAreaId: true,
-            shift: true,
-            facilityItemId: true,
+            swabAreaName: true,
+            mainSwabAreaId: true,
+            facilityId: true,
           },
         });
+
+        if (subSwabAreas.length) {
+          swabAreas = [...swabAreas, ...subSwabAreas];
+
+          const subSwabAreaIds = [
+            ...new Set(subSwabAreas.map(({ id }) => id)),
+          ].filter(Boolean);
+
+          subSwabAreaHistories = await this.swabAreaHistoryRepository.find({
+            where: {
+              ...where,
+              swabAreaId: In(subSwabAreaIds),
+            },
+            select: {
+              id: true,
+              swabAreaDate: true,
+              swabAreaSwabedAt: true,
+              swabPeriodId: true,
+              swabAreaId: true,
+              shift: true,
+              facilityItemId: true,
+            },
+          });
+        }
 
         // console.log(subSwabAreaHistories);
 
