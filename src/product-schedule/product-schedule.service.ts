@@ -1,26 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductScheduleDto } from './dto/create-product-schedule.dto';
-import { UpdateProductScheduleDto } from './dto/update-product-schedule.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, FindOptionsWhere, Raw } from 'typeorm';
+import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
+import { CrudService } from '~/common/services/abstract.crud.service';
+import { DateTransformer } from '~/common/transformers/date-transformer';
+import { QueryProductScheduleDto } from './dto/query-product-schedule.dto';
+import { ProductSchedule } from './entities/product-schedule.entity';
 
 @Injectable()
-export class ProductScheduleService {
-  create(createProductScheduleDto: CreateProductScheduleDto) {
-    return 'This action adds a new productSchedule';
+export class ProductScheduleService extends CrudService<ProductSchedule> {
+  constructor(
+    private readonly dateTransformer: DateTransformer,
+    @InjectRepository(ProductSchedule)
+    repository: CommonRepositoryInterface<ProductSchedule>,
+  ) {
+    super(repository);
   }
 
-  findAll() {
-    return `This action returns all productSchedule`;
+  toFindManyOptions(
+    dto: QueryProductScheduleDto,
+  ): FindManyOptions<ProductSchedule> {
+    const where: FindOptionsWhere<ProductSchedule> = this.toWhere(dto);
+
+    return {
+      where,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productSchedule`;
-  }
+  toWhere(dto): FindOptionsWhere<ProductSchedule> {
+    const where: FindOptionsWhere<ProductSchedule> = {};
 
-  update(id: number, updateProductScheduleDto: UpdateProductScheduleDto) {
-    return `This action updates a #${id} productSchedule`;
-  }
+    let {
+      fromDate: fromDateString,
+      toDate: toDateString,
+      // fromTime: fromTimeString,
+      // toTime: toTimeString,
+    } = dto;
 
-  remove(id: number) {
-    return `This action removes a #${id} productSchedule`;
+    if (toDateString) {
+      const toDateObject = this.dateTransformer.toObject(toDateString);
+
+      toDateObject.setDate(toDateObject.getDate() + 1);
+
+      toDateString = this.dateTransformer.toString(toDateObject);
+    }
+
+    if (fromDateString && toDateString) {
+      where.productScheduleDate = Raw(
+        (field) =>
+          `${field} >= '${fromDateString}' and ${field} < '${toDateString}'`,
+      );
+    } else {
+      if (fromDateString) {
+        where.productScheduleDate = Raw(
+          (field) => `${field} >= '${fromDateString}'`,
+        );
+      }
+
+      if (toDateString) {
+        where.productScheduleDate = Raw(
+          (field) => `${field} < '${toDateString}'`,
+        );
+      }
+    }
+
+    return where;
   }
 }

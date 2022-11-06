@@ -5,19 +5,23 @@ import { ProductScheduleImporter } from './product-schedule.importer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductSchedule } from './entities/product-schedule.entity';
 import { ImportTransactionModule } from '~/import-transaction/import-transaction.module';
+import { CommonModule } from '~/common/common.module';
+import { ProductScheduleQueryService } from './services/product-schedule-query.service';
 
 @Module({
   imports: [
     ImportTransactionModule,
-    TypeOrmModule.forFeature([ProductSchedule])
+    CommonModule,
+    TypeOrmModule.forFeature([ProductSchedule]),
   ],
   controllers: [ProductScheduleController],
   providers: [
     {
       provide: 'DataCollectorImporterInterface<ProductSchedule>',
-      useClass: ProductScheduleImporter
+      useClass: ProductScheduleImporter,
     },
-    ProductScheduleService
-  ]
+    ProductScheduleService,
+    ProductScheduleQueryService,
+  ],
 })
-export class ProductScheduleModule { }
+export class ProductScheduleModule {}
