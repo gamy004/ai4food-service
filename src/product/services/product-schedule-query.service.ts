@@ -3,7 +3,7 @@ import { FindManyOptions, FindOptionsWhere } from 'typeorm';
 import { QueryProductScheduleDto } from '../dto/query-product-schedule.dto';
 import { ResponseQueryProductScheduleDto } from '../dto/response-query-product-schedule.dto';
 import { ProductSchedule } from '../entities/product-schedule.entity';
-import { ProductScheduleService } from '../product-schedule.service';
+import { ProductScheduleService } from './product-schedule.service';
 
 @Injectable()
 export class ProductScheduleQueryService {

@@ -4,8 +4,8 @@ import { FindManyOptions, FindOptionsWhere, Raw } from 'typeorm';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
-import { QueryProductScheduleDto } from './dto/query-product-schedule.dto';
-import { ProductSchedule } from './entities/product-schedule.entity';
+import { QueryProductScheduleDto } from '../dto/query-product-schedule.dto';
+import { ProductSchedule } from '../entities/product-schedule.entity';
 
 @Injectable()
 export class ProductScheduleService extends CrudService<ProductSchedule> {

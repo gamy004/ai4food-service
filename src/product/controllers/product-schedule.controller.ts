@@ -1,16 +1,26 @@
-import { Controller, Post, Body, Inject, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  Get,
+  Query,
+  Put,
+  Param,
+} from '@nestjs/common';
 import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
-import { ProductSchedule } from './entities/product-schedule.entity';
-import { ImportProductScheduleDto } from './dto/import-product-schedule.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
-import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
-import { CrudService } from '~/common/services/abstract.crud.service';
 import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
 import { ApiTags } from '@nestjs/swagger';
-import { QueryProductScheduleDto } from './dto/query-product-schedule.dto';
-import { ProductScheduleQueryService } from './services/product-schedule-query.service';
-import { ResponseQueryProductScheduleDto } from './dto/response-query-product-schedule.dto';
+import { ImportProductScheduleDto } from '../dto/import-product-schedule.dto';
+import { QueryProductScheduleDto } from '../dto/query-product-schedule.dto';
+import { ResponseQueryProductScheduleDto } from '../dto/response-query-product-schedule.dto';
+import { ProductSchedule } from '../entities/product-schedule.entity';
+import { ProductScheduleQueryService } from '../services/product-schedule-query.service';
+import {
+  ParamUpdateProductScheduleDto,
+  BodyUpdateProductScheduleDto,
+} from '../dto/update-product-schedule.dto';
+import { ProductScheduleManagerService } from '../services/product-schedule-manager.service';
 // Infra Layer
 @Controller('product-schedule')
 @ApiTags('Product')
@@ -18,6 +28,7 @@ export class ProductScheduleController {
   constructor(
     private readonly importTransactionService: ImportTransactionService,
     private readonly productScheduleQueryService: ProductScheduleQueryService,
+    private readonly productScheduleManagerService: ProductScheduleManagerService,
     @Inject('DataCollectorImporterInterface<ProductSchedule>')
     private readonly productScheduleImporter: DataCollectorImporterInterface<ProductSchedule>,
   ) {}
@@ -30,7 +41,7 @@ export class ProductScheduleController {
   }
 
   @Post('import')
-  async importProductSchedule(
+  async import(
     @Body() importProductScheduleDto: ImportProductScheduleDto,
   ): Promise<void> {
     const importTransaction = await this.importTransactionService.findOneBy(
@@ -41,5 +52,19 @@ export class ProductScheduleController {
       importTransaction,
       ProductSchedule.create<ProductSchedule>(importProductScheduleDto.records),
     );
+  }
+
+  @Put(':id')
+  async update(
+    @Param() param: ParamUpdateProductScheduleDto,
+    @Body() body: BodyUpdateProductScheduleDto,
+  ) {
+    const productSchedule =
+      await this.productScheduleManagerService.commandUpdateProductScheduleById(
+        param.id,
+        body,
+      );
+
+    return productSchedule;
   }
 }

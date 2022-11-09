@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
-import { FindOptionsWhere, In, IsNull, Like, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
-import { SwabTest } from '../entities/swab-test.entity';
-import { ParamLabSwabPlanByIdDto } from '../dto/param-lab-swab-plan-by-id.dto';
 import { SwabAreaHistoryService } from './swab-area-history.service';
-import { SwabPeriod } from '../entities/swab-period.entity';
-import { SwabArea } from '../entities/swab-area.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ResponseQueryLabSwabPlanDto } from '../dto/response-query-lab-swab-plan.dto';
 import { SwabAreaService } from './swab-area.service';
@@ -19,10 +15,8 @@ import { ResponseQueryLabSwabProductDto } from '../dto/response-query-lab-swab-p
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SwabTestService } from './swab-test.service';
-import { ProductService } from '~/product/product.service';
 import { SwabProductHistoryService } from './swab-product-history.service';
-import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
-import { Shift } from '~/common/enums/shift';
+import { ProductService } from '~/product/services/product.service';
 
 export const DEFAULT_RELATIONS = {
   swabTest: {
@@ -92,7 +86,7 @@ export class SwabLabQueryService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(FacilityItem)
     protected readonly facilityItemRepository: Repository<FacilityItem>,
-  ) { }
+  ) {}
 
   async queryLabSwabPlan(
     queryLabSwabPlanDto: QueryLabSwabPlanDto,

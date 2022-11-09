@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
-import { ProductSchedule } from '~/product-schedule/entities/product-schedule.entity';
+import { ProductSchedule } from '~/product/entities/product-schedule.entity';
 import { SwabAreaHistory } from '~/swab/entities/swab-area-history.entity';
 import { SwabProductHistory } from '~/swab/entities/swab-product-history.entity';
 

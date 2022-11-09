@@ -7,22 +7,19 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-// import { UpdateProductDto } from './dto/update-product.dto';
-// import { CrudService } from '~/common/services/abstract.crud.service';
-// import { Product } from './entities/product.entity';
-import { CheckProductDto } from './dto/check-product.dto';
-import {
-  BodyUpdateProductDto,
-  ParamUpdateProductDto,
-} from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { ParamDeleteProductDto } from './dto/delete-product.dto';
+import { CheckProductDto } from '../dto/check-product.dto';
+import { CreateProductDto } from '../dto/create-product.dto';
+import { ParamDeleteProductDto } from '../dto/delete-product.dto';
 import {
   ParamGetProductDeletePermissionDto,
   ResponseGetProductDeletePermissionDto,
-} from './dto/get-product-delete-permission.dto';
+} from '../dto/get-product-delete-permission.dto';
+import {
+  ParamUpdateProductDto,
+  BodyUpdateProductDto,
+} from '../dto/update-product.dto';
+import { ProductService } from '../services/product.service';
 
 @Controller('product')
 @ApiTags('Product')
