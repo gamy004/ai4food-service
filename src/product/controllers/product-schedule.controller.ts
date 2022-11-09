@@ -7,6 +7,7 @@ import {
   Query,
   Put,
   Param,
+  ForbiddenException,
 } from '@nestjs/common';
 import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
 import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
@@ -59,11 +60,17 @@ export class ProductScheduleController {
     @Param() param: ParamUpdateProductScheduleDto,
     @Body() body: BodyUpdateProductScheduleDto,
   ) {
-    const productSchedule =
-      await this.productScheduleManagerService.commandUpdateProductScheduleById(
-        param.id,
-        body,
-      );
+    let productSchedule;
+
+    try {
+      productSchedule =
+        await this.productScheduleManagerService.commandUpdateProductScheduleById(
+          param.id,
+          body,
+        );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
 
     return productSchedule;
   }
