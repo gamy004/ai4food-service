@@ -25,7 +25,7 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
     super(transaction, repository);
   }
 
-  filterRecordBy(record: ProductSchedule) {
+  map(record: ProductSchedule) {
     const {
       productScheduleDate,
       productScheduleStartedAt,
