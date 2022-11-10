@@ -87,6 +87,11 @@ export class SwabAreaHistoryController {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 
+  @Post('save')
+  saveSwabPlan(@Body() data: Array<String>) {
+    return this.swabPlanManagerService.saveSwabPlan(data);
+  }
+
   @Authenticated()
   @Put(':id')
   async commandUpdateSwabPlanById(

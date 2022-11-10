@@ -21,10 +21,12 @@ import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { ProductService } from '~/product/services/product.service';
+import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 
 @Injectable()
 export class SwabPlanManagerService {
   constructor(
+    private readonly transaction: TransactionDatasource,
     private readonly dateTransformer: DateTransformer,
     protected readonly facilityItemService: FacilityItemService,
     protected readonly productService: ProductService,
@@ -799,5 +801,98 @@ export class SwabPlanManagerService {
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
 
     return;
+  }
+
+  async saveSwabPlan(data: Array<String>) {
+    await this.transaction.execute(async (queryRunnerManger) => {
+      let result = await this.swabPeriodService.findBy([
+        { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
+        { swabPeriodName: 'หลัง Super Big Cleaning', deletedAt: null },
+        { swabPeriodName: 'หลังประกอบเครื่อง', deletedAt: null },
+        { swabPeriodName: 'ก่อนล้างระหว่างงาน', deletedAt: null },
+        { swabPeriodName: 'หลังล้างระหว่างงาน', deletedAt: null },
+        { swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.', deletedAt: null },
+        { swabPeriodName: 'ก่อนล้างท้ายกะ', deletedAt: null },
+        { swabPeriodName: 'หลังล้างท้ายกะ', deletedAt: null },
+      ]);
+
+      const swabPeriods = result.reduce((acc, obj) => {
+        let key = obj['swabPeriodName'];
+        if (!acc[key]) {
+          acc[key] = {};
+        }
+        acc[key] = obj;
+        return acc;
+      }, {});
+
+      for (let index = 0; index < data.length; index++) {
+        const record = data[index];
+        const recordData = record.split('|');
+
+        /** index: keyData
+         * 0: swabAreaDate
+         * 1: shift
+         * 2: swabTest.swabTestCode
+         * 3: swabAreaSwabedAt
+         * 4: swabArea
+         * 5: swabPeriod
+         * 6: swabAreaAtp
+         * 7: swabEnvironments
+         * 8: swabEnvironments
+         * 9: swabEnvironments
+         * 10: swabEnvironments
+         * 11: swabEnvironments
+         * 12
+         * 13
+         */
+        const [d, m, y] = recordData[0].split('/');
+        const day = d.length == 1 ? d : '0' + d;
+        const month = m.length == 1 ? m : '0' + m;
+        const year = parseInt('25' + y) - 543;
+        const swabAreaDateData = format(
+          new Date(`${year}-${month}-${day}`),
+          'yyyy-MM-dd',
+        );
+
+        const shiftData = recordData[1] == 'D' ? Shift.DAY : Shift.NIGHT;
+
+        const swabTestData = SwabTest.create({
+          swabTestCode: `${recordData[2]}`,
+        });
+
+        const swabAreaSwabedAtData =
+          recordData[3] == '-' ? null : recordData[3];
+
+        const swabArea = await this.swabAreaRepository.findOne({
+          where: {
+            swabAreaName: recordData[4],
+          },
+        });
+
+        const swabAreaData = swabArea
+          ? swabArea
+          : SwabArea.create({ swabAreaName: recordData[4] });
+
+        const swabPeriodData = swabPeriods[recordData[5]];
+
+        const swabAreaAtpData = recordData[6] == '-' ? null : recordData[6];
+
+        const historyData = {
+          swabAreaDate: swabAreaDateData,
+          swabAreaSwabedAt: swabAreaSwabedAtData,
+          swabAreaTemperature: null,
+          swabAreaHumidity: null,
+          swabAreaAtp: swabAreaAtpData,
+          swabPeriod: swabPeriodData,
+          swabTest: swabTestData,
+          swabArea: swabAreaData,
+          swabRound: null,
+          shift: shiftData,
+          productLot: '',
+        };
+
+        console.log(historyData);
+      }
+    });
   }
 }
