@@ -1,11 +1,10 @@
-import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
-
-import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
-import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
-import { File } from '~/common/entities/file.entity';
-import { SwabTest } from '~/swab/entities/swab-test.entity';
-import { SwabAreaHistory } from '~/swab/entities/swab-area-history.entity';
-import { SwabProductHistory } from '~/swab/entities/swab-product-history.entity';
+import { Entity, Column, OneToMany } from "typeorm";
+import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
+import { ImportTransaction } from '../../import-transaction/entities/import-transaction.entity';
+import { File } from '../../common/entities/file.entity';
+import { SwabTest } from '../../swab/entities/swab-test.entity';
+import { SwabAreaHistory } from '../../swab/entities/swab-area-history.entity';
+import { SwabProductHistory } from '../../swab/entities/swab-product-history.entity';
 
 export enum UserRole {
     ADMIN = 'admin',

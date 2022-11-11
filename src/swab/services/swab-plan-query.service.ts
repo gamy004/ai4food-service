@@ -183,10 +183,6 @@ export class SwabPlanQueryService {
     //   id: swabPeriodId,
     // });
 
-    // if (!swabPeriod.dependsOnShift) {
-    //   shift = null;
-    // }
-
     const where: FindOptionsWhere<SwabAreaHistory>[] = [
       {
         swabAreaDate,

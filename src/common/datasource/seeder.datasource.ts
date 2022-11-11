@@ -6,8 +6,10 @@ import typeormConfig from "../../database/config/typeorm.config";
     const options: DataSourceOptions & SeederOptions = {
         ...typeormConfig,
         migrationsRun: false,
-        seeds: ["dist/database/seeders/*.seeder.js"],
-        factories: ["dist/database/factories/*.factory.js"]
+        seeds: [
+            "dist/database/seeders/bacteria.seeder.js",
+            "dist/database/seeders/swab-environment.seeder.js",
+        ]
     };
 
     console.log("===========Start Seeding!!!===========");
