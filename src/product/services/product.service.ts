@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { CheckProductDto } from './dto/check-product.dto';
+import { CheckProductDto } from '../dto/check-product.dto';
 import {
   ParamGetProductDeletePermissionDto,
   ResponseGetProductDeletePermissionDto,
-} from './dto/get-product-delete-permission.dto';
-import { Product } from './entities/product.entity';
+} from '../dto/get-product-delete-permission.dto';
+import { Product } from '../entities/product.entity';
 
 @Injectable()
 export class ProductService extends CrudService<Product> {

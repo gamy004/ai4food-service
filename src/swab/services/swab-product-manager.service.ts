@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SwabPeriodService } from './swab-period.service';
-import { ProductService } from '~/product/product.service';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { User } from '~/auth/entities/user.entity';
@@ -19,6 +18,7 @@ import { differenceInDays } from 'date-fns';
 import { SwabArea } from '../entities/swab-area.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { ProductService } from '~/product/services/product.service';
 
 @Injectable()
 export class SwabProductManagerService {

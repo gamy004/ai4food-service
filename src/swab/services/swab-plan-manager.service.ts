@@ -14,13 +14,13 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { SwabEnvironment } from '../entities/swab-environment.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service';
-import { ProductService } from '~/product/product.service';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
+import { ProductService } from '~/product/services/product.service';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 
 @Injectable()
