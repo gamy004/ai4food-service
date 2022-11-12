@@ -14,11 +14,13 @@ import { RoomService } from './services/room.service';
 import { RoomExistsRule } from './validators/room-exists-validator';
 import { ZoneExistsRule } from './validators/zone-exists-validator';
 import { RiskZoneExistsRule } from './validators/risk-zone-exists-validator';
+import { RiskZone } from './entities/risk-zone.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Zone,
+      RiskZone,
       Room,
       Facility,
       FacilityItem

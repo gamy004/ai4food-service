@@ -18,7 +18,8 @@ export class RoomController {
   findAll() {
     return this.roomService.find({
       relations: {
-        zone: true
+        zone: true,
+        riskZone: true
       }
     });
   }
