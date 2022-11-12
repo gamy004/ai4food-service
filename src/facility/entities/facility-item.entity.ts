@@ -4,6 +4,7 @@ import { SwabAreaHistory } from "~/swab/entities/swab-area-history.entity";
 import { SwabArea } from "~/swab/entities/swab-area.entity";
 import { SwabProductHistory } from "~/swab/entities/swab-product-history.entity";
 import { Facility } from "./facility.entity";
+import { RiskZone } from "./risk-zone.entity";
 import { Room } from "./room.entity";
 import { Zone } from "./zone.entity";
 
@@ -29,6 +30,12 @@ export class FacilityItem extends BaseSoftDeletableEntity {
 
     @ManyToOne(() => Zone, entity => entity.facilityItems, { nullable: true, onDelete: 'SET NULL' })
     zone?: Zone;
+
+    @Column({ type: "varchar", length: 36, nullable: true })
+    riskZoneId?: string;
+
+    @ManyToOne(() => RiskZone, entity => entity.facilityItems, { nullable: true, onDelete: 'SET NULL' })
+    riskZone?: Zone;
 
     @OneToMany(() => SwabAreaHistory, entity => entity.facilityItem)
     swabAreaHistories: SwabAreaHistory[];

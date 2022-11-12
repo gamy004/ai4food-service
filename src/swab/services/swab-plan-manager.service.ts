@@ -15,7 +15,7 @@ import { SwabEnvironment } from '../entities/swab-environment.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
-import { FacilityItemService } from '~/facility/facility-item.service';
+import { FacilityItemService } from '~/facility/services/facility-item.service';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';

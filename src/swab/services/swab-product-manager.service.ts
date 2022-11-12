@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SwabPeriodService } from './swab-period.service';
-import { FacilityItemService } from '~/facility/facility-item.service';
+import { FacilityItemService } from '~/facility/services/facility-item.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { User } from '~/auth/entities/user.entity';
 import { DateTransformer } from '~/common/transformers/date-transformer';
