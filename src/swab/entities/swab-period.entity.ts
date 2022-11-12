@@ -9,9 +9,6 @@ export class SwabPeriod extends BaseSoftDeletableEntity {
     @Column({ unique: true })
     swabPeriodName!: string;
 
-    @Column({ type: 'boolean' })
-    dependsOnShift!: boolean;
-
     @OneToMany(() => SwabAreaHistory, entity => entity.swabPeriod)
     swabAreaHistories: SwabAreaHistory[];
 

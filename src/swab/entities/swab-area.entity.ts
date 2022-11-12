@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
-import { FacilityItem } from "~/facility/entities/facility-item.entity";
-import { Facility } from "~/facility/entities/facility.entity";
+import { BaseSoftDeletableEntity } from "../../common/entities/base-softdeletable.entity";
+// import { FacilityItem } from "~/facility/entities/facility-item.entity";
+import { Facility } from "../../facility/entities/facility.entity";
 import { SwabAreaHistory } from "./swab-area-history.entity";
 
 @Entity()

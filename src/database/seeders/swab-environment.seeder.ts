@@ -1,11 +1,10 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { SwabEnvironment } from '~/swab/entities/swab-environment.entity';
 
 export default class SwabEnvironmentSeeder implements Seeder {
     public async run(
-        dataSource: DataSource,
-        factoryManager: SeederFactoryManager
+        dataSource: DataSource
     ): Promise<any> {
         const swabEnvironmentRepository = dataSource.getRepository(SwabEnvironment);
 
@@ -37,7 +36,9 @@ export default class SwabEnvironmentSeeder implements Seeder {
             {
                 swabEnvironmentName: "มีเกลียว"
             },
-
+            {
+                swabEnvironmentName: "ไม่ระบุ"
+            },
         ];
 
         await swabEnvironmentRepository.upsert(swabEnvironments, ['swabEnvironmentName']);

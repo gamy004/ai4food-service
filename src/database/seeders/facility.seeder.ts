@@ -1,4 +1,4 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Facility, FacilityType } from '~/facility/entities/facility.entity';
 import { Zone } from '~/facility/entities/zone.entity';
@@ -13,8 +13,7 @@ type saveFacilityItem = {
 
 export default class FacilitySeeder implements Seeder {
     public async run(
-        dataSource: DataSource,
-        factoryManager: SeederFactoryManager
+        dataSource: DataSource
     ): Promise<any> {
         const zoneRepository = dataSource.getRepository(Zone);
         const roomRepository = dataSource.getRepository(Room);
