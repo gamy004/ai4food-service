@@ -14,22 +14,30 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { SwabEnvironment } from '../entities/swab-environment.entity';
 import { SwabTest } from '../entities/swab-test.entity';
 import { SwabPeriodService } from './swab-period.service';
-import { ProductService } from '~/product/product.service';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { SwabAreaHistoryImageService } from './swab-area-history-image.service';
 import { User } from '~/auth/entities/user.entity';
 import { SwabRoundService } from './swab-round.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
+import { ProductService } from '~/product/services/product.service';
+import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
+import { BacteriaService } from '~/lab/services/bacteria.service';
+import { BacteriaSpecieService } from '~/lab/services/bacteria-specie.service';
+import { SwabAreaService } from './swab-area.service';
 
 @Injectable()
 export class SwabPlanManagerService {
   constructor(
+    private readonly transaction: TransactionDatasource,
     private readonly dateTransformer: DateTransformer,
     protected readonly facilityItemService: FacilityItemService,
     protected readonly productService: ProductService,
     protected readonly swabPeriodService: SwabPeriodService,
     protected readonly swabRoundService: SwabRoundService,
+    protected readonly swabAreaService: SwabAreaService,
+    protected readonly bacteriaService: BacteriaService,
+    protected readonly bacteriaSpecieService: BacteriaSpecieService,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
@@ -799,5 +807,187 @@ export class SwabPlanManagerService {
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
 
     return;
+  }
+
+  async saveSwabPlan(data: Array<String>) {
+    await this.transaction.execute(async (queryRunnerManger) => {
+      let result_swabPeriod = await this.swabPeriodService.find({
+        where: [
+          { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
+          { swabPeriodName: 'หลัง Super Big Cleaning', deletedAt: null },
+          { swabPeriodName: 'หลังประกอบเครื่อง', deletedAt: null },
+          { swabPeriodName: 'ก่อนล้างระหว่างงาน', deletedAt: null },
+          { swabPeriodName: 'หลังล้างระหว่างงาน', deletedAt: null },
+          { swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.', deletedAt: null },
+          { swabPeriodName: 'ก่อนล้างท้ายกะ', deletedAt: null },
+          { swabPeriodName: 'หลังล้างท้ายกะ', deletedAt: null },
+        ],
+        transaction: true,
+      });
+
+      const swabPeriods = result_swabPeriod.reduce((acc, obj) => {
+        let key = obj['swabPeriodName'];
+        if (!acc[key]) {
+          acc[key] = {};
+        }
+        acc[key] = obj;
+        return acc;
+      }, {});
+
+      let result_swabEnvironment = await this.swabEnvironmentRepository.find({
+        transaction: true,
+      });
+
+      const swabEnvironments = result_swabEnvironment.reduce((acc, obj) => {
+        let key = obj['swabEnvironmentName'];
+        if (!acc[key]) {
+          acc[key] = {};
+        }
+        acc[key] = obj;
+        return acc;
+      }, {});
+
+      const bacteria = await this.bacteriaService.findOne({
+        where: {
+          bacteriaName: 'Listeria Monocytogenes',
+        },
+        transaction: true,
+      });
+
+      for (let index = 0; index < data.length; index++) {
+        const record = data[index];
+        const recordData = record.split('|');
+
+        /** index: keyData
+         * 0: swabAreaDate
+         * 1: shift
+         * 2: swabTest.swabTestCode
+         * 3: swabAreaSwabedAt
+         * 4: swabArea
+         * 5: swabPeriod
+         * 6: swabAreaAtp
+         * 7: swabEnvironments  #1
+         * 8: swabEnvironments  #2
+         * 9: swabEnvironments  #3
+         * 10: swabEnvironments #4
+         * 11: swabEnvironments #5
+         * 12: swabTest.bacteria
+         * 13: swabTest.bacteriaSpecies
+         */
+
+        const [d, m, y] = recordData[0].trim().split('/');
+        const day = d.length == 1 ? d : '0' + d;
+        const month = m.length == 1 ? m : '0' + m;
+        const year = parseInt('25' + y) - 543;
+        const swabAreaDateData = format(
+          new Date(`${year}-${month}-${day}`),
+          'yyyy-MM-dd',
+        );
+
+        const shiftData = recordData[1].trim() == 'D' ? Shift.DAY : Shift.NIGHT;
+
+        let bacteriasData = [];
+        let bacteriaSpeciesData = [];
+
+        if (recordData[12].trim() != '-' && recordData[12].trim() == 'Yes') {
+          bacteriasData.push(bacteria);
+        }
+
+        if (recordData[13].trim() != '-') {
+          const bacteriaSpecies = recordData[13].trim().split(',');
+          let whereOption = [];
+          for (let index = 0; index < bacteriaSpecies.length; index++) {
+            const bacteriaSpecieName = bacteriaSpecies[index];
+            whereOption.push({ bacteriaSpecieName: bacteriaSpecieName });
+          }
+          const result_bacteriaSpecie = await this.bacteriaSpecieService.find({
+            where: whereOption,
+            transaction: true,
+          });
+          bacteriaSpeciesData = [...result_bacteriaSpecie];
+        }
+
+        const swabTestData = SwabTest.create({
+          swabTestCode: `${recordData[2].trim()}`,
+          bacteria: bacteriasData,
+          bacteriaSpecies: bacteriaSpeciesData,
+        });
+
+        const swabAreaSwabedAtData =
+          recordData[3].trim() == '-' ? null : recordData[3].trim();
+
+        const swabArea = await this.swabAreaRepository.findOne({
+          where: {
+            swabAreaName: recordData[4].trim(),
+          },
+          transaction: true,
+        });
+
+        let swabAreaData = null;
+        if (swabArea) {
+          swabAreaData = swabArea;
+        } else {
+          const newswabArea: SwabArea = await queryRunnerManger.save(
+            this.swabAreaService.make({
+              swabAreaName: recordData[4].trim(),
+              // facility: { id: '576d8d1c-457c-43aa-a26d-349464b08612' },
+            }),
+          );
+          swabAreaData = newswabArea;
+        }
+
+        const swabPeriodData = swabPeriods[recordData[5].trim()];
+
+        const swabAreaAtpData =
+          recordData[6].trim() == '-' ? null : parseInt(recordData[6].trim());
+
+        let swabEnvironmentsData = [];
+
+        if (
+          recordData[7].trim() != '-' &&
+          swabEnvironments[recordData[7].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[7].trim()]);
+        if (
+          recordData[8].trim() != '-' &&
+          swabEnvironments[recordData[8].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[8].trim()]);
+        if (
+          recordData[9].trim() != '-' &&
+          swabEnvironments[recordData[9].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[9].trim()]);
+        if (
+          recordData[10].trim() != '-' &&
+          swabEnvironments[recordData[10].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[10].trim()]);
+        if (
+          recordData[11].trim() != '-' &&
+          swabEnvironments[recordData[11].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[11].trim()]);
+
+        const historyData = {
+          swabAreaDate: swabAreaDateData,
+          swabAreaSwabedAt: swabAreaSwabedAtData,
+          swabAreaTemperature: null,
+          swabAreaHumidity: null,
+          swabAreaAtp: swabAreaAtpData,
+          swabPeriod: swabPeriodData,
+          swabTest: swabTestData,
+          swabArea: swabAreaData,
+          swabRound: null,
+          shift: shiftData,
+          productLot: '',
+          swabEnvironments: swabEnvironmentsData,
+        };
+
+        // console.log(historyData);
+        const swabAreaHistory = SwabAreaHistory.create(historyData);
+        await queryRunnerManger.save(swabAreaHistory);
+      }
+    });
   }
 }

@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install bash git g++ -y
 
 WORKDIR /var/www
 
-COPY ["package.json", "package-lock.json*", "./"]
+COPY ["package.json", "yarn.lock", "./"]
 
 RUN yarn
 

@@ -1,11 +1,10 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Product } from '~/product/entities/product.entity';
 
 export default class ProductSeeder implements Seeder {
     public async run(
-        dataSource: DataSource,
-        factoryManager: SeederFactoryManager
+        dataSource: DataSource
     ): Promise<any> {
         const productRepository = dataSource.getRepository(Product);
 

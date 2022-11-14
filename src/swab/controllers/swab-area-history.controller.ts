@@ -21,6 +21,7 @@ import { ParamLabSwabPlanByIdDto } from '../dto/param-lab-swab-plan-by-id.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
+import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
 import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
@@ -44,9 +45,19 @@ export class SwabAreaHistoryController {
   }
 
   @Authenticated()
+  @Get('v2')
+  queryUpdateSwabPlanV2(
+    @Query() queryUpdateSwabPlanV2Dto: QueryUpdateSwabPlanV2Dto,
+  ) {
+    return this.swabPlanQueryService.queryUpdateSwabPlanV2(
+      queryUpdateSwabPlanV2Dto,
+    );
+  }
+
+  @Authenticated()
   @Get('export')
-  querySwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
-    return this.swabPlanQueryService.querySwabPlan(querySwabPlanDto);
+  queryExportSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
+    return this.swabPlanQueryService.queryExportSwabPlan(querySwabPlanDto);
   }
 
   @Authenticated()
@@ -76,6 +87,11 @@ export class SwabAreaHistoryController {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 
+  @Post('save')
+  saveSwabPlan(@Body() data: Array<String>) {
+    return this.swabPlanManagerService.saveSwabPlan(data);
+  }
+
   @Authenticated()
   @Put(':id')
   async commandUpdateSwabPlanById(
@@ -85,6 +101,8 @@ export class SwabAreaHistoryController {
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto,
   ) {
     try {
+      console.log(user);
+
       await this.swabPlanManagerService.commandUpdateSwabPlanById(
         paramCommandUpdateSwabPlanByIdDto.id,
         bodycommandUpdateSwabPlanByIdDto,

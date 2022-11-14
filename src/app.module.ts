@@ -4,7 +4,6 @@ import databaseConfig from './database/config/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImportTransactionModule } from './import-transaction/import-transaction.module';
-import { ProductScheduleModule } from './product-schedule/product-schedule.module';
 import { ProductModule } from './product/product.module';
 import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
@@ -27,11 +26,10 @@ import { IotModule } from './iot/iot.module';
       useFactory: async (configService: ConfigService) => ({
         ...configService.get('database'),
         autoLoadEntities: true,
-      })
+      }),
     }),
     CommonModule,
     ImportTransactionModule,
-    ProductScheduleModule,
     ProductModule,
     DataCollectorModule,
     AuthModule,
@@ -39,13 +37,9 @@ import { IotModule } from './iot/iot.module';
     FacilityModule,
     AwsModule,
     LabModule,
-    IotModule
+    IotModule,
   ],
-  controllers: [
-    AppController
-  ],
-  providers: [
-    AppService
-  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

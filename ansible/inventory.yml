@@ -7,7 +7,7 @@ all:
     image_name: "{{ lookup('env', 'IMAGE_NAME') }}"
     image_tag: "{{ lookup('env', 'IMAGE_TAG') }}"
     aws_region: ap-southeast-1
-    image_repo_uri: "{{ aws_account_id }}.dkr.ecr.{{ aws_default_region }}.amazonaws.com/{{ image_name }}"
+    image_repo_uri: '{{ aws_account_id }}.dkr.ecr.{{ aws_default_region }}.amazonaws.com/{{ image_name }}'
 
     # key for aws-cli
     aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
@@ -49,7 +49,7 @@ all_envs:
     service_aws_default_region: "{{ lookup('env', 'SERVICE_AWS_DEFAULT_REGION') }}"
     service_aws_access_key_id: "{{ lookup('env', 'SERVICE_AWS_ACCESS_KEY_ID') }}"
     service_aws_secret_access_key: "{{ lookup('env', 'SERVICE_AWS_SECRET_ACCESS_KEY') }}"
-
+    service_aws_s3_upload_bucket: "{{ lookup('env', 'SERVICE_AWS_S3_UPLOAD_BUCKET') }}"
 
     # database_host: "{{ lookup('env', 'DATABASE_HOST') }}"
     # database_port: "{{ lookup('env', 'DATABASE_PORT') }}"

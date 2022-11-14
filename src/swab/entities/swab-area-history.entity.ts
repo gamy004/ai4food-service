@@ -1,9 +1,9 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne } from "typeorm";
-import { User } from "~/auth/entities/user.entity";
-import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
-import { Shift } from "~/common/enums/shift";
-import { FacilityItem } from "~/facility/entities/facility-item.entity";
-import { Product } from "~/product/entities/product.entity";
+import { User } from "../../auth/entities/user.entity";
+import { BaseSoftDeletableEntity } from "../../common/entities/base-softdeletable.entity";
+import { Shift } from "../../common/enums/shift";
+import { FacilityItem } from "../../facility/entities/facility-item.entity";
+import { Product } from "../../product/entities/product.entity";
 import { SwabAreaHistoryImage } from "./swab-area-history-image.entity";
 import { SwabArea } from "./swab-area.entity";
 import { SwabEnvironment } from "./swab-environment.entity";

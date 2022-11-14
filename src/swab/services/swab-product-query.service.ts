@@ -7,7 +7,6 @@ import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { FacilityService } from '~/facility/facility.service';
 import { SwabPeriodService } from './swab-period.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductService } from '~/product/product.service';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { Product } from '~/product/entities/product.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
@@ -16,6 +15,7 @@ import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.
 import { SwabTest } from '../entities/swab-test.entity';
 import { Facility } from '~/facility/entities/facility.entity';
 import { Bacteria } from '~/lab/entities/bacteria.entity';
+import { ProductService } from '~/product/services/product.service';
 
 @Injectable()
 export class SwabProductQueryService {
@@ -27,7 +27,7 @@ export class SwabProductQueryService {
     protected readonly productService: ProductService,
     @InjectRepository(SwabProductHistory)
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
-  ) { }
+  ) {}
 
   private transformQuerySwabProductDto(
     transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
@@ -40,7 +40,7 @@ export class SwabProductQueryService {
       swabPeriodId,
       productId,
       swabTestCode,
-      bacteriaName
+      bacteriaName,
     } = transformFilterSwabProductHistoryDto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};

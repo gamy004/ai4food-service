@@ -1,4 +1,4 @@
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { SwabArea } from '~/swab/entities/swab-area.entity';
 import { Facility } from '~/facility/entities/facility.entity';
@@ -6,8 +6,7 @@ import { SwabPeriod } from '~/swab/entities/swab-period.entity';
 
 export default class SwabSeeder implements Seeder {
     public async run(
-        dataSource: DataSource,
-        factoryManager: SeederFactoryManager
+        dataSource: DataSource
     ): Promise<any> {
         // const swabPeriodRepository = dataSource.getRepository(SwabPeriod);
 
