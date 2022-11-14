@@ -4,7 +4,6 @@ import databaseConfig from './database/config/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImportTransactionModule } from './import-transaction/import-transaction.module';
-// import { ProductScheduleModule } from './product-schedule/product-schedule.module';
 import { ProductModule } from './product/product.module';
 import { DataCollectorModule } from './data-collector/data-collector.module';
 import { AuthModule } from './auth/auth.module';
@@ -31,7 +30,6 @@ import { IotModule } from './iot/iot.module';
     }),
     CommonModule,
     ImportTransactionModule,
-    // ProductScheduleModule,
     ProductModule,
     DataCollectorModule,
     AuthModule,
