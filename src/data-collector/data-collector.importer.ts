@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { EntityManager, FindOptionsWhere } from 'typeorm';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
@@ -9,10 +8,6 @@ import {
 } from '~/import-transaction/entities/import-transaction.entity';
 
 // Policy!!! (Application Layer)
-export type CheckOutput<E> = {
-  // newRecords: E[],
-  existRecords: E[];
-};
 export abstract class DataCollectorImporter<Entity>
   implements DataCollectorImporterInterface<Entity>
 {
