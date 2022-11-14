@@ -69,7 +69,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
     }
 
     if (facilityId) {
-      whereFacilityItem.facilityId = facilityId;
+      whereSwabArea.facilityId = facilityId;
     }
 
     if (facilityItemId) {
