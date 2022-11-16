@@ -246,6 +246,7 @@ export class SwabPlanQueryService {
         swabTest: {
           id: true,
           swabTestCode: true,
+          swabTestRecordedAt: true,
         },
         swabAreaHistoryImages: {
           id: true,
