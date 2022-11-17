@@ -417,6 +417,16 @@ export class SwabProductManagerService {
           }
         }
       }
+
+      // special case of final day
+      if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
+        generateSwabProductHistory(
+          currentDate,
+          generalSwabPeriods['หลังประกอบเครื่อง'],
+          'night',
+          true,
+        );
+      }
     }
 
     const currentDate = new Date(fromDate);
