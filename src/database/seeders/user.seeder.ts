@@ -1,78 +1,66 @@
 import { Seeder } from 'typeorm-extension';
-import { hash } from "bcryptjs";
+import { hash } from 'bcryptjs';
 import { DataSource } from 'typeorm';
 import { User, UserRole, UserTeam } from '~/auth/entities/user.entity';
 
 export default class UserSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource
-  ): Promise<any> {
+  public async run(dataSource: DataSource): Promise<any> {
     const userRepository = dataSource.getRepository(User);
 
     // ---------------------------------------------------
 
     // const userFactory = await factoryManager.get(User);
 
-    let seedUsers = [];
-
-    for (let index = 1; index <= 1; index++) {
-      const adminUserName = `admin${index}`;
-      const adminUserPassword = await hash(`${adminUserName}password`, 14);
-
-      const adminTeamUser = await userRepository.create({
-        userName: adminUserName,
-        password: adminUserPassword,
-        firstName: adminUserName,
+    let seedUsers = [
+      {
+        userName: 'admin1',
+        firstName: 'admin1',
         lastName: null,
         role: UserRole.ADMIN,
-        team: UserTeam.ADMIN
-      });
-
-      const swabUserName = `swab${index}`;
-      const swabUserPassword = await hash(`${swabUserName}password`, 14);
-
-      const swabTeamUser = await userRepository.create({
-        userName: swabUserName,
-        password: swabUserPassword,
-        firstName: swabUserName,
+        team: UserTeam.ADMIN,
+      },
+      {
+        userName: 'swab1',
+        firstName: 'swab1',
         lastName: null,
         role: UserRole.USER,
-        team: UserTeam.SWAB
-      });
-
-      const labUserName = `lab${index}`;
-      const labUserPassword = await hash(`${labUserName}password`, 14);
-
-      const labTeamUser = await userRepository.create({
-        userName: labUserName,
-        password: labUserPassword,
-        firstName: labUserName,
+        team: UserTeam.SWAB,
+      },
+      {
+        userName: 'lab1',
+        firstName: 'lab1',
         lastName: null,
         role: UserRole.USER,
-        team: UserTeam.LAB
-      });
-
-      const productionUserName = `production${index}`;
-      const productionUserPassword = await hash(`${productionUserName}password`, 14);
-
-      const productionTeamUser = await userRepository.create({
-        userName: productionUserName,
-        password: productionUserPassword,
-        firstName: productionUserName,
+        team: UserTeam.LAB,
+      },
+      {
+        userName: 'production1',
+        firstName: 'production1',
         lastName: null,
         role: UserRole.USER,
-        team: UserTeam.PRODUCTION
-      });
+        team: UserTeam.PRODUCTION,
+      },
+    ];
 
-      seedUsers = [
-        ...seedUsers,
-        adminTeamUser,
-        swabTeamUser,
-        labTeamUser,
-        productionTeamUser
-      ];
+    for (let index = 0; index < seedUsers.length; index++) {
+      const { userName, firstName, lastName, role, team } = seedUsers[index];
+
+      const user = await userRepository.findOneBy({ userName });
+
+      if (!user) {
+        const password = await hash(`${userName}password`, 14);
+
+        const userEntity = userRepository.create({
+          userName,
+          password,
+          firstName,
+          lastName,
+          role,
+          team,
+        });
+
+        await userRepository.save(userEntity);
+      }
     }
-
-    await userRepository.upsert(seedUsers, ['userName']);
   }
 }
