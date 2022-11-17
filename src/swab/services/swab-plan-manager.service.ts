@@ -178,11 +178,7 @@ export class SwabPlanManagerService {
         swabRoundNumber: roundNumberSwabTest,
       });
 
-      if (swabRound) {
-        throw new Error(
-          'Swab round number already exists, use other number to generate data',
-        );
-      } else {
+      if (!swabRound) {
         swabRoundNumber = await this.swabRoundService.create({
           swabRoundNumber: roundNumberSwabTest,
         });
@@ -357,13 +353,13 @@ export class SwabPlanManagerService {
             ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
             shiftMapping: ['day'],
           },
-          // {
-          //     swabAreaName: "สายพานลำเลียงถาด",
-          //     subSwabAreas: [
-          //         { swabAreaName: "ตัวแผ่น" },
-          //         { swabAreaName: "ตัวกั้น" },
-          //     ]
-          // },
+          {
+            swabAreaName: 'สายพานลำเลียงถาด',
+            subSwabAreas: [
+              { swabAreaName: 'ตัวแผ่น' },
+              { swabAreaName: 'ตัวกั้น' },
+            ],
+          },
           {
             swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
             subSwabAreas: [
