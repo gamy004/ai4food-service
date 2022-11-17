@@ -863,16 +863,17 @@ export class SwabPlanManagerService {
          * 1: shift
          * 2: swabTest.swabTestCode
          * 3: swabAreaSwabedAt
-         * 4: swabArea
-         * 5: swabPeriod
-         * 6: swabAreaAtp
-         * 7: swabEnvironments  #1
-         * 8: swabEnvironments  #2
-         * 9: swabEnvironments  #3
-         * 10: swabEnvironments #4
-         * 11: swabEnvironments #5
-         * 12: swabTest.bacteria
-         * 13: swabTest.bacteriaSpecies
+         * 4: facilityItem
+         * 5: swabArea
+         * 6: swabPeriod
+         * 7: swabAreaAtp
+         * 8: swabEnvironments  #1
+         * 9: swabEnvironments  #2
+         * 10: swabEnvironments  #3
+         * 11: swabEnvironments #4
+         * 12: swabEnvironments #5
+         * 13: swabTest.bacteria
+         * 14: swabTest.bacteriaSpecies
          */
 
         const [d, m, y] = recordData[0].trim().split('/');
@@ -889,12 +890,12 @@ export class SwabPlanManagerService {
         let bacteriasData = [];
         let bacteriaSpeciesData = [];
 
-        if (recordData[12].trim() != '-' && recordData[12].trim() == 'Yes') {
+        if (recordData[13].trim() != '-' && recordData[13].trim() == 'Yes') {
           bacteriasData.push(bacteria);
         }
 
-        if (recordData[13].trim() != '-') {
-          const bacteriaSpecies = recordData[13].trim().split(',');
+        if (recordData[14].trim() != '-') {
+          const bacteriaSpecies = recordData[14].trim().split(',');
           let whereOption = [];
           for (let index = 0; index < bacteriaSpecies.length; index++) {
             const bacteriaSpecieName = bacteriaSpecies[index];
@@ -918,36 +919,26 @@ export class SwabPlanManagerService {
 
         const swabArea = await this.swabAreaRepository.findOne({
           where: {
-            swabAreaName: recordData[4].trim(),
+            swabAreaName: recordData[5].trim(),
           },
           transaction: true,
         });
 
         let swabAreaData = null;
+
         if (swabArea) {
           swabAreaData = swabArea;
         } else {
-          const newswabArea: SwabArea = await queryRunnerManger.save(
-            this.swabAreaService.make({
-              swabAreaName: recordData[4].trim(),
-              // facility: { id: '576d8d1c-457c-43aa-a26d-349464b08612' },
-            }),
-          );
-          swabAreaData = newswabArea;
+          throw new Error(``);
         }
 
-        const swabPeriodData = swabPeriods[recordData[5].trim()];
+        const swabPeriodData = swabPeriods[recordData[6].trim()];
 
         const swabAreaAtpData =
-          recordData[6].trim() == '-' ? null : parseInt(recordData[6].trim());
+          recordData[7].trim() == '-' ? null : parseInt(recordData[7].trim());
 
         let swabEnvironmentsData = [];
 
-        if (
-          recordData[7].trim() != '-' &&
-          swabEnvironments[recordData[7].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[7].trim()]);
         if (
           recordData[8].trim() != '-' &&
           swabEnvironments[recordData[8].trim()]
@@ -968,6 +959,11 @@ export class SwabPlanManagerService {
           swabEnvironments[recordData[11].trim()]
         )
           swabEnvironmentsData.push(swabEnvironments[recordData[11].trim()]);
+        if (
+          recordData[12].trim() != '-' &&
+          swabEnvironments[recordData[12].trim()]
+        )
+          swabEnvironmentsData.push(swabEnvironments[recordData[12].trim()]);
 
         const historyData = {
           swabAreaDate: swabAreaDateData,
