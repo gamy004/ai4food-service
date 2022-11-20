@@ -238,8 +238,10 @@ export class SwabLabQueryService {
         facilityItemId: true,
       },
       order: {
-        swabProductSwabedAt: {
-          direction: 'desc',
+        swabTest: {
+          id: {
+            direction: 'asc',
+          },
         },
       },
     });
