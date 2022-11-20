@@ -219,8 +219,6 @@ export class SwabLabQueryService {
     const where: FindOptionsWhere<SwabProductHistory> =
       this.swabProductHistoryService.toFilter(queryLabSwabProductDto);
 
-    console.log(where);
-
     const swabProductHistories = await this.swabProductHistoryService.find({
       where: {
         ...where,
