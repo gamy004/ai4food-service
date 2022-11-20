@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Like, Not, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { SwabTest } from '../entities/swab-test.entity';
@@ -31,11 +32,14 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
       swabTestId,
       swabPeriodId,
       productId,
+      bacteriaName,
+      hasBacteria,
     } = dto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
     const whereSwabTest: FindOptionsWhere<SwabTest> = {};
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
+    const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
     if (id) {
       where.id = id;
@@ -51,6 +55,14 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
 
     if (swabTestCode && swabTestCode.length) {
       whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
+    }
+
+    if (hasBacteria) {
+      whereBacteria.id = Not(IsNull());
+    }
+
+    if (bacteriaName && bacteriaName.length) {
+      whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
     }
 
     if (swabTestId) {
@@ -75,6 +87,10 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
 
     if (Object.keys(whereFacilityItem).length) {
       where.facilityItem = whereFacilityItem;
+    }
+
+    if (Object.keys(whereBacteria).length) {
+      whereSwabTest.bacteria = whereBacteria;
     }
 
     if (Object.keys(whereSwabTest).length) {
