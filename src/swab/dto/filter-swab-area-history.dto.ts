@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsUUID,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
 import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
@@ -14,6 +15,7 @@ import { FacilityExistsRule } from '~/facility/validators/facility-exists-valida
 import { FacilityItemExistsRule } from '~/facility/validators/facility-item-exists-validator';
 import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator';
+import { Transform } from 'class-transformer';
 
 export class FilterSwabAreaHistoryDto {
   @IsOptional()
@@ -61,4 +63,9 @@ export class FilterSwabAreaHistoryDto {
   @IsOptional()
   @IsNotEmpty()
   bacteriaName?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  hasBacteria?: boolean;
 }

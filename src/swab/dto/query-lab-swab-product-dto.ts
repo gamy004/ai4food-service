@@ -11,5 +11,7 @@ export class QueryLabSwabProductDto extends PickType(
     'facilityId',
     'facilityItemId',
     'productId',
+    'bacteriaName',
+    'hasBacteria',
   ],
 ) {}
