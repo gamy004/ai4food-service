@@ -221,7 +221,7 @@ export default class SwabSeeder implements Seeder {
       //     facilityName: "เครื่องซุยข้าว Aiho No.2",
       //     mainSwabAreas: [
       //         {
-      //             swabAreaName: "แกนสายพาน",
+      //             swabAreaName: "แกนสายพานซุยข้าว",
       //             subSwabAreas: [
       //                 { swabAreaName: "แกนกลาง" },
       //                 { swabAreaName: "ก้านซุย" },
