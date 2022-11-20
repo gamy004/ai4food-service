@@ -32,4 +32,12 @@ export class ProductScheduleManagerService {
 
     return productSchedule;
   }
+
+  async commandDeleteProductScheduleById(id: string): Promise<ProductSchedule> {
+    const productSchedule = await this.productScheduleService.findOneByOrFail({
+      id,
+    });
+
+    return this.productScheduleService.removeOne(productSchedule);
+  }
 }
