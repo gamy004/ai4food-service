@@ -33,6 +33,8 @@ export abstract class DataCollectorImporter<Entity>
    */
   abstract map(record: Entity): FindOptionsWhere<Entity>;
 
+  abstract preProcess(records: Entity[]): Entity[];
+
   private getMappingKey(record) {
     return this.mappingKeys.map((mappingKey) => record[mappingKey]).join('_');
   }
@@ -43,18 +45,21 @@ export abstract class DataCollectorImporter<Entity>
 
   public getExistsEntity(entity: Entity) {
     return this.existsRecords[this.getMappingKey(entity)] || null;
-  } 
+  }
 
   /**
    * Method to pre-process the data before inserting to db
    *
    * @param queryRunnerManger The entity manager from transaction
-   * 
+   *
    * @param records The new records that will be imported
    *
    * @return Promise<Entity[], Entity[]>
    */
-  private async preProcess(queryRunnerManger: EntityManager,records: Entity[]): Promise<void> {
+  private async queryExistRecords(
+    queryRunnerManger: EntityManager,
+    records: Entity[],
+  ): Promise<void> {
     // const filteredRecordMapping = {};
 
     const existRecords = await queryRunnerManger.findBy(
@@ -81,8 +86,10 @@ export abstract class DataCollectorImporter<Entity>
     importTransaction: ImportTransaction,
     records: Entity[],
   ): Promise<void> {
+    records = this.preProcess(records);
+
     await this.transaction.execute(async (queryRunnerManger) => {
-      await this.preProcess(queryRunnerManger, records);
+      await this.queryExistRecords(queryRunnerManger, records);
 
       records = records.map((record: Entity) => {
         if (this.isEnitityExists(record)) {
@@ -104,12 +111,12 @@ export abstract class DataCollectorImporter<Entity>
       // );
 
       // await Promise.allSettled([
-        // queryRunnerManger.softRemove(existEntities),
-        // queryRunnerManger.save(
-        //   records.map((entity) =>
-        //     this.repository.create({ ...entity, importTransaction }),
-        //   ),
-        // ),
+      // queryRunnerManger.softRemove(existEntities),
+      // queryRunnerManger.save(
+      //   records.map((entity) =>
+      //     this.repository.create({ ...entity, importTransaction }),
+      //   ),
+      // ),
       // ]);
     });
   }

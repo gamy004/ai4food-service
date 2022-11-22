@@ -5,6 +5,8 @@ import { DataCollectorImporter } from '~/data-collector/data-collector.importer'
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import { ProductSchedule } from '../entities/product-schedule.entity';
+import { DateTransformer } from '~/common/transformers/date-transformer';
+import { Shift } from '~/common/enums/shift';
 
 // Detail!!! (Application Layer)
 export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedule> {
@@ -18,6 +20,7 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
   ];
 
   constructor(
+    private readonly dateTransformer: DateTransformer,
     transaction: TransactionDatasource,
     @InjectRepository(ProductSchedule)
     repository: CommonRepositoryInterface<ProductSchedule>,
@@ -41,5 +44,54 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
       productScheduleStartedAt,
       productScheduleEndedAt,
     };
+  }
+
+  preProcess(records: ProductSchedule[]) {
+    return records.map((record) => {
+      const timeObjectProductScheduleStartedAt =
+        this.dateTransformer.toTimeObject(record.productScheduleStartedAt);
+
+      const productScheduleDateForStartedAt = this.dateTransformer.toObject(
+        record.productScheduleDate,
+        timeObjectProductScheduleStartedAt,
+      );
+
+      const timeObjectProductScheduleEndedAt =
+        this.dateTransformer.toTimeObject(record.productScheduleEndedAt);
+
+      const productScheduleDateForEndedAt = this.dateTransformer.toObject(
+        record.productScheduleDate,
+        timeObjectProductScheduleEndedAt,
+      );
+
+      // for time in shift NIGHT and has started at hour between 00:00 am - 07:00 am, map to next day
+      if (
+        record.shift === Shift.NIGHT &&
+        timeObjectProductScheduleStartedAt.hours >= 0 &&
+        timeObjectProductScheduleStartedAt.hours < 7
+      ) {
+        productScheduleDateForStartedAt.setDate(
+          productScheduleDateForStartedAt.getDate() + 1,
+        );
+      }
+
+      // for time in shift NIGHT and has ended at hour between 00:00 am - 07:00 am, map to next day
+      if (
+        record.shift === Shift.NIGHT &&
+        timeObjectProductScheduleEndedAt.hours >= 0 &&
+        timeObjectProductScheduleEndedAt.hours < 7
+      ) {
+        productScheduleDateForEndedAt.setDate(
+          productScheduleDateForEndedAt.getDate() + 1,
+        );
+      }
+
+      record.productScheduleStartedAtTimestamp =
+        productScheduleDateForStartedAt;
+
+      record.productScheduleEndedAtTimestamp = productScheduleDateForEndedAt;
+
+      return record;
+    });
   }
 }

@@ -1,7 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsInt, Min, Validate, ValidateNested } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  Min,
+  Validate,
+  ValidateNested,
+} from 'class-validator';
 import { FindOptionsWhere, IsNull, Not } from 'typeorm';
 import { ContextAwareDto } from '~/common/dto/context-aware.dto';
+import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
 import { TimeGreaterThanRule } from '~/common/validators/time-greater-than-validator';
 import { TimeOnlyRule } from '~/common/validators/time-only-validator';
@@ -49,11 +56,9 @@ export class CreateProductScheduleDto extends ContextAwareDto {
           deletedAt: IsNull(),
         };
 
-        if (context.params.id) {
+        if (context && context.params && context.params.id) {
           whereCondition.id = Not(context.params.id);
         }
-
-        console.log(12345, whereCondition);
 
         return whereCondition;
       },
@@ -64,4 +69,7 @@ export class CreateProductScheduleDto extends ContextAwareDto {
     },
   )
   product: ConnectProductDto;
+
+  @IsNotEmpty()
+  shift: Shift;
 }

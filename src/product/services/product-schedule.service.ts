@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOptionsWhere, Raw } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  Raw,
+} from 'typeorm';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
@@ -21,9 +26,18 @@ export class ProductScheduleService extends CrudService<ProductSchedule> {
     dto: QueryProductScheduleDto,
   ): FindManyOptions<ProductSchedule> {
     const where: FindOptionsWhere<ProductSchedule> = this.toWhere(dto);
+    const order: FindOptionsOrder<ProductSchedule> = {
+      productScheduleDate: 'asc',
+      productScheduleStartedAtTimestamp: 'asc',
+      productScheduleEndedAtTimestamp: 'asc',
+      product: {
+        productName: 'asc',
+      },
+    };
 
     return {
       where,
+      order,
     };
   }
 
