@@ -1,5 +1,10 @@
-import { ImportTransaction } from "~/import-transaction/entities/import-transaction.entity"
+import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 
 export interface DataCollectorImporterInterface<Entity> {
-    import(importTransaction: ImportTransaction, records: Entity[]): Promise<void>;
+  setTimezone(timezone: string): void;
+  getTimezone(): string;
+  import(
+    importTransaction: ImportTransaction,
+    records: Entity[],
+  ): Promise<void>;
 }

@@ -17,6 +17,8 @@ export abstract class DataCollectorImporter<Entity>
 
   protected existsRecords: Record<string, Entity>;
 
+  protected timezone: string;
+
   constructor(
     protected readonly transaction: TransactionDatasource,
     protected readonly repository: CommonRepositoryInterface<Entity>,
@@ -35,16 +37,24 @@ export abstract class DataCollectorImporter<Entity>
 
   abstract preProcess(records: Entity[]): Entity[];
 
-  private getMappingKey(record) {
+  private getMappingKey(record): string {
     return this.mappingKeys.map((mappingKey) => record[mappingKey]).join('_');
   }
 
-  private isEnitityExists(entity: Entity) {
+  private isEnitityExists(entity: Entity): boolean {
     return this.existsRecords[this.getMappingKey(entity)] !== undefined;
   }
 
-  public getExistsEntity(entity: Entity) {
+  public getExistsEntity(entity: Entity): Entity | null {
     return this.existsRecords[this.getMappingKey(entity)] || null;
+  }
+
+  public setTimezone(timezone: string): void {
+    this.timezone = timezone;
+  }
+
+  public getTimezone(): string {
+    return this.timezone;
   }
 
   /**

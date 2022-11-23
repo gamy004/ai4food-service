@@ -7,6 +7,7 @@ import { TransactionDatasource } from '~/common/datasource/transaction.datasourc
 import { ProductSchedule } from '../entities/product-schedule.entity';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { Shift } from '~/common/enums/shift';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 // Detail!!! (Application Layer)
 export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedule> {
@@ -47,11 +48,13 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
   }
 
   preProcess(records: ProductSchedule[]) {
+    const timezone = this.getTimezone();
+
     return records.map((record) => {
       const timeObjectProductScheduleStartedAt =
         this.dateTransformer.toTimeObject(record.productScheduleStartedAt);
 
-      const productScheduleDateForStartedAt = this.dateTransformer.toObject(
+      let productScheduleDateForStartedAt = this.dateTransformer.toObject(
         record.productScheduleDate,
         timeObjectProductScheduleStartedAt,
       );
@@ -59,7 +62,7 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
       const timeObjectProductScheduleEndedAt =
         this.dateTransformer.toTimeObject(record.productScheduleEndedAt);
 
-      const productScheduleDateForEndedAt = this.dateTransformer.toObject(
+      let productScheduleDateForEndedAt = this.dateTransformer.toObject(
         record.productScheduleDate,
         timeObjectProductScheduleEndedAt,
       );
@@ -83,6 +86,18 @@ export class ProductScheduleImporter extends DataCollectorImporter<ProductSchedu
       ) {
         productScheduleDateForEndedAt.setDate(
           productScheduleDateForEndedAt.getDate() + 1,
+        );
+      }
+
+      if (timezone) {
+        productScheduleDateForStartedAt = zonedTimeToUtc(
+          productScheduleDateForStartedAt,
+          timezone,
+        );
+
+        productScheduleDateForEndedAt = zonedTimeToUtc(
+          productScheduleDateForEndedAt,
+          timezone,
         );
       }
 

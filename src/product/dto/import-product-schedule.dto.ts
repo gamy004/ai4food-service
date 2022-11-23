@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   Min,
   Validate,
   ValidateNested,
@@ -55,4 +56,7 @@ export class ImportProductScheduleDto {
   ])
   @Type(() => ImportProductScheduleRecordDto)
   records: ImportProductScheduleRecordDto[];
+
+  @IsOptional()
+  timezone?: string;
 }
