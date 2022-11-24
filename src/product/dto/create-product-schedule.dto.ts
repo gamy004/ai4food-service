@@ -65,7 +65,7 @@ export class CreateProductScheduleDto extends ContextAwareDto {
     ],
     {
       message:
-        "ProductSchedule with the following fields already exists: ['product', 'productScheduleDate', 'productScheduleStartedAt', 'productScheduleEndedAt']",
+        "ProductSchedule with the same 'product, productScheduleDate, productScheduleStartedAt, productScheduleEndedAt' already exist",
     },
   )
   product: ConnectProductDto;

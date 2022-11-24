@@ -28,6 +28,8 @@ export class ProductScheduleManagerService {
     productSchedule.productScheduleEndedAt = dto.productScheduleEndedAt;
     productSchedule.product = this.productService.make({ id: dto.product.id });
 
+    this.productScheduleService.computeTimestamp(productSchedule, dto.timezone);
+
     this.productScheduleService.save(productSchedule);
 
     return productSchedule;
