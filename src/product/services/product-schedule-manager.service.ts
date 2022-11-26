@@ -18,7 +18,7 @@ export class ProductScheduleManagerService {
     id: string,
     dto: BodyUpdateProductScheduleDto,
   ): Promise<ProductSchedule> {
-    const productSchedule = await this.productScheduleService.findOneByOrFail({
+    let productSchedule = await this.productScheduleService.findOneByOrFail({
       id,
     });
 
@@ -28,9 +28,12 @@ export class ProductScheduleManagerService {
     productSchedule.productScheduleEndedAt = dto.productScheduleEndedAt;
     productSchedule.product = this.productService.make({ id: dto.product.id });
 
-    this.productScheduleService.computeTimestamp(productSchedule, dto.timezone);
+    productSchedule = this.productScheduleService.computeTimestamp(
+      productSchedule,
+      dto.timezone,
+    );
 
-    this.productScheduleService.save(productSchedule);
+    productSchedule = await this.productScheduleService.save(productSchedule);
 
     return productSchedule;
   }
