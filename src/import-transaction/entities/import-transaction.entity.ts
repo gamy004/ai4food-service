@@ -1,4 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { CleaningPlan } from '~/cleaning/entities/cleaning-plan.entity';
+import { CleaningRoomHistory } from '~/cleaning/entities/cleaning-room-history.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
 import { ProductSchedule } from '../../product/entities/product-schedule.entity';
@@ -49,4 +51,10 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
     cascade: true,
   })
   productSchedules: ProductSchedule[];
+
+  @OneToMany(() => CleaningPlan, (entity) => entity.importTransaction)
+  cleaningPlans: CleaningPlan[];
+
+  @OneToMany(() => CleaningRoomHistory, (entity) => entity.importTransaction)
+  cleaningRoomHistories: CleaningRoomHistory[];
 }
