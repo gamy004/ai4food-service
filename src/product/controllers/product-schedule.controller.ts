@@ -51,6 +51,12 @@ export class ProductScheduleController {
       importProductScheduleDto.importTransaction,
     );
 
+    if (importProductScheduleDto.timezone) {
+      this.productScheduleImporter.setTimezone(
+        importProductScheduleDto.timezone,
+      );
+    }
+
     return this.productScheduleImporter.import(
       importTransaction,
       ProductSchedule.create<ProductSchedule>(importProductScheduleDto.records),
