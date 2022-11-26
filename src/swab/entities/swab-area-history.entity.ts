@@ -85,7 +85,7 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     recordedUser: User;
 
     @Column({ nullable: true })
-    SwabRoundId?: number;
+    swabRoundId?: number;
 
     @ManyToOne(() => SwabRound, entity => entity.swabAreaHistories)
     @JoinColumn()

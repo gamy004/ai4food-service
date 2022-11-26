@@ -5,6 +5,7 @@ import { Shift } from '~/common/enums/shift';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Product } from '~/product/entities/product.entity';
 import { SwabPeriod } from './swab-period.entity';
+import { SwabRound } from './swab-round.entity';
 import { SwabTest } from './swab-test.entity';
 
 @Entity()
@@ -61,4 +62,11 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
     onDelete: 'SET NULL',
   })
   facilityItem: FacilityItem;
+
+  @Column({ nullable: true })
+  swabRoundId?: number;
+
+  @ManyToOne(() => SwabRound, entity => entity.swabProductHistories)
+  @JoinColumn()
+  swabRound?: SwabRound;
 }
