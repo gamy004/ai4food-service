@@ -22,19 +22,24 @@ import { SwabAreaHistoryService } from './swab-area-history.service';
 import { ResponseQueryUpdateSwabPlanV2Dto } from '../dto/response-query-update-swab-plan-v2.dto';
 import { FacilityItemService } from '~/facility/facility-item.service';
 import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
+import { SwabProductHistoryService } from './swab-product-history.service';
+import { SwabProductHistory } from '../entities/swab-product-history.entity';
+import { ProductService } from '~/product/services/product.service';
 
 @Injectable()
 export class SwabPlanQueryService {
   constructor(
     private readonly dateTransformer: DateTransformer,
-    protected readonly facilityService: FacilityService,
-    protected readonly facilityItemService: FacilityItemService,
-    protected readonly swabPeriodService: SwabPeriodService,
-    protected readonly swabAreaHistoryService: SwabAreaHistoryService,
+    private readonly facilityService: FacilityService,
+    private readonly facilityItemService: FacilityItemService,
+    private readonly swabPeriodService: SwabPeriodService,
+    private readonly swabAreaHistoryService: SwabAreaHistoryService,
+    private readonly swabProductHistoryService: SwabProductHistoryService,
+    private readonly productService: ProductService,
     @InjectRepository(SwabAreaHistory)
-    protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
+    private readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
-    protected readonly swabAreaRepository: Repository<SwabArea>,
+    private readonly swabAreaRepository: Repository<SwabArea>,
   ) {}
 
   private transformQuerySwabPlanDto(
@@ -71,22 +76,52 @@ export class SwabPlanQueryService {
     return where;
   }
 
+  private transformQuerySwabProductDto(
+    querySwabPlanDto: QuerySwabPlanDto,
+  ): FindOptionsWhere<SwabProductHistory> {
+    const { fromDate, toDate: toDateString } = querySwabPlanDto;
+
+    const where: FindOptionsWhere<SwabProductHistory> = {};
+
+    let toDate;
+
+    if (toDateString) {
+      toDate = this.dateTransformer.toObject(toDateString);
+
+      toDate.setDate(toDate.getDate() + 1);
+
+      toDate = this.dateTransformer.toString(toDate);
+    }
+
+    if (fromDate && toDate) {
+      where.swabProductDate = Raw(
+        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+      );
+    } else {
+      if (fromDate) {
+        where.swabProductDate = Raw((field) => `${field} >= '${fromDate}'`);
+      }
+
+      if (toDate) {
+        where.swabProductDate = Raw((field) => `${field} < '${toDate}'`);
+      }
+    }
+
+    return where;
+  }
+
   async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
-    const where: FindOptionsWhere<SwabAreaHistory> =
+    const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
       this.transformQuerySwabPlanDto(querySwabPlanDto);
 
-    const swabPeriods = await this.swabPeriodService.find({
-      select: {
-        id: true,
-        swabPeriodName: true,
-      },
-    });
-
+    const whereSwabProductHistory: FindOptionsWhere<SwabProductHistory> =
+      this.transformQuerySwabProductDto(querySwabPlanDto);
+    
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where: {
-        ...where,
+        ...whereSwabAreaHistory,
         swabTestId: Not(IsNull()),
       },
       relations: {
@@ -113,10 +148,44 @@ export class SwabPlanQueryService {
       },
     });
 
+    const swabProductHistories = await this.swabProductHistoryService.find({
+      where: {
+        ...whereSwabProductHistory,
+        swabTestId: Not(IsNull()),
+      },
+      relations: {
+        swabTest: true,
+      },
+      select: {
+        id: true,
+        swabProductDate: true,
+        swabPeriodId: true,
+        productId: true,
+        shift: true,
+        swabTestId: true,
+        swabTest: {
+          id: true,
+          swabTestCode: true,
+        },
+      },
+      order: {
+        swabTest: {
+          id: {
+            direction: 'asc',
+          },
+        },
+      },
+    });
+
+    let swabPeriodMapping = {};
+    let swabPeriods = [];
     let facilities = [];
+    let products = [];
     let swabAreas = [];
 
     if (swabAreaHistories.length) {
+      swabAreaHistories.forEach(({ swabPeriodId }) => swabPeriodMapping[swabPeriodId] = true);
+
       const swabAreaIds = [
         ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
       ].filter(Boolean);
@@ -158,10 +227,49 @@ export class SwabPlanQueryService {
         }
       }
     }
+
+    if (swabProductHistories.length) {
+      swabProductHistories.forEach(({ swabPeriodId }) => swabPeriodMapping[swabPeriodId] = true);
+
+      const productIds = [
+        ...new Set(swabProductHistories.map(({ productId }) => productId)),
+      ].filter(Boolean);
+
+      if (productIds.length) {
+        products = await this.productService.find({
+          where: {
+            id: In(productIds),
+          },
+          select: {
+            id: true,
+            productName: true,
+            productCode: true,
+            alternateProductCode: true
+          },
+        });
+      }
+    }
+
+    const swabPeriodIds = Object.keys(swabPeriodMapping).filter(Boolean);
+
+    if (swabPeriodIds.length) {
+      swabPeriods = await this.swabPeriodService.find({
+        where: {
+          id: In(swabPeriodIds)
+        },
+        select: {
+          id: true,
+          swabPeriodName: true,
+        },
+      });
+    }
+
     return {
       swabPeriods,
       swabAreaHistories,
+      swabProductHistories,
       swabAreas,
+      products,
       facilities,
     };
   }
