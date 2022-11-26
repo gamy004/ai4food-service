@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from "typeorm";
 import { BaseSoftDeletableIncrementEntity } from "~/common/entities/base-softdeletable-increment.entity";
 import { SwabAreaHistory } from "./swab-area-history.entity";
+import { SwabProductHistory } from "./swab-product-history.entity";
 
 @Entity()
 export class SwabRound extends BaseSoftDeletableIncrementEntity {
@@ -9,4 +10,7 @@ export class SwabRound extends BaseSoftDeletableIncrementEntity {
 
     @OneToMany(() => SwabAreaHistory, entity => entity.swabRound)
     swabAreaHistories: SwabAreaHistory[];
+
+    @OneToMany(() => SwabProductHistory, entity => entity.swabRound)
+    swabProductHistories: SwabProductHistory[];
 }
