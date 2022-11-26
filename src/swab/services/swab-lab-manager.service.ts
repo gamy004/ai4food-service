@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SwabTestService } from './swab-test.service';
 import { User } from '~/auth/entities/user.entity';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
-import { BacteriaSpecie } from '~/lab/entities/bacteria-specie.entity';
+// import { BacteriaSpecie } from '~/lab/entities/bacteria-specie.entity';
 import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { BacteriaSpecieService } from '~/lab/services/bacteria-specie.service';
 import { BacteriaService } from '~/lab/services/bacteria.service';
@@ -33,18 +33,18 @@ export class SwabLabManagerService {
 
     await this.transaction.execute(async (queryRunnerManger) => {
       const existsBacteriaMapping = {};
-      const existsBacteriaSpecieMapping = {};
+      // const existsBacteriaSpecieMapping = {};
       const newBacteriaMapping = {};
-      const newBacteriaSpecieMapping = {};
+      // const newBacteriaSpecieMapping = {};
       const swabTestBacteria = {};
-      const swabTestBacteriaSpecie = {};
+      // const swabTestBacteriaSpecie = {};
 
       for (let index = 0; index < bacteriaSpecies.length; index++) {
         const {
           bacteriaId,
           bacteriaName,
-          bacteriaSpecieId,
-          bacteriaSpecieName,
+          // bacteriaSpecieId,
+          // bacteriaSpecieName,
         } = bacteriaSpecies[index];
 
         // if new bacteria is inserted
@@ -84,59 +84,59 @@ export class SwabLabManagerService {
         }
 
         // if new bacteria specie is inserted with bacteria id
-        if (
-          bacteriaSpecies[index].bacteriaId &&
-          !bacteriaSpecieId &&
-          bacteriaSpecieName
-        ) {
-          // find existing bacteria specie name
-          if (!existsBacteriaSpecieMapping[bacteriaSpecieName]) {
-            const bacteriaSpecie = await this.bacteriaSpecieService.findOne({
-              where: { bacteriaSpecieName },
-              transaction: true,
-            });
+        // if (
+        //   bacteriaSpecies[index].bacteriaId &&
+        //   !bacteriaSpecieId &&
+        //   bacteriaSpecieName
+        // ) {
+        //   // find existing bacteria specie name
+        //   if (!existsBacteriaSpecieMapping[bacteriaSpecieName]) {
+        //     const bacteriaSpecie = await this.bacteriaSpecieService.findOne({
+        //       where: { bacteriaSpecieName },
+        //       transaction: true,
+        //     });
 
-            if (bacteriaSpecie) {
-              existsBacteriaSpecieMapping[bacteriaSpecieName] =
-                bacteriaSpecie.id;
-            }
-          }
+        //     if (bacteriaSpecie) {
+        //       existsBacteriaSpecieMapping[bacteriaSpecieName] =
+        //         bacteriaSpecie.id;
+        //     }
+        //   }
 
-          // if bacteria specie exists
-          if (existsBacteriaSpecieMapping[bacteriaSpecieName]) {
-            bacteriaSpecies[index].bacteriaSpecieId =
-              existsBacteriaSpecieMapping[bacteriaSpecieName];
-          } else {
-            // if new bacteria specie have not already inserted
-            if (!newBacteriaSpecieMapping[bacteriaSpecieName]) {
-              const newBacteriaSpecie: BacteriaSpecie =
-                await queryRunnerManger.save(
-                  this.bacteriaSpecieService.make({
-                    bacteriaId: bacteriaSpecies[index].bacteriaId,
-                    bacteriaSpecieName,
-                  }),
-                );
+        //   // if bacteria specie exists
+        //   if (existsBacteriaSpecieMapping[bacteriaSpecieName]) {
+        //     bacteriaSpecies[index].bacteriaSpecieId =
+        //       existsBacteriaSpecieMapping[bacteriaSpecieName];
+        //   } else {
+        //     // if new bacteria specie have not already inserted
+        //     if (!newBacteriaSpecieMapping[bacteriaSpecieName]) {
+        //       const newBacteriaSpecie: BacteriaSpecie =
+        //         await queryRunnerManger.save(
+        //           this.bacteriaSpecieService.make({
+        //             bacteriaId: bacteriaSpecies[index].bacteriaId,
+        //             bacteriaSpecieName,
+        //           }),
+        //         );
 
-              newBacteriaSpecieMapping[bacteriaSpecieName] =
-                newBacteriaSpecie.id;
-            }
+        //       newBacteriaSpecieMapping[bacteriaSpecieName] =
+        //         newBacteriaSpecie.id;
+        //     }
 
-            // if new bacteria mapping id exists, fill it to the input data
-            if (newBacteriaSpecieMapping[bacteriaSpecieName]) {
-              bacteriaSpecies[index].bacteriaSpecieId =
-                newBacteriaSpecieMapping[bacteriaSpecieName];
-            }
-          }
-        }
+        //     // if new bacteria mapping id exists, fill it to the input data
+        //     if (newBacteriaSpecieMapping[bacteriaSpecieName]) {
+        //       bacteriaSpecies[index].bacteriaSpecieId =
+        //         newBacteriaSpecieMapping[bacteriaSpecieName];
+        //     }
+        //   }
+        // }
 
         if (bacteriaSpecies[index].bacteriaId) {
           swabTestBacteria[bacteriaSpecies[index].bacteriaId] = true;
         }
 
-        if (bacteriaSpecies[index].bacteriaSpecieId) {
-          swabTestBacteriaSpecie[bacteriaSpecies[index].bacteriaSpecieId] =
-            true;
-        }
+        // if (bacteriaSpecies[index].bacteriaSpecieId) {
+        //   swabTestBacteriaSpecie[bacteriaSpecies[index].bacteriaSpecieId] =
+        //     true;
+        // }
       }
 
       // Update swab test relation
@@ -146,20 +146,25 @@ export class SwabLabManagerService {
       });
 
       swabTest.swabTestRecordedAt = swabTestRecordedAt;
+      console.log(swabTestRecordedAt);
+
+      swabTest.bacteriaRecordedAt = swabTestRecordedAt;
+
+      swabTest.bacteriaRecordedUser = recordedUser;
+
+      swabTest.recordedUser = recordedUser;
 
       if (swabTestNote) {
         swabTest.swabTestNote = swabTestNote;
       }
 
-      swabTest.recordedUser = recordedUser;
-
       swabTest.bacteria = Object.keys(swabTestBacteria).map((id) =>
         this.bacteriaService.make({ id }),
       );
 
-      swabTest.bacteriaSpecies = Object.keys(swabTestBacteriaSpecie).map((id) =>
-        this.bacteriaSpecieService.make({ id }),
-      );
+      // swabTest.bacteriaSpecies = Object.keys(swabTestBacteriaSpecie).map((id) =>
+      //   this.bacteriaSpecieService.make({ id }),
+      // );
 
       await queryRunnerManger.save(swabTest);
     });

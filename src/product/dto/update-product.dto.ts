@@ -1,6 +1,6 @@
 import { PartialType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID, Validate } from 'class-validator';
-import { Not } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 import { ContextAwareDto } from '~/common/dto/context-aware.dto';
 import { Unique } from '~/common/validators/unique-validator';
 import { Product } from '../entities/product.entity';
@@ -21,7 +21,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       productCode,
       id: Not(context.params.id),
-      deletedAt: null,
+      deletedAt: IsNull(),
     }),
   ])
   productCode!: string;
@@ -36,7 +36,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       alternateProductCode,
       id: Not(context.params.id),
-      deletedAt: null,
+      deletedAt: IsNull(),
     }),
   ])
   alternateProductCode!: string;
@@ -51,7 +51,7 @@ export class BodyUpdateProductDto extends ContextAwareDto {
     }) => ({
       productName,
       id: Not(context.params.id),
-      deletedAt: null,
+      deletedAt: IsNull(),
     }),
   ])
   productName!: string;

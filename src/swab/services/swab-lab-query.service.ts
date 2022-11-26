@@ -107,8 +107,10 @@ export class SwabLabQueryService {
         ...DEFAULT_SELECT,
       },
       order: {
-        swabAreaSwabedAt: {
-          direction: 'desc',
+        swabTest: {
+          id: {
+            direction: 'asc',
+          },
         },
       },
     });
@@ -236,8 +238,10 @@ export class SwabLabQueryService {
         facilityItemId: true,
       },
       order: {
-        swabProductSwabedAt: {
-          direction: 'desc',
+        swabTest: {
+          id: {
+            direction: 'asc',
+          },
         },
       },
     });

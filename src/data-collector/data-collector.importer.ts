@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { EntityManager, FindOptionsWhere } from 'typeorm';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
@@ -9,10 +8,6 @@ import {
 } from '~/import-transaction/entities/import-transaction.entity';
 
 // Policy!!! (Application Layer)
-export type CheckOutput<E> = {
-  // newRecords: E[],
-  existRecords: E[];
-};
 export abstract class DataCollectorImporter<Entity>
   implements DataCollectorImporterInterface<Entity>
 {
@@ -21,6 +16,8 @@ export abstract class DataCollectorImporter<Entity>
   abstract mappingKeys: string[];
 
   protected existsRecords: Record<string, Entity>;
+
+  protected timezone: string;
 
   constructor(
     protected readonly transaction: TransactionDatasource,
@@ -38,28 +35,41 @@ export abstract class DataCollectorImporter<Entity>
    */
   abstract map(record: Entity): FindOptionsWhere<Entity>;
 
-  private getMappingKey(record) {
+  abstract preProcess(records: Entity[]): Entity[];
+
+  private getMappingKey(record): string {
     return this.mappingKeys.map((mappingKey) => record[mappingKey]).join('_');
   }
 
-  private isEnitityExists(entity: Entity) {
+  private isEnitityExists(entity: Entity): boolean {
     return this.existsRecords[this.getMappingKey(entity)] !== undefined;
   }
 
-  public getExistsEntity(entity: Entity) {
+  public getExistsEntity(entity: Entity): Entity | null {
     return this.existsRecords[this.getMappingKey(entity)] || null;
-  } 
+  }
+
+  public setTimezone(timezone: string): void {
+    this.timezone = timezone;
+  }
+
+  public getTimezone(): string {
+    return this.timezone;
+  }
 
   /**
    * Method to pre-process the data before inserting to db
    *
    * @param queryRunnerManger The entity manager from transaction
-   * 
+   *
    * @param records The new records that will be imported
    *
    * @return Promise<Entity[], Entity[]>
    */
-  private async preProcess(queryRunnerManger: EntityManager,records: Entity[]): Promise<void> {
+  private async queryExistRecords(
+    queryRunnerManger: EntityManager,
+    records: Entity[],
+  ): Promise<void> {
     // const filteredRecordMapping = {};
 
     const existRecords = await queryRunnerManger.findBy(
@@ -86,8 +96,10 @@ export abstract class DataCollectorImporter<Entity>
     importTransaction: ImportTransaction,
     records: Entity[],
   ): Promise<void> {
+    records = this.preProcess(records);
+
     await this.transaction.execute(async (queryRunnerManger) => {
-      await this.preProcess(queryRunnerManger, records);
+      await this.queryExistRecords(queryRunnerManger, records);
 
       records = records.map((record: Entity) => {
         if (this.isEnitityExists(record)) {
@@ -109,12 +121,12 @@ export abstract class DataCollectorImporter<Entity>
       // );
 
       // await Promise.allSettled([
-        // queryRunnerManger.softRemove(existEntities),
-        // queryRunnerManger.save(
-        //   records.map((entity) =>
-        //     this.repository.create({ ...entity, importTransaction }),
-        //   ),
-        // ),
+      // queryRunnerManger.softRemove(existEntities),
+      // queryRunnerManger.save(
+      //   records.map((entity) =>
+      //     this.repository.create({ ...entity, importTransaction }),
+      //   ),
+      // ),
       // ]);
     });
   }

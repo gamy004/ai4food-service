@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Like, Not, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
@@ -31,6 +31,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       swabTestCode,
       swabTestId,
       bacteriaName,
+      hasBacteria,
       id,
     } = dto;
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
@@ -63,13 +64,16 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
     }
 
-    if (bacteriaName) {
+    if (hasBacteria) {
+      whereBacteria.id = Not(IsNull());
+    }
+
+    if (bacteriaName && bacteriaName.length) {
       whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
-      whereSwabTest.bacteria = whereBacteria;
     }
 
     if (facilityId) {
-      whereFacilityItem.facilityId = facilityId;
+      whereSwabArea.facilityId = facilityId;
     }
 
     if (facilityItemId) {
@@ -82,6 +86,10 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
 
     if (Object.keys(whereSwabArea).length) {
       whereSwabAreaHistory.swabArea = whereSwabArea;
+    }
+
+    if (Object.keys(whereBacteria).length) {
+      whereSwabTest.bacteria = whereBacteria;
     }
 
     if (Object.keys(whereSwabTest).length) {
