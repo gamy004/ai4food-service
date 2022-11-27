@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { format } from 'date-fns-tz';
+import { format, zonedTimeToUtc } from 'date-fns-tz';
+import { Shift } from '../enums/shift';
 
 @Injectable()
 export class DateTransformer {
@@ -37,5 +38,28 @@ export class DateTransformer {
       minutes: Number(splittedTimeString[1]),
       seconds: Number(splittedTimeString[2]),
     };
+  }
+
+  public toShiftTimestamp(dateString, timeString, shift: Shift, timezone: string | null = null): Date {
+    const timeObject =
+      this.toTimeObject(timeString);
+
+    let dateObject = this.toObject(dateString, timeObject);
+
+    if (
+      shift === Shift.NIGHT &&
+      timeObject.hours >= 0 &&
+      timeObject.hours < 7
+    ) {
+      dateObject.setDate(
+        dateObject.getDate() + 1,
+      );
+    }
+
+    if (timezone) {
+      dateObject = zonedTimeToUtc(dateObject, timezone);
+    }
+
+    return dateObject;
   }
 }
