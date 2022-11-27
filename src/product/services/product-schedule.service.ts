@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { zonedTimeToUtc } from 'date-fns-tz';
 import {
   FindManyOptions,
   FindOptionsOrder,
   FindOptionsWhere,
   Raw,
 } from 'typeorm';
-import { Shift } from '~/common/enums/shift';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
@@ -83,61 +81,20 @@ export class ProductScheduleService extends CrudService<ProductSchedule> {
     return where;
   }
 
-  computeTimestamp(entity: ProductSchedule, timezone: string): ProductSchedule {
-    const timeObjectProductScheduleStartedAt =
-      this.dateTransformer.toTimeObject(entity.productScheduleStartedAt);
-
-    let productScheduleDateForStartedAt = this.dateTransformer.toObject(
+  computeTimestamp(entity: ProductSchedule, timezone: string | null = null): ProductSchedule {
+    entity.productScheduleStartedAtTimestamp = this.dateTransformer.toShiftTimestamp(
       entity.productScheduleDate,
-      timeObjectProductScheduleStartedAt,
+      entity.productScheduleStartedAt,
+      entity.shift,
+      timezone
     );
 
-    const timeObjectProductScheduleEndedAt = this.dateTransformer.toTimeObject(
+    entity.productScheduleEndedAtTimestamp = this.dateTransformer.toShiftTimestamp(
+      entity.productScheduleDate,
       entity.productScheduleEndedAt,
+      entity.shift,
+      timezone
     );
-
-    let productScheduleDateForEndedAt = this.dateTransformer.toObject(
-      entity.productScheduleDate,
-      timeObjectProductScheduleEndedAt,
-    );
-
-    // for time in shift NIGHT and has started at hour between 00:00 am - 07:00 am, map to next day
-    if (
-      entity.shift === Shift.NIGHT &&
-      timeObjectProductScheduleStartedAt.hours >= 0 &&
-      timeObjectProductScheduleStartedAt.hours < 7
-    ) {
-      productScheduleDateForStartedAt.setDate(
-        productScheduleDateForStartedAt.getDate() + 1,
-      );
-    }
-
-    // for time in shift NIGHT and has ended at hour between 00:00 am - 07:00 am, map to next day
-    if (
-      entity.shift === Shift.NIGHT &&
-      timeObjectProductScheduleEndedAt.hours >= 0 &&
-      timeObjectProductScheduleEndedAt.hours < 7
-    ) {
-      productScheduleDateForEndedAt.setDate(
-        productScheduleDateForEndedAt.getDate() + 1,
-      );
-    }
-
-    if (timezone) {
-      productScheduleDateForStartedAt = zonedTimeToUtc(
-        productScheduleDateForStartedAt,
-        timezone,
-      );
-
-      productScheduleDateForEndedAt = zonedTimeToUtc(
-        productScheduleDateForEndedAt,
-        timezone,
-      );
-    }
-
-    entity.productScheduleStartedAtTimestamp = productScheduleDateForStartedAt;
-
-    entity.productScheduleEndedAtTimestamp = productScheduleDateForEndedAt;
 
     return entity;
   }
