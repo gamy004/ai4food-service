@@ -865,9 +865,9 @@ export class SwabPlanManagerService {
       '	2022-06-24 | N	|	AI 51	|	18.25	|	ขึ้นรูป | สายลมเครื่อง Portion 	|	หลัง Super Big Cleaning	|	58 RLU	|	มีความชื้น	|	มีร่อง/มีรู	|	มีเกลียว	|	มีน้ำขัง	|	-	|	No	|	-	',
       '	2022-06-24 | N	|	AI 52	|	18.26	|	ขึ้นรูป | เครื่องชั่ง Topping  	|	หลัง Super Big Cleaning	|	8 RLU	|	มีความชื้น	|	มีร่อง/มีรู	|	-	|	-	|	-	|	No	|	-	',
       '	2022-06-24 | N	|	AI 53	|	18.21	|	กล่องเครื่องมือวิศวะ | กล่องเครื่องมือวิศวะ    	|	หลัง Super Big Cleaning	|	7 RLU	|	มีความชื้น	|	-	|	-	|	-	|	-	|	No	|	-	',
-      '	2022-06-24 | N	|	AI 54	|	17.33	|	ตู้ Vac. | พื้นและ Slope   	|	หลัง Super Big Cleaning	|	35 RLU	|	มีความชื้น	|	มีความชื้น	|	มีรอยแตก	|	มีน้ำขัง	|	-	|	No	|	-	',
-      '	2022-06-24 | N	|	AI 55	|	17.32	|	ตู้ Steam | พื้นและ Slope  	|	หลัง Super Big Cleaning	|	1039 RLU ,  96 RLU	|	มีความชื้น	|	มีความชื้น	|	มีน้ำขัง	|	มีรอยแตก	|	มีผิวขรุขระ	|	Yes	|	  L.innocua, L.monocytogenes 	',
-      '	2022-06-24 | N	|	AI 56	|	18.36	|	รถเข็นกะบะ | ล้อรถเข็นกะบะ   	|	หลัง Super Big Cleaning	|	380 RLU , 55 RLU	|	มีความชื้น	|	มีความชื้น	|	มีร่อง/มีรู	|	-	|	-	|	No	|	-	',
+      '	2022-06-24 | N	|	AI 54	|	17.33	|	ตู้ Vac. | พื้นและ Slope   	|	หลัง Super Big Cleaning	|	35 RLU	|	-	|	มีความชื้น	|	มีรอยแตก	|	มีน้ำขัง	|	-	|	No	|	-	',
+      '	2022-06-24 | N	|	AI 55	|	17.32	|	ตู้ Steam | พื้นและ Slope  	|	หลัง Super Big Cleaning	|	1039 RLU ,  96 RLU	|	-	|	มีความชื้น	|	มีน้ำขัง	|	มีรอยแตก	|	มีผิวขรุขระ	|	Yes	|	  L.innocua, L.monocytogenes 	',
+      '	2022-06-24 | N	|	AI 56	|	18.36	|	รถเข็นกะบะ | ล้อรถเข็นกะบะ   	|	หลัง Super Big Cleaning	|	380 RLU , 55 RLU	|	-	|	มีความชื้น	|	มีร่อง/มีรู	|	-	|	-	|	No	|	-	',
       '	2022-06-24 | N	|	AI 57	|	17.34	|	เครื่องซุยข้าว Aiho | แกนสายพานซุยข้าว    	|	หลัง Super Big Cleaning	|	9 RLU	|	มีความชื้น	|	มีร่อง/มีรู	|	มีเกลียว	|	-	|	-	|	No	|	-	',
       '	2022-06-24 | N	|	AI 58	|	17.35	|	เครื่องซุยข้าว Aiho | สายพาน และ แผ่นเพลท   	|	หลัง Super Big Cleaning	|	9 RLU	|	มีความชื้น	|	มีผิวขรุขระ	|	มีร่อง/มีรู	|	-	|	-	|	No	|	-	',
       '	2022-06-24 | N	|	AI 59	|	20.51	|	ขึ้นรูป | ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter  	|	หลังประกอบเครื่อง	|	-	|	มีความชื้น	|	มีผิวขรุขระ	|	มีร่อง/มีรู	|	-	|	-	|	No	|	-	',
@@ -982,7 +982,7 @@ export class SwabPlanManagerService {
       '	2022-06-25 | D	|	AI 168	|	10.48	|	ขึ้นรูป | เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน  	|	ก่อนล้างระหว่างงาน	|	-	|	มีร่อง/มีรู	|	มีเศษอาหาร	|	-	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
       '	2022-06-25 | D	|	AI 169	|	10.42	|	ขึ้นรูป | ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control  	|	ก่อนล้างระหว่างงาน	|	-	|	มีร่อง/มีรู	|	มีคราบสกปรก	|	มีความชื้น	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
       '	2022-06-25 | D	|	AI 170	|	10.41	|	ขึ้นรูป | ด้านบนตู้ Control Infeed และ สายไฟ 	|	ก่อนล้างระหว่างงาน	|	-	|	มีเศษอาหาร	|	-	|	-	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
-      '	2022-06-25 | D	|	AI 171	|	10.40	|	ขึ้นรูป | พื้นใต้เครื่อง Portion  	|	ก่อนล้างระหว่างงาน	|	-	|	มีเศษอาหาร	|	มีเศษอาหาร	|	-	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
+      '	2022-06-25 | D	|	AI 171	|	10.40	|	ขึ้นรูป | พื้นใต้เครื่อง Portion  	|	ก่อนล้างระหว่างงาน	|	-	|	-	|	มีเศษอาหาร	|	-	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
       '	2022-06-25 | D	|	AI 172	|	10.49	|	ขึ้นรูป | รางระบายน้ำห้อง 	|	ก่อนล้างระหว่างงาน	|	-	|	มีความชื้น	|	มีเศษอาหาร	|	มีน้ำขัง	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
       '	2022-06-25 | D	|	AI 173	|	10.55	|	กล่องเครื่องมือวิศวะ | กล่องเครื่องมือวิศวะ  	|	ก่อนล้างระหว่างงาน	|	-	|	-	|	-	|	-	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
       '	2022-06-25 | D	|	AI 174	|	10.52	|	ตู้ Vac. | พื้นและ Slope  	|	ก่อนล้างระหว่างงาน	|	-	|	มีรอยแตก	|	มีน้ำขัง	|	มีความชื้น	|	-	|	-	|	-	|	ยกเลิกส่งตัวอย่าง	',
@@ -997,7 +997,7 @@ export class SwabPlanManagerService {
       '	2022-06-25 | D	|	AI 183	|	13.12	|	ขึ้นรูป | เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน  	|	หลังล้างระหว่างงาน	|	-	|	มีร่อง/มีรู	|	-	|	-	|	-	|	-	|	No	|	-	',
       '	2022-06-25 | D	|	AI 184	|	13.08	|	ขึ้นรูป | ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control  	|	หลังล้างระหว่างงาน	|	-	|	มีร่อง/มีรู	|	มีคราบสกปรก	|	มีความชื้น	|	-	|	-	|	No	|	-	',
       '	2022-06-25 | D	|	AI 185	|	13.11	|	ขึ้นรูป | ด้านบนตู้ Control Infeed และ สายไฟ  	|	หลังล้างระหว่างงาน	|	-	|	มีเศษอาหาร	|	-	|	-	|	-	|	-	|	No	|	-	',
-      '	2022-06-25 | D	|	AI 186	|	13.12	|	ขึ้นรูป | พื้นใต้เครื่อง Portion  	|	หลังล้างระหว่างงาน	|	-	|	มีเศษอาหาร	|	มีเศษอาหาร	|	-	|	-	|	-	|	No	|	-	',
+      '	2022-06-25 | D	|	AI 186	|	13.12	|	ขึ้นรูป | พื้นใต้เครื่อง Portion  	|	หลังล้างระหว่างงาน	|	-	|	-	|	มีเศษอาหาร	|	-	|	-	|	-	|	No	|	-	',
       '	2022-06-25 | D	|	AI 187	|	13.20	|	ขึ้นรูป | รางระบายน้ำห้อง  	|	หลังล้างระหว่างงาน	|	-	|	มีความชื้น	|	มีเศษอาหาร	|	มีน้ำขัง	|	-	|	-	|	No	|	-	',
       '	2022-06-25 | D	|	AI 188	|	13.22	|	กล่องเครื่องมือวิศวะ | กล่องเครื่องมือวิศวะ  	|	หลังล้างระหว่างงาน	|	-	|	-	|	-	|	-	|	-	|	-	|	No	|	-	',
       '	2022-06-25 | D	|	AI 189	|	13.16	|	ตู้ Vac. | พื้นและ Slope  	|	หลังล้างระหว่างงาน	|	-	|	มีรอยแตก	|	มีน้ำขัง	|	มีความชื้น	|	-	|	-	|	No	|	-	',
@@ -2212,8 +2212,6 @@ export class SwabPlanManagerService {
         transaction: true,
       });
 
-      console.log(data);
-
       for (let index = 0; index < data.length; index++) {
         const record = data[index];
         const recordData = record.split('|');
@@ -2264,8 +2262,6 @@ export class SwabPlanManagerService {
             const bacteriaSpecieName = bacteriaSpecies[index];
             whereOption.push({ bacteriaSpecieName: bacteriaSpecieName.trim() });
           }
-          
-          console.log(whereOption);
           
           const result_bacteriaSpecie = await this.bacteriaSpecieService.find({
             where: whereOption,
@@ -2333,35 +2329,57 @@ export class SwabPlanManagerService {
 
         let swabEnvironmentsData = [];
 
-        if (
-          recordData[8].trim() != '-' &&
-          swabEnvironments[recordData[8].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[8].trim()]);
-        if (
-          recordData[9].trim() != '-' &&
-          swabEnvironments[recordData[9].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[9].trim()]);
-        if (
-          recordData[10].trim() != '-' &&
-          swabEnvironments[recordData[10].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[10].trim()]);
-        if (
-          recordData[11].trim() != '-' &&
-          swabEnvironments[recordData[11].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[11].trim()]);
-        if (
-          recordData[12].trim() != '-' &&
-          swabEnvironments[recordData[12].trim()]
-        )
-          swabEnvironmentsData.push(swabEnvironments[recordData[12].trim()]);
-
         const swabTestCode = `${recordData[2].trim()}/1`;
 
-        console.log(swabTestCode, bacteriasData, bacteriaSpeciesData);
+        if (
+          recordData[8].trim() != '-'
+        ) {
+          if (swabEnvironments[recordData[8].trim()]) {
+            swabEnvironmentsData.push(swabEnvironments[recordData[8].trim()]);
+          } else {
+            console.log("Missing swab environment at 8", swabTestCode, recordData[8].trim());
+          }
+        }
+          
+        if (
+          recordData[9].trim() != '-'
+        ) {
+          if (swabEnvironments[recordData[9].trim()]) {
+            swabEnvironmentsData.push(swabEnvironments[recordData[9].trim()]);
+          } else {
+            console.log("Missing swab environment at 9", swabTestCode, recordData[9].trim());
+          }
+        }
+
+        if (
+          recordData[10].trim() != '-'
+        ) {
+          if (swabEnvironments[recordData[10].trim()]) {
+              swabEnvironmentsData.push(swabEnvironments[recordData[10].trim()]);
+          } else {
+            console.log("Missing swab environment at 10", swabTestCode, recordData[10].trim());
+          }
+        }
+
+        if (
+          recordData[11].trim() != '-'
+        ) {
+          if (swabEnvironments[recordData[11].trim()]) {
+            swabEnvironmentsData.push(swabEnvironments[recordData[11].trim()]);
+          } else {
+            console.log("Missing swab environment at 11", swabTestCode, recordData[11].trim());
+          }
+        }
+
+        if (
+          recordData[12].trim() != '-'
+        ) {
+          if (swabEnvironments[recordData[12].trim()]) {
+            swabEnvironmentsData.push(swabEnvironments[recordData[12].trim()]);
+          } else {
+            console.log("Missing swab environment at 12", swabTestCode, recordData[12].trim());
+          }
+        }
         
         const swabTestData = SwabTest.create({
             swabTestCode,
@@ -2386,7 +2404,6 @@ export class SwabPlanManagerService {
           facilityItem: facilityItemData,
         };
 
-        // console.log(historyData);
         const swabAreaHistory = SwabAreaHistory.create(historyData);
 
         await queryRunnerManger.save(swabAreaHistory);
