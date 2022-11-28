@@ -50,6 +50,7 @@ all_envs:
     service_aws_access_key_id: "{{ lookup('env', 'SERVICE_AWS_ACCESS_KEY_ID') }}"
     service_aws_secret_access_key: "{{ lookup('env', 'SERVICE_AWS_SECRET_ACCESS_KEY') }}"
     service_aws_s3_upload_bucket: "{{ lookup('env', 'SERVICE_AWS_S3_UPLOAD_BUCKET') }}"
+    swagger_password: "{{ lookup('env', 'SWAGGER_PASSWORD') }}"
 
     # database_host: "{{ lookup('env', 'DATABASE_HOST') }}"
     # database_port: "{{ lookup('env', 'DATABASE_PORT') }}"
