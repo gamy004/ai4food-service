@@ -8,6 +8,7 @@ import {
   Put,
   Param,
   ForbiddenException,
+  Delete,
 } from '@nestjs/common';
 import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
 import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
@@ -22,6 +23,7 @@ import {
   BodyUpdateProductScheduleDto,
 } from '../dto/update-product-schedule.dto';
 import { ProductScheduleManagerService } from '../services/product-schedule-manager.service';
+import { ParamDeleteProductScheduleDto } from '../dto/delete-product-schedule.dto';
 // Infra Layer
 @Controller('product-schedule')
 @ApiTags('Product')
@@ -49,6 +51,12 @@ export class ProductScheduleController {
       importProductScheduleDto.importTransaction,
     );
 
+    if (importProductScheduleDto.timezone) {
+      this.productScheduleImporter.setTimezone(
+        importProductScheduleDto.timezone,
+      );
+    }
+
     return this.productScheduleImporter.import(
       importTransaction,
       ProductSchedule.create<ProductSchedule>(importProductScheduleDto.records),
@@ -67,6 +75,22 @@ export class ProductScheduleController {
         await this.productScheduleManagerService.commandUpdateProductScheduleById(
           param.id,
           body,
+        );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return productSchedule;
+  }
+
+  @Delete(':id')
+  async remove(@Param() param: ParamDeleteProductScheduleDto) {
+    let productSchedule;
+
+    try {
+      productSchedule =
+        await this.productScheduleManagerService.commandDeleteProductScheduleById(
+          param.id,
         );
     } catch (error) {
       throw new ForbiddenException(error.message);

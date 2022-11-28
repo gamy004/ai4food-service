@@ -197,11 +197,16 @@ export default class SwabSeeder implements Seeder {
         ],
       },
       // {
-      //     facilityName: "กล่องเครื่องมือวิศวะ โซนสุก",
+      //     facilityName: "กล่องเครื่องมือวิศวะ",
       //     mainSwabAreas: [
-      //         { swabAreaName: "ฝากล่อง", subSwabAreas: [] },
-      //         { swabAreaName: "ขอบมุม", subSwabAreas: [] },
-      //         { swabAreaName: "ประแจ", subSwabAreas: [] },
+      //       {
+      //         swabAreaName: 'กล่องเครื่องมือวิศวะ',
+      //         subSwabAreas: [
+      //           { swabAreaName: 'ฝากล่อง' },
+      //           { swabAreaName: 'ขอบมุม' },
+      //           { swabAreaName: 'ประแจ' },
+      //         ],
+      //       }
       //     ]
       // },
       {
@@ -221,7 +226,7 @@ export default class SwabSeeder implements Seeder {
       //     facilityName: "เครื่องซุยข้าว Aiho No.2",
       //     mainSwabAreas: [
       //         {
-      //             swabAreaName: "แกนสายพาน",
+      //             swabAreaName: "แกนสายพานซุยข้าว",
       //             subSwabAreas: [
       //                 { swabAreaName: "แกนกลาง" },
       //                 { swabAreaName: "ก้านซุย" },

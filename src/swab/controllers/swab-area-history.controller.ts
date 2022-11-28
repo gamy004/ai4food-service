@@ -87,7 +87,7 @@ export class SwabAreaHistoryController {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 
-  @Post('save')
+  @Post('import-old-data')
   saveSwabPlan(@Body() data: Array<String>) {
     return this.swabPlanManagerService.saveSwabPlan(data);
   }
