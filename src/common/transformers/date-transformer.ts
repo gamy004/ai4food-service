@@ -40,9 +40,13 @@ export class DateTransformer {
     };
   }
 
-  public toShiftTimestamp(dateString, timeString, shift: Shift, timezone: string | null = null): Date {
-    const timeObject =
-      this.toTimeObject(timeString);
+  public toShiftTimestamp(
+    dateString,
+    timeString,
+    shift: Shift,
+    timezone: string | null = null,
+  ): Date {
+    const timeObject = this.toTimeObject(timeString);
 
     let dateObject = this.toObject(dateString, timeObject);
 
@@ -51,10 +55,24 @@ export class DateTransformer {
       timeObject.hours >= 0 &&
       timeObject.hours < 7
     ) {
-      dateObject.setDate(
-        dateObject.getDate() + 1,
-      );
+      dateObject.setDate(dateObject.getDate() + 1);
     }
+
+    if (timezone) {
+      dateObject = zonedTimeToUtc(dateObject, timezone);
+    }
+
+    return dateObject;
+  }
+
+  public toTimestamp(
+    dateString,
+    timeString,
+    timezone: string | null = null,
+  ): Date {
+    const timeObject = this.toTimeObject(timeString);
+
+    let dateObject = this.toObject(dateString, timeObject);
 
     if (timezone) {
       dateObject = zonedTimeToUtc(dateObject, timezone);
