@@ -55,6 +55,8 @@
         value: '{{ service_aws_secret_access_key }}'
       - name: AWS_S3_UPLOAD_BUCKET
         value: '{{ service_aws_s3_upload_bucket }}'
+      - name: SWAGGER_PASSWORD
+        value: '{{ swagger_password }}'
   # no_log: true
 - set_fact:
     task_env: '{{ default_task_env + additional_task_env | default([]) }}'
