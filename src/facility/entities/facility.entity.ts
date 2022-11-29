@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { CleaningPlan } from '~/cleaning/entities/cleaning-plan.entity';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
 import { SwabArea } from '~/swab/entities/swab-area.entity';
 import { FacilityItem } from './facility-item.entity';
@@ -23,7 +22,4 @@ export class Facility extends BaseSoftDeletableEntity {
 
   @OneToMany(() => SwabArea, (entity) => entity.facility)
   swabAreas: SwabArea[];
-
-  @OneToMany(() => CleaningPlan, (entity) => entity.facility)
-  cleaningPlans: CleaningPlan[];
 }

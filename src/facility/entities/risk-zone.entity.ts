@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany } from "typeorm";
+import { CleaningRoomHistory } from "~/cleaning/entities/cleaning-room-history.entity";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { FacilityItem } from "./facility-item.entity";
 import { Room } from "./room.entity";
@@ -13,4 +14,7 @@ export class RiskZone extends BaseSoftDeletableEntity {
 
     @OneToMany(() => FacilityItem, entity => entity.riskZone)
     facilityItems: FacilityItem[];
+
+    @OneToMany(() => CleaningRoomHistory, entity => entity.riskZone)
+    cleaningRoomHistories: CleaningRoomHistory[];
 }

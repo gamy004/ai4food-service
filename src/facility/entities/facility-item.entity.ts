@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { CleaningPlan } from "~/cleaning/entities/cleaning-plan.entity";
 import { BaseSoftDeletableEntity } from "~/common/entities/base-softdeletable.entity";
 import { SensorMapping } from "~/iot/entities/sensor-mapping.entity";
 import { SwabAreaHistory } from "~/swab/entities/swab-area-history.entity";
@@ -53,4 +54,7 @@ export class FacilityItem extends BaseSoftDeletableEntity {
 
   @OneToMany(() => SensorMapping, (entity) => entity.facilityItem)
   sensorMappings: SensorMapping[];
+
+  @OneToMany(() => CleaningPlan, (entity) => entity.facilityItem)
+  cleaningPlans: CleaningPlan[];
 }

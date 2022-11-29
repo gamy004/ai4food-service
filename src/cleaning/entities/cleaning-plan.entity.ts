@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
-import { Facility } from '~/facility/entities/facility.entity';
+import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 import { CleaningProgram } from './cleaning-program.entity';
 
@@ -16,21 +16,23 @@ export class CleaningPlan extends BaseSoftDeletableEntity {
   cleaningProgramId: string;
 
   @ManyToOne(() => CleaningProgram, (entity) => entity.cleaningPlans, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   cleaningProgram: CleaningProgram;
 
   @Column({ type: 'varchar', length: 36 })
-  facilityId: string;
+  facilityItemId: string;
 
-  @ManyToOne(() => Facility, (entity) => entity.cleaningPlans, {
-    onDelete: 'SET NULL',
+  @ManyToOne(() => FacilityItem, (entity) => entity.cleaningPlans, {
+    onDelete: 'CASCADE',
   })
-  facility: Facility;
+  facilityItem: FacilityItem;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   importTransactionId?: string;
 
-  @ManyToOne(() => ImportTransaction, (entity) => entity.cleaningPlans)
+  @ManyToOne(() => ImportTransaction, (entity) => entity.cleaningPlans, {
+    onDelete: 'CASCADE',
+  })
   importTransaction?: ImportTransaction;
 }

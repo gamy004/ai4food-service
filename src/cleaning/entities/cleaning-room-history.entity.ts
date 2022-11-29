@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
+import { RiskZone } from '~/facility/entities/risk-zone.entity';
 import { Room } from '~/facility/entities/room.entity';
 import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 
@@ -24,9 +25,15 @@ export class CleaningRoomHistory extends BaseSoftDeletableEntity {
   roomId: string;
 
   @ManyToOne(() => Room, (entity) => entity.cleaningRoomHistories, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   room: Room;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  riskZoneId: string;
+
+  @ManyToOne(() => RiskZone, (entity) => entity.rooms, { onDelete: 'SET NULL' })
+  riskZone: RiskZone;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   importTransactionId?: string;
