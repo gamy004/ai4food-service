@@ -1,6 +1,5 @@
 import {
   BaseEntity as TypeOrmBaseEntity,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   Column,
   PrimaryColumn,
