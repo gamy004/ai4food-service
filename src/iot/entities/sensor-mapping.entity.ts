@@ -12,10 +12,10 @@ export class SensorMapping extends TypeOrmBaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 20 })
   nodeNo: string;
 
-  @Column({ type: 'datetime', nullable: true })
+  @PrimaryColumn({ type: 'datetime' })
   startedAt: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @PrimaryColumn({ type: 'datetime' })
   endedAt: Date;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
