@@ -8,9 +8,8 @@ import typeormConfig from '../../database/config/typeorm.config';
     migrationsRun: false,
     entities: ['dist/**/*.entity.js'],
     seeds: [
-      'dist/database/seeders/user.seeder.js',
-      'dist/database/seeders/bacteria.seeder.js',
-      'dist/database/seeders/swab-environment.seeder.js',
+      'dist/database/seeders/contact-zone.seeder.js',
+      'dist/database/seeders/swab.seeder.js',
     ],
   };
 
