@@ -1,7 +1,8 @@
 import { Seeder } from 'typeorm-extension';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { SwabArea } from '~/swab/entities/swab-area.entity';
 import { Facility } from '~/facility/entities/facility.entity';
+import { ContactZone } from '~/facility/entities/contact-zone.entity';
 
 export default class SwabSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
@@ -12,6 +13,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // not collected
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว', contactZoneName: 'Zone 1' },
               { swabAreaName: 'สายพานลำเลียง', contactZoneName: 'Zone 1' },
@@ -22,6 +24,7 @@ export default class SwabSeeder implements Seeder {
           },
           {
             swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight',
@@ -33,6 +36,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด',
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ชุดกดหน้าข้าว', contactZoneName: 'Zone 1' },
               {
@@ -49,6 +53,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'คานตู้ control หน้าเครื่อง Portion',
@@ -67,6 +72,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และ โครงชุดแขนชัตเตอร์',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'โครงชุดเติมข้าว ส่วน Sup Weight',
@@ -87,6 +93,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'Cover หน้าเครื่องจุดวางถาด',
@@ -101,6 +108,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'ช่องยกคานลิฟท์ด้านหลัง',
@@ -112,6 +120,7 @@ export default class SwabSeeder implements Seeder {
           },
           {
             swabAreaName: 'Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง',
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'Cover ใส', contactZoneName: 'Zone 1' },
               { swabAreaName: 'Cover สแตนเลส', contactZoneName: 'Zone 1' },
@@ -119,15 +128,16 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            contactZoneName: 'Zone 2',
-            swabAreaName: 'สายพานลำเลียงถาด',
+            swabAreaName: 'สายพานลำเลียงถาด', // ไม่มีรข้อมูลใน excel confirm อีกที!!
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ตัวแผ่น', contactZoneName: 'Zone 2' },
               { swabAreaName: 'ตัวกั้น', contactZoneName: 'Zone 2' },
             ],
           },
           {
-            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน', // ไม่มีรข้อมูลใน excel confirm อีกที!!
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'เลื่อนสายพาน', contactZoneName: 'Zone 3' },
               {
@@ -144,6 +154,7 @@ export default class SwabSeeder implements Seeder {
           {
             swabAreaName:
               'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control',
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ขาตั้งเครื่อง', contactZoneName: 'Zone 3' },
               {
@@ -158,6 +169,7 @@ export default class SwabSeeder implements Seeder {
           },
           {
             swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
+            contactZoneName: null,
             subSwabAreas: [
               {
                 swabAreaName: 'ด้านบนตู้ Control Infeed',
@@ -182,8 +194,8 @@ export default class SwabSeeder implements Seeder {
             subSwabAreas: [],
           },
           {
-            contactZoneName: 'Zone 3',
             swabAreaName: 'รางระบายน้ำห้อง',
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'กลางราง', contactZoneName: 'Zone 3' },
               { swabAreaName: 'ขอบรางซ้าย', contactZoneName: 'Zone 3' },
@@ -193,6 +205,7 @@ export default class SwabSeeder implements Seeder {
           },
           {
             swabAreaName: 'แป้นกดสบู่ และ อ่างล้างมือ',
+            contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'แป้นกดสบู่', contactZoneName: 'Zone 2' },
               { swabAreaName: 'อ่างล้างมือ', contactZoneName: 'Zone 3' },
@@ -219,9 +232,12 @@ export default class SwabSeeder implements Seeder {
         facilityName: 'ตู้ Vac.',
         mainSwabAreas: [
           {
-            contactZoneName: 'Zone 3',
             swabAreaName: 'พื้นและ Slope',
-            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'พื้น', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'Slope', contactZoneName: 'Zone 3' },
+            ],
           },
         ],
       },
@@ -229,9 +245,12 @@ export default class SwabSeeder implements Seeder {
         facilityName: 'ตู้ Steam',
         mainSwabAreas: [
           {
-            contactZoneName: 'Zone 3',
             swabAreaName: 'พื้นและ Slope',
-            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'พื้น', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'Slope', contactZoneName: 'Zone 3' },
+            ],
           },
         ],
       },
@@ -239,12 +258,12 @@ export default class SwabSeeder implements Seeder {
         facilityName: 'กล่องเครื่องมือวิศวะ',
         mainSwabAreas: [
           {
-            contactZoneName: 'Zone 3',
             swabAreaName: 'กล่องเครื่องมือวิศวะ',
+            contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'ฝากล่อง' },
-              { swabAreaName: 'ขอบมุม' },
-              { swabAreaName: 'ประแจ' },
+              { swabAreaName: 'ฝากล่อง', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'ขอบมุม', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'ประแจ', contactZoneName: 'Zone 3' },
             ],
           },
         ],
@@ -253,35 +272,35 @@ export default class SwabSeeder implements Seeder {
         facilityName: 'รถเข็นกะบะ',
         mainSwabAreas: [
           {
-            contactZoneName: 'Zone 3',
             swabAreaName: 'ล้อรถเข็นกะบะ',
+            contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'กันชน' },
-              { swabAreaName: 'ระหว่างรอยต่อ' },
-              { swabAreaName: 'โครงล้อ' },
+              { swabAreaName: 'กันชน', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'ระหว่างรอยต่อ', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'โครงล้อ', contactZoneName: 'Zone 3' },
             ],
           },
         ],
       },
       {
-        facilityName: 'เครื่องซุยข้าว Aiho No.2',
+        facilityName: 'เครื่องซุยข้าว Aiho',
         mainSwabAreas: [
           {
-            contactZoneName: 'Zone 1',
             swabAreaName: 'แกนสายพานซุยข้าว',
+            contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'แกนกลาง' },
-              { swabAreaName: 'ก้านซุย' },
+              { swabAreaName: 'แกนกลาง', contactZoneName: 'Zone 1' },
+              { swabAreaName: 'ก้านซุย', contactZoneName: 'Zone 1' },
             ],
           },
           {
-            contactZoneName: 'Zone 1',
             swabAreaName: 'สายพานและแผ่นเพลท',
+            contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'สายพาน - กลาง' },
-              { swabAreaName: 'สายพาน - ขอบซ้าย' },
-              { swabAreaName: 'สายพาน - ขอบขวา' },
-              { swabAreaName: 'แผ่นเพลท' },
+              { swabAreaName: 'สายพาน - กลาง', contactZoneName: 'Zone 1' },
+              { swabAreaName: 'สายพาน - ขอบซ้าย', contactZoneName: 'Zone 1' },
+              { swabAreaName: 'สายพาน - ขอบขวา', contactZoneName: 'Zone 1' },
+              { swabAreaName: 'แผ่นเพลท', contactZoneName: 'Zone 1' },
             ],
           },
         ],
@@ -291,10 +310,24 @@ export default class SwabSeeder implements Seeder {
     // const swabAreaHistoryRepository = dataSource.getRepository(SwabAreaHistory);
     const swabAreaRepository = dataSource.getRepository(SwabArea);
     const facilityRepository = dataSource.getRepository(Facility);
+    const contactZoneRepository = dataSource.getRepository(ContactZone);
     // const swabAreaHistoryFactory = await factoryManager.get(SwabAreaHistory);
     // const swabTestFactory = await factoryManager.get(SwabTest);
 
     // const swabAreaHistories = [];
+    const contactZones = await contactZoneRepository.findBy([
+      { contactZoneName: 'Zone 1' },
+      { contactZoneName: 'Zone 2' },
+      { contactZoneName: 'Zone 3' },
+    ]);
+
+    const contactZoneMapping = contactZones.reduce((mapping, contactZone) => {
+      mapping[contactZone.contactZoneName] = contactZone;
+
+      return mapping;
+    }, {});
+
+    const savedMainSwabAreas = [];
 
     for (let index = 0; index < swapAreas.length; index++) {
       const { facilityName, mainSwabAreas = [] } = swapAreas[index];
@@ -302,23 +335,86 @@ export default class SwabSeeder implements Seeder {
       if (mainSwabAreas.length) {
         const facility = await facilityRepository.findOneBy({ facilityName });
 
-        const savedMainSwabAreas = mainSwabAreas.map((mainSwabArea) => {
-          let { subSwabAreas = [], swabAreaName } = mainSwabArea;
+        for (let index = 0; index < mainSwabAreas.length; index++) {
+          const mainSwabAreaData = mainSwabAreas[index];
 
-          return {
+          let {
+            subSwabAreas = [],
+            swabAreaName,
+            contactZoneName,
+          } = mainSwabAreaData;
+
+          const savedMainSwabAreaEntity = swabAreaRepository.create({
             swabAreaName,
             facility,
-            subSwabAreas: subSwabAreas.map((subSwabArea) => {
-              return {
-                ...subSwabArea,
-                facility,
-              };
-            }),
-          };
-        });
+            contactZone: null,
+            subSwabAreas: [],
+          });
 
-        await swabAreaRepository.save(savedMainSwabAreas);
+          if (contactZoneName && contactZoneMapping[contactZoneName]) {
+            savedMainSwabAreaEntity.contactZone =
+              contactZoneMapping[contactZoneName];
+          }
+
+          let existMainSwabArea = await swabAreaRepository.findOneBy({
+            swabAreaName,
+            facilityId: facility.id,
+            mainSwabAreaId: IsNull(),
+          });
+
+          console.log('existMainSwabArea', existMainSwabArea);
+
+          if (existMainSwabArea) {
+            savedMainSwabAreaEntity.id = existMainSwabArea.id;
+          }
+
+          console.log('savedMainSwabAreaEntity', savedMainSwabAreaEntity);
+
+          if (subSwabAreas.length) {
+            for (let index2 = 0; index2 < subSwabAreas.length; index2++) {
+              const subSwabAreaData = subSwabAreas[index2];
+
+              let {
+                swabAreaName: subSwabAreaName,
+                contactZoneName: subContactZoneName,
+              } = subSwabAreaData;
+
+              if (!subContactZoneName) {
+                throw new Error(
+                  'Sub swab area require `contactZoneName` attibute',
+                );
+              }
+
+              const savedSubSwabAreaEntity = swabAreaRepository.create({
+                swabAreaName: subSwabAreaName,
+                facility,
+                contactZone: contactZoneMapping[subContactZoneName],
+              });
+
+              if (existMainSwabArea) {
+                let existSubSwabArea = await swabAreaRepository.findOneBy({
+                  swabAreaName: subSwabAreaName,
+                  facilityId: facility.id,
+                  mainSwabAreaId: existMainSwabArea.id,
+                });
+
+                console.log('existSubSwabArea', existSubSwabArea);
+
+                if (existSubSwabArea) {
+                  savedSubSwabAreaEntity.id = existSubSwabArea.id;
+                }
+              }
+
+              console.log('savedSubSwabAreaEntity', savedSubSwabAreaEntity);
+
+              savedMainSwabAreaEntity.subSwabAreas.push(savedSubSwabAreaEntity);
+            }
+          }
+          savedMainSwabAreas.push(savedMainSwabAreaEntity);
+        }
       }
     }
+
+    await swabAreaRepository.save(savedMainSwabAreas);
   }
 }
