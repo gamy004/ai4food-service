@@ -7,7 +7,7 @@ import { CleaningRoomHistory } from '../entities/cleaning-room-history.entity';
 import { CleaningRoomHistoryService } from './cleaning-room-history.service';
 
 export class CleaningRoomHistoryImporter extends DataCollectorImporter<CleaningRoomHistory> {
-  importType: ImportType = ImportType.PRODUCT_SCHEDULE;
+  importType: ImportType = ImportType.CLEANING_ROOM_HISTORY;
 
   mappingKeys: string[] = [
     'roomId',

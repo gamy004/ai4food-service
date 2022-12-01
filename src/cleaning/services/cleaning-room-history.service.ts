@@ -19,15 +19,18 @@ export class CleaningRoomHistoryService extends CrudService<CleaningRoomHistory>
     entity: CleaningRoomHistory,
     timezone: string | null = null,
   ): CleaningRoomHistory {
-    entity.cleaningRoomStartedAtTimestamp = this.dateTransformer.toTimestamp(
-      entity.cleaningRoomDate,
-      entity.cleaningRoomStartedAt,
-      timezone,
-    );
+    entity.cleaningRoomStartedAtTimestamp =
+      this.dateTransformer.toShiftTimestamp(
+        entity.cleaningRoomDate,
+        entity.cleaningRoomStartedAt,
+        entity.shift,
+        timezone,
+      );
 
-    entity.cleaningRoomEndedAtTimestamp = this.dateTransformer.toTimestamp(
+    entity.cleaningRoomEndedAtTimestamp = this.dateTransformer.toShiftTimestamp(
       entity.cleaningRoomDate,
       entity.cleaningRoomEndedAt,
+      entity.shift,
       timezone,
     );
 

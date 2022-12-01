@@ -3,8 +3,10 @@ import { DataCollectorImporterInterface } from '~/data-collector/interface/data-
 import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
 import { ImportCleaningRoomHistoryDto } from '../dto/import-cleaning-room-history.dto';
 import { CleaningRoomHistory } from '../entities/cleaning-room-history.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('cleaning-room-history')
+@ApiTags('Cleaning')
 export class CleaningRoomHistoryController {
   constructor(
     private readonly importTransactionService: ImportTransactionService,

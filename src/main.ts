@@ -85,6 +85,7 @@ async function bootstrap() {
     .addTag('Lab')
     .addTag('Product')
     .addTag('Common')
+    .addTag('Cleaning')
     .addTag('File')
     .addTag('Importing')
     .addTag('Facility')

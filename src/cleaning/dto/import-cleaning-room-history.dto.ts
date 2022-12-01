@@ -8,14 +8,15 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ContextAwareDto } from '~/common/dto/context-aware.dto';
+import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
 import { TimeGreaterThanRule } from '~/common/validators/time-greater-than-validator';
 import { TimeOnlyRule } from '~/common/validators/time-only-validator';
 import { UniqueFieldRecordRule } from '~/common/validators/unique-field-record-validator';
+import { ConnectRoomDto } from '~/facility/dto/connect-room.dto';
 import { ConnectImportTransactionDto } from '~/import-transaction/dto/connect-import-transaction.dto';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
 import { IsImportTypeRule } from '~/import-transaction/validators/is-import-type-validator';
-import { ConnectCleaningRoomHistoryDto } from './connect-cleaning-room-history.dto';
 
 export class ImportCleaningRoomHistoryRecordDto extends ContextAwareDto {
   @Validate(DateOnlyRule)
@@ -29,8 +30,11 @@ export class ImportCleaningRoomHistoryRecordDto extends ContextAwareDto {
   cleaningRoomEndedAt: string;
 
   @ValidateNested()
-  @Type(() => ConnectCleaningRoomHistoryDto)
-  room: ConnectCleaningRoomHistoryDto;
+  @Type(() => ConnectRoomDto)
+  room: ConnectRoomDto;
+
+  @IsNotEmpty()
+  shift: Shift;
 }
 
 // Object Values!! (Domain Layer)
