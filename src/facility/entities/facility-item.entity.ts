@@ -44,7 +44,7 @@ export class FacilityItem extends BaseSoftDeletableEntity {
   riskZoneId: string;
 
   @ManyToOne(() => RiskZone, entity => entity.facilityItems, { nullable: true, onDelete: 'SET NULL' })
-  riskZone: Zone;
+  riskZone: RiskZone;
 
   @OneToMany(() => SwabAreaHistory, entity => entity.facilityItem)
   swabAreaHistories: SwabAreaHistory[];

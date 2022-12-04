@@ -9,7 +9,7 @@ export class RiskZone extends BaseSoftDeletableEntity {
     @Column({ unique: true })
     riskZoneName!: string;
 
-    @OneToMany(() => Room, entity => entity.riskZone, { cascade: ["insert", "update"] })
+    @OneToMany(() => Room, entity => entity.riskZone)
     rooms: Room[];
 
     @OneToMany(() => FacilityItem, entity => entity.riskZone)

@@ -294,7 +294,7 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            swabAreaName: 'สายพานและแผ่นเพลท',
+            swabAreaName: 'สายพาน และ แผ่นเพลท',
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'สายพาน - กลาง', contactZoneName: 'Zone 1' },
@@ -362,13 +362,9 @@ export default class SwabSeeder implements Seeder {
             mainSwabAreaId: IsNull(),
           });
 
-          console.log('existMainSwabArea', existMainSwabArea);
-
           if (existMainSwabArea) {
             savedMainSwabAreaEntity.id = existMainSwabArea.id;
           }
-
-          console.log('savedMainSwabAreaEntity', savedMainSwabAreaEntity);
 
           if (subSwabAreas.length) {
             for (let index2 = 0; index2 < subSwabAreas.length; index2++) {
@@ -398,14 +394,10 @@ export default class SwabSeeder implements Seeder {
                   mainSwabAreaId: existMainSwabArea.id,
                 });
 
-                console.log('existSubSwabArea', existSubSwabArea);
-
                 if (existSubSwabArea) {
                   savedSubSwabAreaEntity.id = existSubSwabArea.id;
                 }
               }
-
-              console.log('savedSubSwabAreaEntity', savedSubSwabAreaEntity);
 
               savedMainSwabAreaEntity.subSwabAreas.push(savedSubSwabAreaEntity);
             }

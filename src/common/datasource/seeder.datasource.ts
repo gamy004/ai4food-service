@@ -10,6 +10,8 @@ import typeormConfig from '../../database/config/typeorm.config';
     seeds: [
       'dist/database/seeders/contact-zone.seeder.js',
       'dist/database/seeders/swab.seeder.js',
+      'dist/database/seeders/risk-zone.seeder.js',
+      'dist/database/seeders/facility.seeder.js',
     ],
   };
 
