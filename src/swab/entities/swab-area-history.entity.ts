@@ -85,9 +85,18 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     recordedUser: User;
 
     @Column({ nullable: true })
-    swabRoundId?: number;
+    swabRoundId: number;
 
     @ManyToOne(() => SwabRound, entity => entity.swabAreaHistories)
     @JoinColumn()
     swabRound?: SwabRound;
+
+    @Column({ type: "varchar", length: 36, nullable: true })
+    mainSwabAreaHistoryId?: string;
+
+    @ManyToOne(() => SwabAreaHistory, entity => entity.subSwabAreaHistories, { cascade: true })
+    mainSwabAreaHistory?: SwabAreaHistory;
+
+    @OneToMany(() => SwabAreaHistory, entity => entity.mainSwabAreaHistory, { nullable: true })
+    subSwabAreaHistories: SwabAreaHistory[];
 }
