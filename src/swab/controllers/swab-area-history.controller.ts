@@ -23,6 +23,8 @@ import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { UpdateRelatedSwabAreaHistoryDto } from '../dto/update-related-swab-area-history.dto';
+import { SwabAreaHistoryRelationManagerService } from '../services/swab-area-history-relation-manager.service';
 import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
 import { SwabPlanQueryService } from '../services/swab-plan-query.service';
@@ -34,6 +36,7 @@ export class SwabAreaHistoryController {
     private readonly swabPlanQueryService: SwabPlanQueryService,
     private readonly swabPlanManagerService: SwabPlanManagerService,
     private readonly swabLabQueryService: SwabLabQueryService,
+    private readonly swabAreaHistoryRelationManagerService: SwabAreaHistoryRelationManagerService,
   ) {}
 
   @Authenticated()
@@ -90,6 +93,13 @@ export class SwabAreaHistoryController {
   @Post('import-old-data')
   saveSwabPlan(@Body() data: Array<String>) {
     return this.swabPlanManagerService.saveSwabPlan(data);
+  }
+
+  @Post('update-related')
+  updateRelatedSwabAreaHistory(@Body() data: UpdateRelatedSwabAreaHistoryDto) {
+    return this.swabAreaHistoryRelationManagerService.updateRelatedSwabAreaHistory(
+      data,
+    );
   }
 
   @Authenticated()
