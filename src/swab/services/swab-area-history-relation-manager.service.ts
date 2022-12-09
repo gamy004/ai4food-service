@@ -17,8 +17,8 @@ export class SwabAreaHistoryRelationManagerService {
 
   async updateRelatedSwabAreaHistory(
     dto: UpdateRelatedSwabAreaHistoryDto,
-    transaction = false,
-  ) {
+    transaction = true,
+  ): Promise<void> {
     const { roundNumberSwabTest = '' } = dto;
 
     const where: FindOptionsWhere<SwabAreaHistory> =
@@ -27,7 +27,6 @@ export class SwabAreaHistoryRelationManagerService {
     if (roundNumberSwabTest) {
       const swabRound = await this.swabRoundService.findOneOrFail({
         where: { swabRoundNumber: roundNumberSwabTest },
-        transaction,
       });
 
       if (swabRound) {
@@ -37,7 +36,6 @@ export class SwabAreaHistoryRelationManagerService {
 
     const swabAreaHistories = await this.swabAreaHistoryService.find({
       where,
-      transaction,
     });
 
     const mainSwabAreaMap: Record<string, SwabArea> = {};
@@ -50,7 +48,7 @@ export class SwabAreaHistoryRelationManagerService {
 
     if (swabAreaHistories.length) {
       console.log(
-        `found swab area hsitories ${swabAreaHistories.length} records`,
+        `found swab area histories ${swabAreaHistories.length} records`,
       );
 
       const swabAreaIds = [
@@ -73,10 +71,6 @@ export class SwabAreaHistoryRelationManagerService {
           }
         });
       }
-
-      console.log(
-        `found swab area hsitories ${swabAreaHistories.length} records`,
-      );
 
       swabAreaHistories.forEach((swabAreaHistory) => {
         const isSubSwabArea = subSwabAreaMap[swabAreaHistory.swabAreaId];
@@ -126,8 +120,14 @@ export class SwabAreaHistoryRelationManagerService {
       );
     }
 
-    return {
-      updatedSubSwabAreaHistories,
-    };
+    console.log(
+      `updated swab area histories ${updatedSubSwabAreaHistories.length} records`,
+    );
+
+    if (updatedSubSwabAreaHistories.length) {
+      await this.swabAreaHistoryService.saveMany(updatedSubSwabAreaHistories, {
+        transaction,
+      });
+    }
   }
 }
