@@ -44,7 +44,7 @@ export class ImportCleaningRoomHistoryDto {
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Validate(UniqueFieldRecordRule, ['cleaningRoomDate', 'room.id'])
+  @Validate(UniqueFieldRecordRule, ['cleaningRoomDate', 'room.id', 'shift'])
   @Type(() => ImportCleaningRoomHistoryRecordDto)
   records: ImportCleaningRoomHistoryRecordDto[];
 
