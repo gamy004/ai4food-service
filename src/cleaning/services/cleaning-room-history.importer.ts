@@ -9,7 +9,7 @@ import { CleaningRoomHistoryService } from './cleaning-room-history.service';
 export class CleaningRoomHistoryImporter extends DataCollectorImporter<CleaningRoomHistory> {
   importType: ImportType = ImportType.CLEANING_ROOM_HISTORY;
 
-  mappingKeys: string[] = ['roomId', 'cleaningRoomDate'];
+  mappingKeys: string[] = ['cleaningRoomDate', 'roomId', 'shift'];
 
   constructor(
     private readonly cleaningRoomHistoryService: CleaningRoomHistoryService,
@@ -21,13 +21,14 @@ export class CleaningRoomHistoryImporter extends DataCollectorImporter<CleaningR
   }
 
   map(record: CleaningRoomHistory) {
-    const { cleaningRoomDate, room } = record;
+    const { cleaningRoomDate, room, shift } = record;
 
     const { id: roomId } = room;
 
     return {
       roomId,
       cleaningRoomDate,
+      shift
     };
   }
 
