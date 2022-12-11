@@ -10,33 +10,33 @@ import { Zone } from './zone.entity';
 @Entity()
 export class FacilityItem extends BaseSoftDeletableEntity {
   @Column({ unique: true })
-  facilityItemName!: string;
+  facilityItemName: string;
 
   @Column({ type: 'varchar', length: 36 })
-  facilityId!: string;
+  facilityId: string;
 
   @ManyToOne(() => Facility, (entity) => entity.facilityItems, {
     onDelete: 'CASCADE',
   })
-  facility!: Facility;
+  facility: Facility;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
-  roomId?: string;
+  roomId: string;
 
   @ManyToOne(() => Room, (entity) => entity.facilityItems, {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  room?: Room;
+  room: Room;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
-  zoneId?: string;
+  zoneId: string;
 
   @ManyToOne(() => Zone, (entity) => entity.facilityItems, {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  zone?: Zone;
+  zone: Zone;
 
   @OneToMany(() => SwabAreaHistory, (entity) => entity.facilityItem)
   swabAreaHistories: SwabAreaHistory[];
