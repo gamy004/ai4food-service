@@ -154,17 +154,15 @@ export class SwabProductManagerService {
       roundNumberSwabTest = '',
     } = generateSwabProductPlanDto;
 
-    let swabRoundNumber = null;
+    let swabRound = null;
 
     if (roundNumberSwabTest) {
-      const swabRound = await this.swabRoundService.findOneBy({
+      swabRound = await this.swabRoundService.findOneBy({
         swabRoundNumber: roundNumberSwabTest,
       });
 
-      if (swabRound) {
-        swabRoundNumber = swabRound;
-      } else {
-        swabRoundNumber = await this.swabRoundService.create({
+      if (!swabRound) {
+        swabRound = await this.swabRoundService.create({
           swabRoundNumber: roundNumberSwabTest,
         });
       }
@@ -338,6 +336,7 @@ export class SwabProductManagerService {
         shift,
         productLot: null,
         recordedUser: null,
+        swabRound: null,
       };
 
       if (createSwabTest) {
@@ -345,10 +344,20 @@ export class SwabProductManagerService {
           swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${
             roundNumberSwabTest ? '/' + roundNumberSwabTest : ''
           }`,
+          swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
         });
 
+        if (swabRound) {
+          swabTestData.swabRound = swabRound;
+        }
+
         historyData.swabTest = swabTestData;
+
         SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+      }
+
+      if (swabRound) {
+        historyData.swabRound = swabRound;
       }
 
       const swabProductHistory = SwabProductHistory.create(historyData);

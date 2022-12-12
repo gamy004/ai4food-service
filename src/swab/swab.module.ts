@@ -41,6 +41,7 @@ import { SwabProductHistoryService } from './services/swab-product-history.servi
 import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { SwabAreaHistoryRelationManagerService } from './services/swab-area-history-relation-manager.service';
 
 @Module({
   imports: [
@@ -53,12 +54,12 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
       SwabEnvironment,
       SwabProductHistory,
       SwabRound,
-      FacilityItem
+      FacilityItem,
     ]),
     FacilityModule,
     ProductModule,
     LabModule,
-    CommonModule
+    CommonModule,
   ],
   controllers: [
     SwabController,
@@ -67,7 +68,7 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
     SwabPeriodController,
     SwabEnvironmentController,
     SwabTestController,
-    SwabProductHistoryController
+    SwabProductHistoryController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -77,6 +78,7 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
     SwabAreaService,
     SwabAreaHistoryService,
     SwabAreaHistoryImageService,
+    SwabAreaHistoryRelationManagerService,
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
@@ -90,7 +92,7 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
     SwabTestExistsRule,
     SwabProductQueryService,
     SwabProductHistoryService,
-    SwabProductManagerService
-  ]
+    SwabProductManagerService,
+  ],
 })
-export class SwabModule { }
+export class SwabModule {}

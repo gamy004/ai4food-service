@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
+import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import {
   ParamCommandUpdateSwabPlanByIdDto,
   BodyCommandUpdateSwabPlanByIdDto,
@@ -23,6 +24,8 @@ import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
 import { QueryUpdateSwabPlanByIdDto } from '../dto/query-update-swab-plan-by-id.dto';
 import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { QueryUpdateSwabPlanDto } from '../dto/query-update-swab-plan.dto';
+import { UpdateRelatedSwabAreaHistoryDto } from '../dto/update-related-swab-area-history.dto';
+import { SwabAreaHistoryRelationManagerService } from '../services/swab-area-history-relation-manager.service';
 import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
 import { SwabPlanQueryService } from '../services/swab-plan-query.service';
@@ -31,9 +34,11 @@ import { SwabPlanQueryService } from '../services/swab-plan-query.service';
 @ApiTags('Swab')
 export class SwabAreaHistoryController {
   constructor(
+    private readonly transaction: TransactionDatasource,
     private readonly swabPlanQueryService: SwabPlanQueryService,
     private readonly swabPlanManagerService: SwabPlanManagerService,
     private readonly swabLabQueryService: SwabLabQueryService,
+    private readonly swabAreaHistoryRelationManagerService: SwabAreaHistoryRelationManagerService,
   ) {}
 
   @Authenticated()
@@ -92,6 +97,23 @@ export class SwabAreaHistoryController {
     return this.swabPlanManagerService.saveSwabPlan(data);
   }
 
+  @Post('update-related')
+  async updateRelatedSwabAreaHistory(
+    @Body() data: UpdateRelatedSwabAreaHistoryDto,
+  ) {
+    await this.transaction.execute(async () => {
+      await this.swabAreaHistoryRelationManagerService.updateRelatedSwabAreaHistory(
+        data,
+        false,
+      );
+    });
+
+    return {
+      ok: true,
+      message: 'update related swab area history success',
+    };
+  }
+
   @Authenticated()
   @Put(':id')
   async commandUpdateSwabPlanById(
@@ -101,8 +123,6 @@ export class SwabAreaHistoryController {
     @Body() bodycommandUpdateSwabPlanByIdDto: BodyCommandUpdateSwabPlanByIdDto,
   ) {
     try {
-      console.log(user);
-
       await this.swabPlanManagerService.commandUpdateSwabPlanById(
         paramCommandUpdateSwabPlanByIdDto.id,
         bodycommandUpdateSwabPlanByIdDto,
