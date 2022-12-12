@@ -1,14 +1,17 @@
+// import { keyBy } from 'lodash';
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Facility, FacilityType } from '~/facility/entities/facility.entity';
 import { Zone } from '~/facility/entities/zone.entity';
 import { Room } from '~/facility/entities/room.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { RiskZone } from '~/facility/entities/risk-zone.entity';
 
 type saveFacilityItem = {
     facilityItemName: string;
     zone: null | Zone;
     room: null | Room;
+    riskZone: null | RiskZone;
 };
 
 export default class FacilitySeeder implements Seeder {
@@ -19,42 +22,99 @@ export default class FacilitySeeder implements Seeder {
         const roomRepository = dataSource.getRepository(Room);
         const facilityRepository = dataSource.getRepository(Facility);
         const facilityItemRepository = dataSource.getRepository(FacilityItem);
+        const riskZoneRepository = dataSource.getRepository(RiskZone);
 
         // // // ---------------------------------------------------
-        const zones = [
+        const zonesTemplate = [
             {
                 zoneName: "สุก",
                 rooms: [
-                    { roomName: "Inspection&chilling area" },
-                    { roomName: "Rice mixing & vacuum" },
-                    { roomName: "Equipment wash" },
-                    { roomName: "Processing 1" },
-                    { roomName: "Processing 2" },
-                    { roomName: "Processing 3" },
+                    { roomName: "Inspection&chilling area", riskZoneName: "Medium Risk" },
+                    { roomName: "Rice mixing & vacuum", riskZoneName: "High Risk" },
+                    { roomName: "Equipment wash", riskZoneName: "High Risk" },
+                    { roomName: "Processing 1", riskZoneName: "High Risk" },
+                    { roomName: "Processing 2", riskZoneName: "High Risk" },
+                    { roomName: "Processing 3", riskZoneName: "High Risk" },
                 ]
             },
             {
                 zoneName: "ดิบ 1",
                 rooms: [
-                    { roomName: "Eggs preparation" },
-                    { roomName: "Meat preparation" },
-                    { roomName: "Vegetable preparation" },
-                    { roomName: "Equipment wash" },
-                    { roomName: "Rice storage" },
+                    { roomName: "Eggs preparation", riskZoneName: "Low Risk Floor 1" },
+                    { roomName: "Meat preparation", riskZoneName: "Low Risk Floor 1" },
+                    { roomName: "Vegetable preparation", riskZoneName: "Low Risk Floor 1" },
+                    { roomName: "Equipment wash", riskZoneName: "Low Risk Floor 1" },
+                    { roomName: "Rice storage", riskZoneName: "Low Risk Floor 1" },
                 ]
             },
             {
                 zoneName: "ดิบ 3",
                 rooms: [
-                    { roomName: "Cooking 1" },
-                    { roomName: "Cooking 2 (Fryer)" },
-                    { roomName: "Rice cooker" },
-                    { roomName: "Equipment wash" },
+                    { roomName: "Cooking 1", riskZoneName: "Low Risk Floor 3" },
+                    { roomName: "Cooking 2 (Fryer)", riskZoneName: "Low Risk Floor 3" },
+                    { roomName: "Rice cooker", riskZoneName: "Low Risk Floor 3" },
+                    { roomName: "Equipment wash", riskZoneName: "Low Risk Floor 3" },
                 ]
             }
         ];
 
-        await zoneRepository.save(zones);
+        const riskZones = await riskZoneRepository.findBy([
+        { riskZoneName: 'Low Risk Floor 1' },
+        { riskZoneName: 'Low Risk Floor 3' },
+        { riskZoneName: 'Medium Risk' },
+        { riskZoneName: 'High Risk' },
+        ]);
+    
+        const riskZoneMapping = riskZones.reduce((mapping, riskZone) => {
+        mapping[riskZone.riskZoneName] = riskZone;
+    
+        return mapping;
+        }, {});
+
+        const savedZones = [];
+
+        for (let zoneIndex = 0; zoneIndex < zonesTemplate.length; zoneIndex++) {
+            const { zoneName, rooms = [] } = zonesTemplate[zoneIndex];
+            
+            const savedZoneEntity = zoneRepository.create({
+                zoneName,
+                rooms: []
+            });
+
+            const targetZone = await zoneRepository.findOneBy({ zoneName });
+
+            if (targetZone) {
+                savedZoneEntity.id = targetZone.id
+            }
+
+            for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
+                const { roomName, riskZoneName } = rooms[roomIndex];
+                
+                const savedRoomEntity = roomRepository.create({
+                    roomName,
+                    riskZone: riskZoneMapping[riskZoneName]
+                });
+
+                const targetRoom = await roomRepository.findOneBy({ roomName, zoneId: targetZone.id });
+
+                if (targetRoom) {
+                    savedRoomEntity.id = targetRoom.id;
+                }
+
+                savedZoneEntity.rooms.push(savedRoomEntity);
+            }
+
+            savedZones.push(savedZoneEntity);
+        }
+        
+        await zoneRepository.save(savedZones);
+
+        // const mappedZoneRoom = keyBy(zones, (zone) => {
+        //     const { zoneName, room } = zone;
+        //     const { roomName } = room;
+
+        //     return `${zoneName}_${roomName}`;
+        // });
 
         const facilities = [
             {
@@ -285,23 +345,46 @@ export default class FacilitySeeder implements Seeder {
         for (let index = 0; index < facilities.length; index++) {
             const facility = facilities[index];
 
-            const { facilityItems = [], ...facilityProps } = facility;
+            const { facilityItems = [], facilityName, facilityType } = facility;
 
-            const savedFacilityItems = await Promise.all(facilityItems.map(
+            const savedFacility = facilityRepository.create({
+                facilityName,
+                facilityType,
+                facilityItems: []
+            });
+
+            const targetFacility = await facilityRepository.findOneBy({
+                facilityName,
+            });
+
+            if (targetFacility) {
+                savedFacility.id = targetFacility.id;
+            }
+
+            savedFacility.facilityItems = await Promise.all(facilityItems.map(
                 async (facilityItem) => {
                     let { zone = null, room = null, facilityItemName } = facilityItem;
 
-                    const facilityItemProp: saveFacilityItem = {
+                    const savedFacilityItem = facilityItemRepository.create({
                         facilityItemName,
                         zone: null,
-                        room: null
-                    };
+                        room: null,
+                        riskZone: null
+                    });
+
+                    const relatedFacilityItem = await facilityItemRepository.findOneBy({
+                        facilityItemName
+                    });
+
+                    if (relatedFacilityItem) {
+                        savedFacilityItem.id = relatedFacilityItem.id;
+                    }
 
                     if (zone !== null) {
                         const relatedZone = await zoneRepository.findOneBy({ zoneName: zone });
 
                         if (relatedZone) {
-                            facilityItemProp.zone = relatedZone;
+                            savedFacilityItem.zone = relatedZone;
 
                             if (room !== null) {
                                 const relatedRoom = await roomRepository.findOneBy({
@@ -312,21 +395,23 @@ export default class FacilitySeeder implements Seeder {
                                 });
 
                                 if (relatedRoom) {
-                                    facilityItemProp.room = relatedRoom;
+                                    savedFacilityItem.room = relatedRoom;
+
+                                    if (relatedRoom.riskZoneId) {
+                                        savedFacilityItem.riskZone = riskZoneRepository.create({
+                                            id: relatedRoom.riskZoneId
+                                        });
+                                    }
                                 }
                             }
                         }
                     }
 
-                    console.log(facilityItemProp);
-
-                    return facilityItemProp;
+                    return savedFacilityItem;
                 }
-            ))
-            await facilityRepository.save({
-                ...facilityProps,
-                facilityItems: savedFacilityItems
-            });
+            ));
+
+            await facilityRepository.save(savedFacility);
         }
     }
 }

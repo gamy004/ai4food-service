@@ -45,6 +45,7 @@ all_envs:
     # env variables for services
     service_database_url: "{{ lookup('env', 'SERVICE_DATABASE_URL') }}"
     service_database_timezone: "{{ lookup('env', 'SERVICE_DATABASE_TIMEZONE') }}"
+    service_database_migrate_on_start: "{{ lookup('env', 'SERVICE_DATABASE_MIGRATE_ON_START') }}"
     service_jwt_secret_key: "{{ lookup('env', 'SERVICE_JWT_SECRET_KEY') }}"
     service_aws_default_region: "{{ lookup('env', 'SERVICE_AWS_DEFAULT_REGION') }}"
     service_aws_access_key_id: "{{ lookup('env', 'SERVICE_AWS_ACCESS_KEY_ID') }}"
