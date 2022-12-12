@@ -128,7 +128,7 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            swabAreaName: 'สายพานลำเลียงถาด', // ไม่มีรข้อมูลใน excel confirm อีกที!!
+            swabAreaName: 'สายพานลำเลียงถาด',
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ตัวแผ่น', contactZoneName: 'Zone 2' },
@@ -136,7 +136,7 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน', // ไม่มีรข้อมูลใน excel confirm อีกที!!
+            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'เลื่อนสายพาน', contactZoneName: 'Zone 3' },
