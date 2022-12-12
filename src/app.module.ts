@@ -14,6 +14,7 @@ import { AppController } from './app.controller';
 import { CommonModule } from './common/common.module';
 import { LabModule } from './lab/lab.module';
 import { IotModule } from './iot/iot.module';
+import { CleaningModule } from './cleaning/cleaning.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { IotModule } from './iot/iot.module';
     AwsModule,
     LabModule,
     IotModule,
+    CleaningModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { ContactZone } from "~/facility/entities/contact-zone.entity";
 import { BaseSoftDeletableEntity } from "../../common/entities/base-softdeletable.entity";
 // import { FacilityItem } from "~/facility/entities/facility-item.entity";
 import { Facility } from "../../facility/entities/facility.entity";
@@ -32,4 +33,10 @@ export class SwabArea extends BaseSoftDeletableEntity {
 
     @ManyToOne(() => Facility, entity => entity.swabAreas)
     facility!: Facility;
+
+    @Column({ type: "varchar", length: 36, nullable: true })
+    contactZoneId: string;
+
+    @ManyToOne(() => ContactZone, entity => entity.swabAreas, { onDelete: 'SET NULL' })
+    contactZone: ContactZone;
 }

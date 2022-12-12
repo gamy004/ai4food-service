@@ -8,11 +8,11 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { FacilityService } from './facility.service';
-import { FacilityItemService } from './facility-item.service';
+import { FacilityService } from '../services/facility.service';
+import { FacilityItemService } from '../services/facility-item.service';
 import { Not, IsNull, FindOptionsWhere } from 'typeorm';
-import { QueryFindAllFacilityItemDto } from './dto/query-find-all-facility-item.dto';
-import { FacilityItem } from './entities/facility-item.entity';
+import { QueryFindAllFacilityItemDto } from '../dto/query-find-all-facility-item.dto';
+import { FacilityItem } from '../entities/facility-item.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('facility')

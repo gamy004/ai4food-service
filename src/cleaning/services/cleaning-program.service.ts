@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere } from 'typeorm';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { Facility } from './entities/facility.entity';
+import { CleaningProgram } from '../entities/cleaning-program.entity';
 
 @Injectable()
-export class FacilityService extends CrudService<Facility> {
+export class CleaningProgramService extends CrudService<CleaningProgram> {
   constructor(
-    @InjectRepository(Facility)
-    repository: CommonRepositoryInterface<Facility>
+    @InjectRepository(CleaningProgram)
+    repository: CommonRepositoryInterface<CleaningProgram>,
   ) {
     super(repository);
   }

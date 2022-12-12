@@ -11,7 +11,7 @@ export class RunningNumberService extends CrudService<RunningNumber> {
   constructor(
     private readonly transaction: TransactionDatasource,
     @InjectRepository(RunningNumber)
-    repository: CommonRepositoryInterface<RunningNumber>
+    repository: CommonRepositoryInterface<RunningNumber>,
   ) {
     super(repository);
   }
@@ -21,44 +21,43 @@ export class RunningNumberService extends CrudService<RunningNumber> {
 
     let latestRunningNumber = null;
 
-    await this.transaction.execute(
-      async (queryRunnerManger) => {
-        const repository = queryRunnerManger.getRepository(RunningNumber);
+    await this.transaction.execute(async (queryRunnerManger) => {
+      const repository = queryRunnerManger.getRepository(RunningNumber);
 
-        const runningNumber = await repository.findOne({
-          where: { key },
-          lock: {
-            mode: "pessimistic_write",
-          },
-          transaction: true
-        });
+      const runningNumber = await repository.findOne({
+        where: { key },
+        lock: {
+          mode: 'pessimistic_write',
+        },
+        transaction: false,
+      });
 
-        if (!runningNumber) {
-          latestRunningNumber = 1;
+      if (!runningNumber) {
+        latestRunningNumber = 1;
 
-          console.log(`Insert running number key: ${key} with latest running number: ${latestRunningNumber}`);
+        console.log(
+          `Insert running number key: ${key} with latest running number: ${latestRunningNumber}`,
+        );
 
-          await repository.save(
-            { key, latestRunningNumber },
-            { transaction: true }
-          );
-        } else {
-          runningNumber.latestRunningNumber += offset;
+        await repository.save(
+          { key, latestRunningNumber },
+          { transaction: false },
+        );
+      } else {
+        runningNumber.latestRunningNumber += offset;
 
-          latestRunningNumber = runningNumber.latestRunningNumber;
+        latestRunningNumber = runningNumber.latestRunningNumber;
 
-          console.log(`Update running number key: ${key} with latest running number: ${latestRunningNumber}`);
+        console.log(
+          `Update running number key: ${key} with latest running number: ${latestRunningNumber}`,
+        );
 
-          await repository.save(
-            runningNumber,
-            { transaction: true }
-          );
-        }
+        await repository.save(runningNumber, { transaction: false });
       }
-    );
+    });
 
     if (!latestRunningNumber) {
-      throw new Error("Generate running number failed");
+      throw new Error('Generate running number failed');
     }
 
     return latestRunningNumber;
