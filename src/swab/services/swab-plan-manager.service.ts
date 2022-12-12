@@ -171,15 +171,15 @@ export class SwabPlanManagerService {
   async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
     const { fromDate, toDate, roundNumberSwabTest = '' } = generateSwabPlanDto;
 
-    let swabRoundNumber = null;
+    let swabRound = null;
 
     if (roundNumberSwabTest) {
-      const swabRound = await this.swabRoundService.findOneBy({
+      swabRound = await this.swabRoundService.findOneBy({
         swabRoundNumber: roundNumberSwabTest,
       });
 
       if (!swabRound) {
-        swabRoundNumber = await this.swabRoundService.create({
+        swabRound = await this.swabRoundService.create({
           swabRoundNumber: roundNumberSwabTest,
         });
       }
@@ -617,19 +617,25 @@ export class SwabPlanManagerService {
           swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${
             roundNumberSwabTest ? '/' + roundNumberSwabTest : ''
           }`,
+          swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
         });
 
+        if (swabRound) {
+          swabTestData.swabRound = swabRound;
+        }
+
         historyData.swabTest = swabTestData;
+
         SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
       }
 
-      if (swabRoundNumber) {
-        historyData.swabRound = swabRoundNumber;
+      if (swabRound) {
+        historyData.swabRound = swabRound;
       }
 
       const swabAreaHistory = SwabAreaHistory.create(historyData);
 
-      return swabAreaHistories.push(swabAreaHistory);
+      return swabAreaHistory;
     }
 
     async function generateHistory(
@@ -682,7 +688,7 @@ export class SwabPlanManagerService {
                   indexShift++
                 ) {
                   const shift = shiftMapping[indexShift];
-                  await generateSwabAreaHistory(
+                  const mainSwabAreaHistory = await generateSwabAreaHistory(
                     currentDate,
                     swabAreas,
                     bigCleaningSwabPeriod,
@@ -691,24 +697,36 @@ export class SwabPlanManagerService {
                   );
 
                   if (subSwabAreas && subSwabAreas.length > 0) {
+                    const subSwabAreaHistories = [];
+
                     for (
                       let indexSubSwabArea = 0;
                       indexSubSwabArea < subSwabAreas.length;
                       indexSubSwabArea++
                     ) {
                       const swabArea = subSwabAreas[indexSubSwabArea];
-                      await generateSwabAreaHistory(
+
+                      const subSwabAreaHistory = await generateSwabAreaHistory(
                         currentDate,
                         swabArea,
                         bigCleaningSwabPeriod,
                         shift,
                         false,
                       );
+
+                      subSwabAreaHistories.push(subSwabAreaHistory);
+                    }
+
+                    if (subSwabAreaHistories.length) {
+                      mainSwabAreaHistory.subSwabAreaHistories =
+                        subSwabAreaHistories;
                     }
                   }
+
+                  swabAreaHistories.push(mainSwabAreaHistory);
                 }
               } else {
-                await generateSwabAreaHistory(
+                const mainSwabAreaHistory = await generateSwabAreaHistory(
                   currentDate,
                   swabAreas,
                   bigCleaningSwabPeriod,
@@ -717,17 +735,29 @@ export class SwabPlanManagerService {
                 );
 
                 if (subSwabAreas && subSwabAreas.length > 0) {
+                  const subSwabAreaHistories = [];
+
                   for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
                     const swabArea = subSwabAreas[index3];
-                    await generateSwabAreaHistory(
+
+                    const subSwabAreaHistory = await generateSwabAreaHistory(
                       currentDate,
                       swabArea,
                       bigCleaningSwabPeriod,
                       'day',
                       false,
                     );
+
+                    subSwabAreaHistories.push(subSwabAreaHistory);
+                  }
+
+                  if (subSwabAreaHistories.length) {
+                    mainSwabAreaHistory.subSwabAreaHistories =
+                      subSwabAreaHistories;
                   }
                 }
+
+                swabAreaHistories.push(mainSwabAreaHistory);
               }
             }
           }
@@ -772,7 +802,7 @@ export class SwabPlanManagerService {
               }
               // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
 
-              await generateSwabAreaHistory(
+              const mainSwabAreaHistory = await generateSwabAreaHistory(
                 currentDate,
                 swabAreas,
                 swabPeriod,
@@ -781,18 +811,29 @@ export class SwabPlanManagerService {
               );
 
               if (subSwabAreas && subSwabAreas.length > 0) {
+                const subSwabAreaHistories = [];
+
                 for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
                   const swabArea = subSwabAreas[index4];
 
-                  await generateSwabAreaHistory(
+                  const subSwabAreaHistory = await generateSwabAreaHistory(
                     currentDate,
                     swabArea,
                     swabPeriod,
                     Shift[shiftKey],
                     false,
                   );
+
+                  subSwabAreaHistories.push(subSwabAreaHistory);
+                }
+
+                if (subSwabAreaHistories.length) {
+                  mainSwabAreaHistory.subSwabAreaHistories =
+                    subSwabAreaHistories;
                 }
               }
+
+              swabAreaHistories.push(mainSwabAreaHistory);
             }
           }
         }
@@ -2133,18 +2174,20 @@ export class SwabPlanManagerService {
     ];
 
     await this.transaction.execute(async (queryRunnerManger) => {
-      const whereSwabRound: FindOptionsWhere<SwabRound> = {swabRoundNumber: '1'};
-      
+      const whereSwabRound: FindOptionsWhere<SwabRound> = {
+        swabRoundNumber: '1',
+      };
+
       let targetSwabRound = await this.swabRoundService.findOne({
         where: whereSwabRound,
-        transaction: true
+        transaction: true,
       });
 
       if (!targetSwabRound) {
         targetSwabRound = await queryRunnerManger.save(
           this.swabRoundService.make({
-            swabRoundNumber: whereSwabRound.swabRoundNumber as string
-          })
+            swabRoundNumber: whereSwabRound.swabRoundNumber as string,
+          }),
         );
       }
 
@@ -2256,13 +2299,13 @@ export class SwabPlanManagerService {
 
         if (recordData[14].trim() != '-') {
           const bacteriaSpecies = recordData[14].trim().split(',');
-          
+
           let whereOption = [];
           for (let index = 0; index < bacteriaSpecies.length; index++) {
             const bacteriaSpecieName = bacteriaSpecies[index];
             whereOption.push({ bacteriaSpecieName: bacteriaSpecieName.trim() });
           }
-          
+
           const result_bacteriaSpecie = await this.bacteriaSpecieService.find({
             where: whereOption,
             transaction: true,
@@ -2284,7 +2327,7 @@ export class SwabPlanManagerService {
           swabAreaDateData,
           swabAreaSwabedAt,
           shiftData,
-          "Asia/Bangkok"
+          'Asia/Bangkok',
         );
 
         let facilityItemData = {};
@@ -2306,7 +2349,7 @@ export class SwabPlanManagerService {
         if (recordData[4].trim() == 'กล่องเครื่องมือวิศวะ') {
           facilityItemData = facilityItem['กล่องเครื่องมือวิศวะ โซนสุก'];
         }
-        
+
         const swabArea = await this.swabAreaRepository.findOne({
           where: {
             swabAreaName: recordData[5].trim(),
@@ -2315,7 +2358,7 @@ export class SwabPlanManagerService {
         });
 
         let swabAreaData = null;
-        
+
         if (swabArea) {
           swabAreaData = swabArea;
         } else {
@@ -2331,61 +2374,71 @@ export class SwabPlanManagerService {
 
         const swabTestCode = `${recordData[2].trim()}/1`;
 
-        if (
-          recordData[8].trim() != '-'
-        ) {
+        if (recordData[8].trim() != '-') {
           if (swabEnvironments[recordData[8].trim()]) {
             swabEnvironmentsData.push(swabEnvironments[recordData[8].trim()]);
           } else {
-            console.log("Missing swab environment at 8", swabTestCode, recordData[8].trim());
+            console.log(
+              'Missing swab environment at 8',
+              swabTestCode,
+              recordData[8].trim(),
+            );
           }
         }
-          
-        if (
-          recordData[9].trim() != '-'
-        ) {
+
+        if (recordData[9].trim() != '-') {
           if (swabEnvironments[recordData[9].trim()]) {
             swabEnvironmentsData.push(swabEnvironments[recordData[9].trim()]);
           } else {
-            console.log("Missing swab environment at 9", swabTestCode, recordData[9].trim());
+            console.log(
+              'Missing swab environment at 9',
+              swabTestCode,
+              recordData[9].trim(),
+            );
           }
         }
 
-        if (
-          recordData[10].trim() != '-'
-        ) {
+        if (recordData[10].trim() != '-') {
           if (swabEnvironments[recordData[10].trim()]) {
-              swabEnvironmentsData.push(swabEnvironments[recordData[10].trim()]);
+            swabEnvironmentsData.push(swabEnvironments[recordData[10].trim()]);
           } else {
-            console.log("Missing swab environment at 10", swabTestCode, recordData[10].trim());
+            console.log(
+              'Missing swab environment at 10',
+              swabTestCode,
+              recordData[10].trim(),
+            );
           }
         }
 
-        if (
-          recordData[11].trim() != '-'
-        ) {
+        if (recordData[11].trim() != '-') {
           if (swabEnvironments[recordData[11].trim()]) {
             swabEnvironmentsData.push(swabEnvironments[recordData[11].trim()]);
           } else {
-            console.log("Missing swab environment at 11", swabTestCode, recordData[11].trim());
+            console.log(
+              'Missing swab environment at 11',
+              swabTestCode,
+              recordData[11].trim(),
+            );
           }
         }
 
-        if (
-          recordData[12].trim() != '-'
-        ) {
+        if (recordData[12].trim() != '-') {
           if (swabEnvironments[recordData[12].trim()]) {
             swabEnvironmentsData.push(swabEnvironments[recordData[12].trim()]);
           } else {
-            console.log("Missing swab environment at 12", swabTestCode, recordData[12].trim());
+            console.log(
+              'Missing swab environment at 12',
+              swabTestCode,
+              recordData[12].trim(),
+            );
           }
         }
-        
+
         const swabTestData = SwabTest.create({
-            swabTestCode,
-            swabTestRecordedAt,
-            bacteria: bacteriasData,
-            bacteriaSpecies: bacteriaSpeciesData,
+          swabTestCode,
+          swabTestRecordedAt,
+          bacteria: bacteriasData,
+          bacteriaSpecies: bacteriaSpeciesData,
         });
 
         const historyData = {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, IsNull, Like, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Like, Not, Raw, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
@@ -20,6 +20,8 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
     super(repository);
   }
 
+  transformDateRangeFIlter;
+
   toFilter(dto: FilterSwabAreaHistoryDto): FindOptionsWhere<SwabAreaHistory> {
     let {
       swabAreaId,
@@ -32,6 +34,8 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       swabTestId,
       bacteriaName,
       hasBacteria,
+      fromDate,
+      toDate: toDateString,
       id,
     } = dto;
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
@@ -99,6 +103,34 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
     if (swabAreaDateString) {
       whereSwabAreaHistory.swabAreaDate =
         this.dateTransformer.toObject(swabAreaDateString);
+    }
+
+    let toDate;
+
+    if (toDateString) {
+      toDate = this.dateTransformer.toObject(toDateString);
+
+      toDate.setDate(toDate.getDate() + 1);
+
+      toDate = this.dateTransformer.toString(toDate);
+    }
+
+    if (fromDate && toDate) {
+      whereSwabAreaHistory.swabAreaDate = Raw(
+        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+      );
+    } else {
+      if (fromDate) {
+        whereSwabAreaHistory.swabAreaDate = Raw(
+          (field) => `${field} >= '${fromDate}'`,
+        );
+      }
+
+      if (toDate) {
+        whereSwabAreaHistory.swabAreaDate = Raw(
+          (field) => `${field} < '${toDate}'`,
+        );
+      }
     }
 
     return whereSwabAreaHistory;
