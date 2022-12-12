@@ -45,6 +45,8 @@
         value: '{{ service_database_url }}'
       - name: DATABASE_TIMEZONE
         value: '{{ service_database_timezone }}'
+      - name: DATABASE_MIGRATE_ON_START
+        value: '{{ service_database_migrate_on_start }}'
       - name: JWT_SECRET_KEY
         value: '{{ service_jwt_secret_key }}'
       - name: AWS_DEFAULT_REGION
