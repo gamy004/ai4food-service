@@ -73,7 +73,9 @@ export class SwabPlanManagerService {
 
     swabAreaHistory.recordedUser = recordedUser;
 
-    swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
+    if (swabAreaSwabedAt) {
+      swabAreaHistory.swabAreaSwabedAt = swabAreaSwabedAt;
+    }
 
     if (connectProductDto) {
       swabAreaHistory.product = this.productService.make(connectProductDto);
