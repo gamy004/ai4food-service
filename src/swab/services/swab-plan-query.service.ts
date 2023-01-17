@@ -4,6 +4,7 @@ import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabPeriodService } from './swab-period.service';
 import {
   FindManyOptions,
+  FindOptionsRelations,
   FindOptionsWhere,
   In,
   IsNull,
@@ -118,15 +119,31 @@ export class SwabPlanQueryService {
 
     const whereSwabProductHistory: FindOptionsWhere<SwabProductHistory> =
       this.transformQuerySwabProductDto(querySwabPlanDto);
-    
+
+    const relationsSwabAreaHistory: FindOptionsRelations<SwabAreaHistory> = {
+      swabTest: true,
+    };
+    const relationsSwabProductHistory: FindOptionsRelations<SwabProductHistory> =
+      { swabTest: true };
+
+    if (querySwabPlanDto.bacteriaSpecies) {
+      relationsSwabAreaHistory.swabTest = {
+        bacteria: true,
+        bacteriaSpecies: true,
+      };
+
+      relationsSwabProductHistory.swabTest = {
+        bacteria: true,
+        bacteriaSpecies: true,
+      };
+    }
+
     const swabAreaHistories = await this.swabAreaHistoryRepository.find({
       where: {
         ...whereSwabAreaHistory,
         swabTestId: Not(IsNull()),
       },
-      relations: {
-        swabTest: true,
-      },
+      relations: relationsSwabAreaHistory,
       select: {
         id: true,
         swabAreaDate: true,
@@ -137,6 +154,14 @@ export class SwabPlanQueryService {
         swabTest: {
           id: true,
           swabTestCode: true,
+          swabTestRecordedAt: true,
+          bacteria: {
+            id: true,
+          },
+          bacteriaSpecies: {
+            id: true,
+            bacteriaId: true,
+          },
         },
       },
       order: {
@@ -153,9 +178,7 @@ export class SwabPlanQueryService {
         ...whereSwabProductHistory,
         swabTestId: Not(IsNull()),
       },
-      relations: {
-        swabTest: true,
-      },
+      relations: relationsSwabProductHistory,
       select: {
         id: true,
         swabProductDate: true,
@@ -166,6 +189,14 @@ export class SwabPlanQueryService {
         swabTest: {
           id: true,
           swabTestCode: true,
+          swabTestRecordedAt: true,
+          bacteria: {
+            id: true,
+          },
+          bacteriaSpecies: {
+            id: true,
+            bacteriaId: true,
+          },
         },
       },
       order: {
@@ -184,7 +215,9 @@ export class SwabPlanQueryService {
     let swabAreas = [];
 
     if (swabAreaHistories.length) {
-      swabAreaHistories.forEach(({ swabPeriodId }) => swabPeriodMapping[swabPeriodId] = true);
+      swabAreaHistories.forEach(
+        ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
+      );
 
       const swabAreaIds = [
         ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
@@ -229,7 +262,9 @@ export class SwabPlanQueryService {
     }
 
     if (swabProductHistories.length) {
-      swabProductHistories.forEach(({ swabPeriodId }) => swabPeriodMapping[swabPeriodId] = true);
+      swabProductHistories.forEach(
+        ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
+      );
 
       const productIds = [
         ...new Set(swabProductHistories.map(({ productId }) => productId)),
@@ -244,7 +279,7 @@ export class SwabPlanQueryService {
             id: true,
             productName: true,
             productCode: true,
-            alternateProductCode: true
+            alternateProductCode: true,
           },
         });
       }
@@ -255,7 +290,7 @@ export class SwabPlanQueryService {
     if (swabPeriodIds.length) {
       swabPeriods = await this.swabPeriodService.find({
         where: {
-          id: In(swabPeriodIds)
+          id: In(swabPeriodIds),
         },
         select: {
           id: true,
