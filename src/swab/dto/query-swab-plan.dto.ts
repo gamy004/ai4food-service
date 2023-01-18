@@ -15,4 +15,9 @@ export class QuerySwabPlanDto {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   bacteriaSpecies?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  hasBacteria?: boolean;
 }

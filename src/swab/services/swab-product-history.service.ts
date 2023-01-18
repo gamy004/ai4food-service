@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, IsNull, Like, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Like, Not, Raw, Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
@@ -34,6 +34,8 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
       productId,
       bacteriaName,
       hasBacteria,
+      fromDate,
+      toDate: toDateString,
     } = dto;
 
     const where: FindOptionsWhere<SwabProductHistory> = {};
@@ -95,6 +97,30 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
 
     if (Object.keys(whereSwabTest).length) {
       where.swabTest = whereSwabTest;
+    }
+
+    let toDate;
+
+    if (toDateString) {
+      toDate = this.dateTransformer.toObject(toDateString);
+
+      toDate.setDate(toDate.getDate() + 1);
+
+      toDate = this.dateTransformer.toString(toDate);
+    }
+
+    if (fromDate && toDate) {
+      where.swabProductDate = Raw(
+        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+      );
+    } else {
+      if (fromDate) {
+        where.swabProductDate = Raw((field) => `${field} >= '${fromDate}'`);
+      }
+
+      if (toDate) {
+        where.swabProductDate = Raw((field) => `${field} < '${toDate}'`);
+      }
     }
 
     return where;

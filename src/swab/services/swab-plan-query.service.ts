@@ -26,6 +26,8 @@ import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { SwabProductHistoryService } from './swab-product-history.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
+import { Bacteria } from '~/lab/entities/bacteria.entity';
+import { SwabTest } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -39,6 +41,8 @@ export class SwabPlanQueryService {
     private readonly productService: ProductService,
     @InjectRepository(SwabAreaHistory)
     private readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
+    @InjectRepository(SwabProductHistory)
+    private readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(SwabArea)
     private readonly swabAreaRepository: Repository<SwabArea>,
   ) {}
@@ -46,9 +50,11 @@ export class SwabPlanQueryService {
   private transformQuerySwabPlanDto(
     querySwabPlanDto: QuerySwabPlanDto,
   ): FindOptionsWhere<SwabAreaHistory> {
-    const { fromDate, toDate: toDateString } = querySwabPlanDto;
+    const { fromDate, toDate: toDateString, hasBacteria } = querySwabPlanDto;
 
     const where: FindOptionsWhere<SwabAreaHistory> = {};
+    const whereSwabTest: FindOptionsWhere<SwabTest> = {};
+    const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
     let toDate;
 
@@ -72,6 +78,18 @@ export class SwabPlanQueryService {
       if (toDate) {
         where.swabAreaDate = Raw((field) => `${field} < '${toDate}'`);
       }
+    }
+
+    if (hasBacteria !== undefined) {
+      whereBacteria.id = hasBacteria === true ? Not(IsNull()) : IsNull();
+    }
+
+    if (Object.keys(whereBacteria).length) {
+      whereSwabTest.bacteria = whereBacteria;
+    }
+
+    if (Object.keys(whereSwabTest).length) {
+      where.swabTest = whereSwabTest;
     }
 
     return where;
@@ -114,99 +132,157 @@ export class SwabPlanQueryService {
   async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
-    const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
-      this.transformQuerySwabPlanDto(querySwabPlanDto);
+    const { fromDate, toDate, hasBacteria, bacteriaSpecies } = querySwabPlanDto;
 
-    const whereSwabProductHistory: FindOptionsWhere<SwabProductHistory> =
-      this.transformQuerySwabProductDto(querySwabPlanDto);
+    // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
+    //   this.swabAreaHistoryService.toFilter({ fromDate, toDate });
 
-    const relationsSwabAreaHistory: FindOptionsRelations<SwabAreaHistory> = {
-      swabTest: true,
-    };
-    const relationsSwabProductHistory: FindOptionsRelations<SwabProductHistory> =
-      { swabTest: true };
+    // const whereSwabProductHistory: FindOptionsWhere<SwabProductHistory> =
+    //   this.swabProductHistoryService.toFilter({ fromDate, toDate });
 
-    if (querySwabPlanDto.bacteriaSpecies) {
-      relationsSwabAreaHistory.swabTest = {
-        bacteria: true,
-        bacteriaSpecies: true,
-      };
+    // const relationsSwabAreaHistory: FindOptionsRelations<SwabAreaHistory> = {
+    //   swabTest: {
+    //     bacteria: true,
+    //   },
+    // };
+    // const relationsSwabProductHistory: FindOptionsRelations<SwabProductHistory> =
+    //   {
+    //     swabTest: {
+    //       bacteria: true,
+    //     },
+    //   };
 
-      relationsSwabProductHistory.swabTest = {
-        bacteria: true,
-        bacteriaSpecies: true,
-      };
+    // if (querySwabPlanDto.bacteriaSpecies) {
+    //   relationsSwabAreaHistory.swabTest = {
+    //     bacteria: true,
+    //     bacteriaSpecies: true,
+    //   };
+
+    //   relationsSwabProductHistory.swabTest = {
+    //     bacteria: true,
+    //     bacteriaSpecies: true,
+    //   };
+    // }
+
+    // const swabAreaHistories = await this.swabAreaHistoryRepository.find({
+    //   relations: {
+    //     swabTest: {
+    //       bacteria: true,
+    //     },
+    //   },
+    //   where: {
+    //     swabTest: {
+    //       id: Not(IsNull()),
+    //     },
+    //   },
+    // });
+
+    let swabAreaHistoryQuery = this.swabAreaHistoryRepository
+      .createQueryBuilder('swabAreaHistory')
+      .innerJoinAndSelect('swabAreaHistory.swabTest', 'swab_test')
+      .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
+      .where('swab_test.id IS NOT NULL');
+
+    if (fromDate || toDate) {
+      swabAreaHistoryQuery.andWhere(
+        this.dateTransformer.dateRangeToSql(
+          'swabAreaHistory.swabAreaDate',
+          fromDate,
+          toDate,
+        ),
+      );
     }
 
-    const swabAreaHistories = await this.swabAreaHistoryRepository.find({
-      where: {
-        ...whereSwabAreaHistory,
-        swabTestId: Not(IsNull()),
-      },
-      relations: relationsSwabAreaHistory,
-      select: {
-        id: true,
-        swabAreaDate: true,
-        swabPeriodId: true,
-        swabAreaId: true,
-        shift: true,
-        swabTestId: true,
-        swabTest: {
-          id: true,
-          swabTestCode: true,
-          swabTestRecordedAt: true,
-          bacteria: {
-            id: true,
-          },
-          bacteriaSpecies: {
-            id: true,
-            bacteriaId: true,
-          },
-        },
-      },
-      order: {
-        swabTest: {
-          id: {
-            direction: 'asc',
-          },
-        },
-      },
-    });
+    if (bacteriaSpecies) {
+      swabAreaHistoryQuery.leftJoinAndSelect(
+        'swab_test.bacteriaSpecies',
+        'bacteria_specie',
+      );
+    }
 
-    const swabProductHistories = await this.swabProductHistoryService.find({
-      where: {
-        ...whereSwabProductHistory,
-        swabTestId: Not(IsNull()),
-      },
-      relations: relationsSwabProductHistory,
-      select: {
-        id: true,
-        swabProductDate: true,
-        swabPeriodId: true,
-        productId: true,
-        shift: true,
-        swabTestId: true,
-        swabTest: {
-          id: true,
-          swabTestCode: true,
-          swabTestRecordedAt: true,
-          bacteria: {
-            id: true,
-          },
-          bacteriaSpecies: {
-            id: true,
-            bacteriaId: true,
-          },
-        },
-      },
-      order: {
-        swabTest: {
-          id: {
-            direction: 'asc',
-          },
-        },
-      },
-    });
+    if (hasBacteria !== undefined) {
+      swabAreaHistoryQuery.andWhere(
+        `bacteria.id ${hasBacteria ? 'IS NOT NULL' : 'IS NULL'}`,
+      );
+    }
+    // .where({
+    //   swabTest: {
+    //     id: Not(IsNull()),
+    //     // bacteria: {
+    //     //   id: IsNull(),
+    //     // },
+    //   },
+    // })
+    const swabAreaHistories = await swabAreaHistoryQuery
+      .orderBy('swab_test.id', 'ASC')
+      .getMany();
+    // const swabAreaHistories = await this.swabAreaHistoryRepository.find({
+    //   where: {
+    //     ...whereSwabAreaHistory,
+    //     swabTestId: Not(IsNull()),
+    //   },
+    //   relations: relationsSwabAreaHistory,
+    //   select: {
+    //     id: true,
+    //     swabAreaDate: true,
+    //     swabPeriodId: true,
+    //     swabAreaId: true,
+    //     shift: true,
+    //     swabTestId: true,
+    //     swabTest: {
+    //       id: true,
+    //       swabTestCode: true,
+    //       swabTestRecordedAt: true,
+    //       bacteria: {
+    //         id: true,
+    //       },
+    //       bacteriaSpecies: {
+    //         id: true,
+    //         bacteriaId: true,
+    //       },
+    //     },
+    //   },
+    //   order: {
+    //     swabTest: {
+    //       id: {
+    //         direction: 'asc',
+    //       },
+    //     },
+    //   },
+    // });
+
+    let swabProductHistoryQuery = this.swabProductHistoryRepository
+      .createQueryBuilder('swabProductHistory')
+      .innerJoinAndSelect('swabProductHistory.swabTest', 'swab_test')
+      .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
+      .where('swab_test.id IS NOT NULL');
+
+    if (fromDate || toDate) {
+      swabProductHistoryQuery.andWhere(
+        this.dateTransformer.dateRangeToSql(
+          'swabProductHistory.swabProductDate',
+          fromDate,
+          toDate,
+        ),
+      );
+    }
+
+    if (bacteriaSpecies) {
+      swabProductHistoryQuery.leftJoinAndSelect(
+        'swab_test.bacteriaSpecies',
+        'bacteria_specie',
+      );
+    }
+
+    if (hasBacteria !== undefined) {
+      swabProductHistoryQuery.andWhere(
+        `bacteria.id ${hasBacteria ? 'IS NOT NULL' : 'IS NULL'}`,
+      );
+    }
+
+    const swabProductHistories = await swabProductHistoryQuery
+      .orderBy('swab_test.id', 'ASC')
+      .getMany();
 
     let swabPeriodMapping = {};
     let swabPeriods = [];

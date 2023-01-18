@@ -68,4 +68,12 @@ export class FilterSwabProductHistoryDto {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   hasBacteria?: boolean;
+
+  @IsOptional()
+  @Validate(DateOnlyRule)
+  fromDate?: string;
+
+  @IsOptional()
+  @Validate(DateOnlyRule)
+  toDate?: string;
 }
