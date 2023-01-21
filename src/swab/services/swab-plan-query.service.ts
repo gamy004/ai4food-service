@@ -27,7 +27,7 @@ import { SwabProductHistoryService } from './swab-product-history.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
 import { Bacteria } from '~/lab/entities/bacteria.entity';
-import { SwabTest } from '../entities/swab-test.entity';
+import { BacteriaStatus, SwabTest } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -47,92 +47,92 @@ export class SwabPlanQueryService {
     private readonly swabAreaRepository: Repository<SwabArea>,
   ) {}
 
-  private transformQuerySwabPlanDto(
-    querySwabPlanDto: QuerySwabPlanDto,
-  ): FindOptionsWhere<SwabAreaHistory> {
-    const { fromDate, toDate: toDateString, hasBacteria } = querySwabPlanDto;
+  // private transformQuerySwabPlanDto(
+  //   querySwabPlanDto: QuerySwabPlanDto,
+  // ): FindOptionsWhere<SwabAreaHistory> {
+  //   const { fromDate, toDate: toDateString, hasBacteria } = querySwabPlanDto;
 
-    const where: FindOptionsWhere<SwabAreaHistory> = {};
-    const whereSwabTest: FindOptionsWhere<SwabTest> = {};
-    const whereBacteria: FindOptionsWhere<Bacteria> = {};
+  //   const where: FindOptionsWhere<SwabAreaHistory> = {};
+  //   const whereSwabTest: FindOptionsWhere<SwabTest> = {};
+  //   const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
-    let toDate;
+  //   let toDate;
 
-    if (toDateString) {
-      toDate = this.dateTransformer.toObject(toDateString);
+  //   if (toDateString) {
+  //     toDate = this.dateTransformer.toObject(toDateString);
 
-      toDate.setDate(toDate.getDate() + 1);
+  //     toDate.setDate(toDate.getDate() + 1);
 
-      toDate = this.dateTransformer.toString(toDate);
-    }
+  //     toDate = this.dateTransformer.toString(toDate);
+  //   }
 
-    if (fromDate && toDate) {
-      where.swabAreaDate = Raw(
-        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
-      );
-    } else {
-      if (fromDate) {
-        where.swabAreaDate = Raw((field) => `${field} >= '${fromDate}'`);
-      }
+  //   if (fromDate && toDate) {
+  //     where.swabAreaDate = Raw(
+  //       (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+  //     );
+  //   } else {
+  //     if (fromDate) {
+  //       where.swabAreaDate = Raw((field) => `${field} >= '${fromDate}'`);
+  //     }
 
-      if (toDate) {
-        where.swabAreaDate = Raw((field) => `${field} < '${toDate}'`);
-      }
-    }
+  //     if (toDate) {
+  //       where.swabAreaDate = Raw((field) => `${field} < '${toDate}'`);
+  //     }
+  //   }
 
-    if (hasBacteria !== undefined) {
-      whereBacteria.id = hasBacteria === true ? Not(IsNull()) : IsNull();
-    }
+  //   if (hasBacteria !== undefined) {
+  //     whereBacteria.id = hasBacteria === true ? Not(IsNull()) : IsNull();
+  //   }
 
-    if (Object.keys(whereBacteria).length) {
-      whereSwabTest.bacteria = whereBacteria;
-    }
+  //   if (Object.keys(whereBacteria).length) {
+  //     whereSwabTest.bacteria = whereBacteria;
+  //   }
 
-    if (Object.keys(whereSwabTest).length) {
-      where.swabTest = whereSwabTest;
-    }
+  //   if (Object.keys(whereSwabTest).length) {
+  //     where.swabTest = whereSwabTest;
+  //   }
 
-    return where;
-  }
+  //   return where;
+  // }
 
-  private transformQuerySwabProductDto(
-    querySwabPlanDto: QuerySwabPlanDto,
-  ): FindOptionsWhere<SwabProductHistory> {
-    const { fromDate, toDate: toDateString } = querySwabPlanDto;
+  // private transformQuerySwabProductDto(
+  //   querySwabPlanDto: QuerySwabPlanDto,
+  // ): FindOptionsWhere<SwabProductHistory> {
+  //   const { fromDate, toDate: toDateString } = querySwabPlanDto;
 
-    const where: FindOptionsWhere<SwabProductHistory> = {};
+  //   const where: FindOptionsWhere<SwabProductHistory> = {};
 
-    let toDate;
+  //   let toDate;
 
-    if (toDateString) {
-      toDate = this.dateTransformer.toObject(toDateString);
+  //   if (toDateString) {
+  //     toDate = this.dateTransformer.toObject(toDateString);
 
-      toDate.setDate(toDate.getDate() + 1);
+  //     toDate.setDate(toDate.getDate() + 1);
 
-      toDate = this.dateTransformer.toString(toDate);
-    }
+  //     toDate = this.dateTransformer.toString(toDate);
+  //   }
 
-    if (fromDate && toDate) {
-      where.swabProductDate = Raw(
-        (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
-      );
-    } else {
-      if (fromDate) {
-        where.swabProductDate = Raw((field) => `${field} >= '${fromDate}'`);
-      }
+  //   if (fromDate && toDate) {
+  //     where.swabProductDate = Raw(
+  //       (field) => `${field} >= '${fromDate}' and ${field} < '${toDate}'`,
+  //     );
+  //   } else {
+  //     if (fromDate) {
+  //       where.swabProductDate = Raw((field) => `${field} >= '${fromDate}'`);
+  //     }
 
-      if (toDate) {
-        where.swabProductDate = Raw((field) => `${field} < '${toDate}'`);
-      }
-    }
+  //     if (toDate) {
+  //       where.swabProductDate = Raw((field) => `${field} < '${toDate}'`);
+  //     }
+  //   }
 
-    return where;
-  }
+  //   return where;
+  // }
 
   async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
-    const { fromDate, toDate, hasBacteria, bacteriaSpecies } = querySwabPlanDto;
+    const { fromDate, toDate, bacteriaSpecies, status } = querySwabPlanDto;
 
     // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
     //   this.swabAreaHistoryService.toFilter({ fromDate, toDate });
@@ -200,11 +200,27 @@ export class SwabPlanQueryService {
       );
     }
 
-    if (hasBacteria !== undefined) {
-      swabAreaHistoryQuery.andWhere(
-        `bacteria.id ${hasBacteria ? 'IS NOT NULL' : 'IS NULL'}`,
-      );
+    switch (status) {
+      case BacteriaStatus.PENDING:
+        swabAreaHistoryQuery.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
+        break;
+
+      case BacteriaStatus.NORMAL:
+        swabAreaHistoryQuery
+          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+          .andWhere(`bacteria.id IS NULL`);
+        break;
+
+      case BacteriaStatus.DETECTED:
+        swabAreaHistoryQuery
+          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+          .andWhere(`bacteria.id IS NOT NULL`);
+        break;
+
+      default:
+        break;
     }
+
     // .where({
     //   swabTest: {
     //     id: Not(IsNull()),
@@ -274,10 +290,27 @@ export class SwabPlanQueryService {
       );
     }
 
-    if (hasBacteria !== undefined) {
-      swabProductHistoryQuery.andWhere(
-        `bacteria.id ${hasBacteria ? 'IS NOT NULL' : 'IS NULL'}`,
-      );
+    switch (status) {
+      case BacteriaStatus.PENDING:
+        swabProductHistoryQuery.andWhere(
+          `swab_test.swabTestRecordedAt IS NULL`,
+        );
+        break;
+
+      case BacteriaStatus.NORMAL:
+        swabProductHistoryQuery
+          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+          .andWhere(`bacteria.id IS NULL`);
+        break;
+
+      case BacteriaStatus.DETECTED:
+        swabProductHistoryQuery
+          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+          .andWhere(`bacteria.id IS NOT NULL`);
+        break;
+
+      default:
+        break;
     }
 
     const swabProductHistories = await swabProductHistoryQuery

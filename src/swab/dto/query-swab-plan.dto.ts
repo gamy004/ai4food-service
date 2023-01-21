@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
+import { BacteriaStatus } from '../entities/swab-test.entity';
 
 export class QuerySwabPlanDto {
   @IsOptional()
@@ -17,7 +18,6 @@ export class QuerySwabPlanDto {
   bacteriaSpecies?: boolean;
 
   @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === 'true')
-  hasBacteria?: boolean;
+  @IsNotEmpty()
+  status?: BacteriaStatus;
 }
