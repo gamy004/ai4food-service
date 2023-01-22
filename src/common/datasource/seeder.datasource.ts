@@ -17,6 +17,7 @@ import typeormConfig from '../../database/config/typeorm.config';
       'dist/database/seeders/facility.seeder.js',
       'dist/database/seeders/swab.seeder.js',
       'dist/database/seeders/user.seeder.js',
+      'dist/database/seeders/cleaning-program.seeder.js',
     ],
   };
 
