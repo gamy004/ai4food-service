@@ -8,6 +8,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
 import { Shift } from '../../common/enums/shift';
@@ -116,4 +117,13 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     cascade: ['insert', 'soft-remove'],
   })
   subSwabAreaHistories: SwabAreaHistory[];
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  cleaningHistoryId?: string;
+
+  @OneToOne(() => CleaningHistory, (entity) => entity.swabAreaHistory, {
+    cascade: ['soft-remove'],
+  })
+  @JoinColumn()
+  cleaningHistory: CleaningHistory;
 }
