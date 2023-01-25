@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
-import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from 'typeorm';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { SwabAreaHistoryService } from './swab-area-history.service';
@@ -94,7 +101,7 @@ export class SwabLabQueryService {
     const where: FindOptionsWhere<SwabAreaHistory> =
       this.swabAreaHistoryService.toFilter(queryLabSwabPlanDto);
 
-    const result = await this.swabAreaHistoryService.find({
+    const params: FindManyOptions<SwabAreaHistory> = {
       where: {
         ...where,
         swabAreaSwabedAt: Not(IsNull()),
@@ -113,7 +120,30 @@ export class SwabLabQueryService {
           },
         },
       },
+    };
+
+    const paginationParams: FindManyOptions<SwabAreaHistory> = {};
+
+    if (queryLabSwabPlanDto.skip !== undefined) {
+      paginationParams.skip = queryLabSwabPlanDto.skip;
+    }
+
+    if (queryLabSwabPlanDto.take !== undefined) {
+      paginationParams.take = queryLabSwabPlanDto.take;
+    }
+
+    const result = await this.swabAreaHistoryService.find({
+      ...params,
+      ...paginationParams,
     });
+
+    let total;
+
+    if (paginationParams.skip || paginationParams.take) {
+      total = await this.swabAreaHistoryService.count(params);
+    } else {
+      total = result.length;
+    }
 
     let swabPeriods = [];
     let swabAreaHistories = [];
@@ -210,6 +240,7 @@ export class SwabLabQueryService {
       swabPeriods,
       facilities,
       facilityitems,
+      total,
     };
   }
 
@@ -219,11 +250,14 @@ export class SwabLabQueryService {
     const where: FindOptionsWhere<SwabProductHistory> =
       this.swabProductHistoryService.toFilter(queryLabSwabProductDto);
 
-    const swabProductHistories = await this.swabProductHistoryService.find({
+    const params: FindManyOptions<SwabProductHistory> = {
       where: {
         ...where,
         swabProductSwabedAt: Not(IsNull()),
         swabTestId: Not(IsNull()),
+      },
+      relations: {
+        swabTest: true,
       },
       select: {
         id: true,
@@ -236,6 +270,9 @@ export class SwabLabQueryService {
         swabTestId: true,
         swabPeriodId: true,
         facilityItemId: true,
+        swabTest: {
+          id: true,
+        },
       },
       order: {
         swabTest: {
@@ -244,7 +281,30 @@ export class SwabLabQueryService {
           },
         },
       },
+    };
+
+    const paginationParams: FindManyOptions<SwabProductHistory> = {};
+
+    if (queryLabSwabProductDto.skip !== undefined) {
+      paginationParams.skip = queryLabSwabProductDto.skip;
+    }
+
+    if (queryLabSwabProductDto.take !== undefined) {
+      paginationParams.take = queryLabSwabProductDto.take;
+    }
+
+    const swabProductHistories = await this.swabProductHistoryService.find({
+      ...params,
+      ...paginationParams,
     });
+
+    let total = 0;
+
+    if (paginationParams.skip || paginationParams.take) {
+      total = await this.swabProductHistoryService.count(params);
+    } else {
+      total = swabProductHistories.length;
+    }
 
     let facilities = [];
     let facilityItems = [];
@@ -351,6 +411,7 @@ export class SwabLabQueryService {
       facilities,
       swabTests,
       swabPeriods,
+      total,
     };
   }
 }
