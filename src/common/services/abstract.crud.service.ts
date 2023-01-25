@@ -57,6 +57,10 @@ export abstract class CrudService<Entity>
     return this.repository.findOneByOrFail(where);
   }
 
+  count(options?: FindManyOptions<Entity>): Promise<number> {
+    return this.repository.count(options);
+  }
+
   save(entity: Entity, options?: SaveOptions): Promise<Entity> {
     return this.repository.save(entity, options);
   }

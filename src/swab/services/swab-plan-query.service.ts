@@ -425,7 +425,7 @@ export class SwabPlanQueryService {
       swabAreaDate: swabAreaDateString,
       shift,
       facilityId,
-      mainSwabAreaId,
+      swabAreaId,
       swabPeriodId,
     } = querySwabPlanDto;
 
@@ -441,7 +441,7 @@ export class SwabPlanQueryService {
         shift,
         swabPeriodId,
         swabArea: {
-          id: mainSwabAreaId,
+          id: swabAreaId,
           facilityId,
         },
       },
@@ -450,7 +450,7 @@ export class SwabPlanQueryService {
         shift,
         swabPeriodId,
         swabArea: {
-          mainSwabAreaId,
+          mainSwabAreaId: swabAreaId,
           facilityId,
         },
       },
@@ -529,12 +529,12 @@ export class SwabPlanQueryService {
   private async transformQueryUpdateSwabPlanV2Dto(
     querySwabPlanDto: QueryUpdateSwabPlanV2Dto,
   ): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate, shift, facilityId, mainSwabAreaId, swabPeriodId } =
+    let { swabAreaDate, shift, facilityId, swabAreaId, swabPeriodId } =
       querySwabPlanDto;
 
     const where: FindOptionsWhere<SwabAreaHistory> =
       this.swabAreaHistoryService.toFilter({
-        swabAreaId: mainSwabAreaId,
+        swabAreaId,
         swabAreaDate,
         shift,
         facilityId,
@@ -603,11 +603,11 @@ export class SwabPlanQueryService {
 
     const paginationParams: FindManyOptions<SwabAreaHistory> = {};
 
-    if (queryUpdateSwabPlanDto.skip) {
+    if (queryUpdateSwabPlanDto.skip !== undefined) {
       paginationParams.skip = queryUpdateSwabPlanDto.skip;
     }
 
-    if (queryUpdateSwabPlanDto.take) {
+    if (queryUpdateSwabPlanDto.take !== undefined) {
       paginationParams.take = queryUpdateSwabPlanDto.take;
     }
 
