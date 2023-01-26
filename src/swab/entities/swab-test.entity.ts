@@ -14,7 +14,7 @@ import { SwabRound } from './swab-round.entity';
 
 export const SWAB_TEST_CODE_PREFIX = 'AI';
 
-export enum BacteriaStatus {
+export enum SwabStatus {
   PENDING = 'pending',
   DETECTED = 'detected',
   NORMAL = 'normal',

@@ -26,8 +26,7 @@ import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { SwabProductHistoryService } from './swab-product-history.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
-import { Bacteria } from '~/lab/entities/bacteria.entity';
-import { BacteriaStatus, SwabTest } from '../entities/swab-test.entity';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -201,17 +200,17 @@ export class SwabPlanQueryService {
     }
 
     switch (status) {
-      case BacteriaStatus.PENDING:
+      case SwabStatus.PENDING:
         swabAreaHistoryQuery.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
         break;
 
-      case BacteriaStatus.NORMAL:
+      case SwabStatus.NORMAL:
         swabAreaHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NULL`);
         break;
 
-      case BacteriaStatus.DETECTED:
+      case SwabStatus.DETECTED:
         swabAreaHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NOT NULL`);
@@ -291,19 +290,19 @@ export class SwabPlanQueryService {
     }
 
     switch (status) {
-      case BacteriaStatus.PENDING:
+      case SwabStatus.PENDING:
         swabProductHistoryQuery.andWhere(
           `swab_test.swabTestRecordedAt IS NULL`,
         );
         break;
 
-      case BacteriaStatus.NORMAL:
+      case SwabStatus.NORMAL:
         swabProductHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NULL`);
         break;
 
-      case BacteriaStatus.DETECTED:
+      case SwabStatus.DETECTED:
         swabProductHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NOT NULL`);
