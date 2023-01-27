@@ -131,7 +131,7 @@ export class SwabPlanQueryService {
   async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
-    const { fromDate, toDate, bacteriaSpecies, status } = querySwabPlanDto;
+    const { fromDate, toDate, bacteriaSpecies, swabStatus } = querySwabPlanDto;
 
     // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
     //   this.swabAreaHistoryService.toFilter({ fromDate, toDate });
@@ -176,61 +176,14 @@ export class SwabPlanQueryService {
     //   },
     // });
 
-    let swabAreaHistoryQuery = this.swabAreaHistoryRepository
-      .createQueryBuilder('swabAreaHistory')
-      .innerJoinAndSelect('swabAreaHistory.swabTest', 'swab_test')
-      .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
-      .where('swab_test.id IS NOT NULL');
+    const swabAreaHistoryQuery = this.swabAreaHistoryService
+      .toQuery(querySwabPlanDto)
+      .andWhere('swab_test.id IS NOT NULL');
 
-    if (fromDate || toDate) {
-      swabAreaHistoryQuery.andWhere(
-        this.dateTransformer.dateRangeToSql(
-          'swabAreaHistory.swabAreaDate',
-          fromDate,
-          toDate,
-        ),
-      );
-    }
-
-    if (bacteriaSpecies) {
-      swabAreaHistoryQuery.leftJoinAndSelect(
-        'swab_test.bacteriaSpecies',
-        'bacteria_specie',
-      );
-    }
-
-    switch (status) {
-      case SwabStatus.PENDING:
-        swabAreaHistoryQuery.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
-        break;
-
-      case SwabStatus.NORMAL:
-        swabAreaHistoryQuery
-          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
-          .andWhere(`bacteria.id IS NULL`);
-        break;
-
-      case SwabStatus.DETECTED:
-        swabAreaHistoryQuery
-          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
-          .andWhere(`bacteria.id IS NOT NULL`);
-        break;
-
-      default:
-        break;
-    }
-
-    // .where({
-    //   swabTest: {
-    //     id: Not(IsNull()),
-    //     // bacteria: {
-    //     //   id: IsNull(),
-    //     // },
-    //   },
-    // })
     const swabAreaHistories = await swabAreaHistoryQuery
       .orderBy('swab_test.id', 'ASC')
       .getMany();
+
     // const swabAreaHistories = await this.swabAreaHistoryRepository.find({
     //   where: {
     //     ...whereSwabAreaHistory,
@@ -289,7 +242,7 @@ export class SwabPlanQueryService {
       );
     }
 
-    switch (status) {
+    switch (swabStatus) {
       case SwabStatus.PENDING:
         swabProductHistoryQuery.andWhere(
           `swab_test.swabTestRecordedAt IS NULL`,

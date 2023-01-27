@@ -1,23 +1,25 @@
+import { PickType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsOptional, Validate } from 'class-validator';
-import { DateOnlyRule } from '~/common/validators/date-only-validator';
-import { SwabStatus } from '../entities/swab-test.entity';
+import { IsBoolean, IsOptional } from 'class-validator';
+import { FilterSwabAreaHistoryDto } from './filter-swab-area-history.dto';
 
-export class QuerySwabPlanDto {
-  @IsOptional()
-  @Validate(DateOnlyRule)
-  fromDate?: string;
-
-  @IsOptional()
-  @Validate(DateOnlyRule)
-  toDate?: string;
-
+export class QuerySwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
+  'id',
+  'swabAreaDate',
+  'fromDate',
+  'toDate',
+  'shift',
+  'swabTestCode',
+  'swabPeriodId',
+  'facilityId',
+  'facilityItemId',
+  'swabAreaId',
+  'bacteriaName',
+  'hasBacteria',
+  'swabStatus',
+]) {
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   bacteriaSpecies?: boolean;
-
-  @IsOptional()
-  @IsNotEmpty()
-  status?: SwabStatus;
 }

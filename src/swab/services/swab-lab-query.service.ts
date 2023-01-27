@@ -7,6 +7,7 @@ import {
   IsNull,
   Not,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
@@ -98,52 +99,52 @@ export class SwabLabQueryService {
   async queryLabSwabPlan(
     queryLabSwabPlanDto: QueryLabSwabPlanDto,
   ): Promise<ResponseQueryLabSwabPlanDto> {
-    const where: FindOptionsWhere<SwabAreaHistory> =
-      this.swabAreaHistoryService.toFilter(queryLabSwabPlanDto);
+    const { skip, take, ...otherDtos } = queryLabSwabPlanDto;
 
-    const params: FindManyOptions<SwabAreaHistory> = {
-      where: {
-        ...where,
-        swabAreaSwabedAt: Not(IsNull()),
-        swabTestId: Not(IsNull()),
-      },
-      relations: {
-        ...DEFAULT_RELATIONS,
-      },
-      select: {
-        ...DEFAULT_SELECT,
-      },
-      order: {
-        swabTest: {
-          id: {
-            direction: 'asc',
-          },
-        },
-      },
-    };
+    const query: SelectQueryBuilder<SwabAreaHistory> =
+      this.swabAreaHistoryService
+        .toQuery({
+          ...otherDtos,
+          skip,
+          take,
+        })
+        .andWhere('swab_area_history.swabAreaSwabedAt IS NOT NULL')
+        .andWhere('swab_test.id IS NOT NULL');
 
-    const paginationParams: FindManyOptions<SwabAreaHistory> = {};
+    const [result, total] = await query
+      .orderBy('swab_test.id', 'ASC')
+      .getManyAndCount();
 
-    if (queryLabSwabPlanDto.skip !== undefined) {
-      paginationParams.skip = queryLabSwabPlanDto.skip;
-    }
+    console.log(result, total);
 
-    if (queryLabSwabPlanDto.take !== undefined) {
-      paginationParams.take = queryLabSwabPlanDto.take;
-    }
+    // const where: FindOptionsWhere<SwabAreaHistory> =
+    //   this.swabAreaHistoryService.toFilter(queryLabSwabPlanDto);
 
-    const result = await this.swabAreaHistoryService.find({
-      ...params,
-      ...paginationParams,
-    });
+    // const params: FindManyOptions<SwabAreaHistory> = {
+    //   where: {
+    //     ...where,
+    //     swabAreaSwabedAt: Not(IsNull()),
+    //     swabTestId: Not(IsNull()),
+    //   },
+    //   relations: {
+    //     ...DEFAULT_RELATIONS,
+    //   },
+    //   select: {
+    //     ...DEFAULT_SELECT,
+    //   },
+    //   order: {
+    //     swabTest: {
+    //       id: {
+    //         direction: 'asc',
+    //       },
+    //     },
+    //   },
+    // };
 
-    let total;
-
-    if (paginationParams.skip || paginationParams.take) {
-      total = await this.swabAreaHistoryService.count(params);
-    } else {
-      total = result.length;
-    }
+    // const result = await this.swabAreaHistoryService.find({
+    //   ...params,
+    //   ...paginationParams,
+    // });
 
     let swabPeriods = [];
     let swabAreaHistories = [];
