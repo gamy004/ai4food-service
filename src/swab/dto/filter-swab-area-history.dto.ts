@@ -16,6 +16,7 @@ import { FacilityItemExistsRule } from '~/facility/validators/facility-item-exis
 import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator';
 import { Transform, Type } from 'class-transformer';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 export class FilterSwabAreaHistoryDto {
   @IsOptional()
@@ -30,6 +31,10 @@ export class FilterSwabAreaHistoryDto {
   @IsOptional()
   @IsEnum(Shift)
   shift?: Shift;
+
+  @IsOptional()
+  @IsEnum(SwabStatus)
+  swabStatus?: SwabStatus;
 
   @IsOptional()
   @IsNotEmpty()

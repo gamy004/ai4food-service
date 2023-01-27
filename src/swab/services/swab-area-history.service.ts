@@ -8,7 +8,7 @@ import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { FilterSwabAreaHistoryDto } from '../dto/filter-swab-area-history.dto';
 import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabArea } from '../entities/swab-area.entity';
-import { SwabTest } from '../entities/swab-test.entity';
+import { SwabStatus, SwabTest } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
@@ -37,6 +37,7 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       fromDate,
       toDate: toDateString,
       id,
+      swabStatus,
     } = dto;
     const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
     const whereSwabArea: FindOptionsWhere<SwabArea> = {};
@@ -68,8 +69,16 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
     }
 
-    if (hasBacteria) {
+    console.log(swabStatus);
+
+    if (hasBacteria || swabStatus === SwabStatus.DETECTED) {
+      whereSwabTest.bacteriaRecordedAt = Not(IsNull());
       whereBacteria.id = Not(IsNull());
+    }
+
+    if (swabStatus === SwabStatus.NORMAL) {
+      // whereSwabTest.bacteriaRecordedAt = Not(IsNull());
+      whereBacteria.id = IsNull();
     }
 
     if (bacteriaName && bacteriaName.length) {
