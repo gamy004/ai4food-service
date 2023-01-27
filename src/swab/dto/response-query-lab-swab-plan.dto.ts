@@ -17,4 +17,6 @@ export class ResponseQueryLabSwabPlanDto {
   facilities: Facility[];
 
   facilityitems: FacilityItem[];
+
+  total: number;
 }

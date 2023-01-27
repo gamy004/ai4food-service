@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
-import { BacteriaStatus } from '../entities/swab-test.entity';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 export class QuerySwabPlanDto {
   @IsOptional()
@@ -19,5 +19,5 @@ export class QuerySwabPlanDto {
 
   @IsOptional()
   @IsNotEmpty()
-  status?: BacteriaStatus;
+  status?: SwabStatus;
 }

@@ -15,7 +15,7 @@ import { FacilityExistsRule } from '~/facility/validators/facility-exists-valida
 import { FacilityItemExistsRule } from '~/facility/validators/facility-item-exists-validator';
 import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class FilterSwabAreaHistoryDto {
   @IsOptional()
@@ -76,4 +76,14 @@ export class FilterSwabAreaHistoryDto {
   @IsOptional()
   @Validate(DateOnlyRule)
   toDate?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  skip?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  take?: number;
 }

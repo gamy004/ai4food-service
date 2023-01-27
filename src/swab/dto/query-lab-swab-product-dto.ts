@@ -5,6 +5,8 @@ export class QueryLabSwabProductDto extends PickType(
   FilterSwabProductHistoryDto,
   [
     'swabProductDate',
+    'fromDate',
+    'toDate',
     'shift',
     'swabTestCode',
     'swabPeriodId',
@@ -13,5 +15,7 @@ export class QueryLabSwabProductDto extends PickType(
     'productId',
     'bacteriaName',
     'hasBacteria',
+    'skip',
+    'take',
   ],
 ) {}

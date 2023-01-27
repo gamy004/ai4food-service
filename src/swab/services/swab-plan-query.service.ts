@@ -26,8 +26,7 @@ import { QueryUpdateSwabPlanV2Dto } from '../dto/query-update-swab-plan-v2.dto';
 import { SwabProductHistoryService } from './swab-product-history.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
-import { Bacteria } from '~/lab/entities/bacteria.entity';
-import { BacteriaStatus, SwabTest } from '../entities/swab-test.entity';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -201,17 +200,17 @@ export class SwabPlanQueryService {
     }
 
     switch (status) {
-      case BacteriaStatus.PENDING:
+      case SwabStatus.PENDING:
         swabAreaHistoryQuery.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
         break;
 
-      case BacteriaStatus.NORMAL:
+      case SwabStatus.NORMAL:
         swabAreaHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NULL`);
         break;
 
-      case BacteriaStatus.DETECTED:
+      case SwabStatus.DETECTED:
         swabAreaHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NOT NULL`);
@@ -291,19 +290,19 @@ export class SwabPlanQueryService {
     }
 
     switch (status) {
-      case BacteriaStatus.PENDING:
+      case SwabStatus.PENDING:
         swabProductHistoryQuery.andWhere(
           `swab_test.swabTestRecordedAt IS NULL`,
         );
         break;
 
-      case BacteriaStatus.NORMAL:
+      case SwabStatus.NORMAL:
         swabProductHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NULL`);
         break;
 
-      case BacteriaStatus.DETECTED:
+      case SwabStatus.DETECTED:
         swabProductHistoryQuery
           .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
           .andWhere(`bacteria.id IS NOT NULL`);
@@ -425,7 +424,7 @@ export class SwabPlanQueryService {
       swabAreaDate: swabAreaDateString,
       shift,
       facilityId,
-      mainSwabAreaId,
+      swabAreaId,
       swabPeriodId,
     } = querySwabPlanDto;
 
@@ -441,7 +440,7 @@ export class SwabPlanQueryService {
         shift,
         swabPeriodId,
         swabArea: {
-          id: mainSwabAreaId,
+          id: swabAreaId,
           facilityId,
         },
       },
@@ -450,7 +449,7 @@ export class SwabPlanQueryService {
         shift,
         swabPeriodId,
         swabArea: {
-          mainSwabAreaId,
+          mainSwabAreaId: swabAreaId,
           facilityId,
         },
       },
@@ -529,12 +528,12 @@ export class SwabPlanQueryService {
   private async transformQueryUpdateSwabPlanV2Dto(
     querySwabPlanDto: QueryUpdateSwabPlanV2Dto,
   ): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate, shift, facilityId, mainSwabAreaId, swabPeriodId } =
+    let { swabAreaDate, shift, facilityId, swabAreaId, swabPeriodId } =
       querySwabPlanDto;
 
     const where: FindOptionsWhere<SwabAreaHistory> =
       this.swabAreaHistoryService.toFilter({
-        swabAreaId: mainSwabAreaId,
+        swabAreaId,
         swabAreaDate,
         shift,
         facilityId,
@@ -603,11 +602,11 @@ export class SwabPlanQueryService {
 
     const paginationParams: FindManyOptions<SwabAreaHistory> = {};
 
-    if (queryUpdateSwabPlanDto.skip) {
+    if (queryUpdateSwabPlanDto.skip !== undefined) {
       paginationParams.skip = queryUpdateSwabPlanDto.skip;
     }
 
-    if (queryUpdateSwabPlanDto.take) {
+    if (queryUpdateSwabPlanDto.take !== undefined) {
       paginationParams.take = queryUpdateSwabPlanDto.take;
     }
 

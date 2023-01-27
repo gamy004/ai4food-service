@@ -22,6 +22,8 @@ export interface CrudServiceInterface<T> {
 
   findOneByOrFail(options?: T | T[] | any | any[]): Promise<T | any>;
 
+  count(options?: object): Promise<number>;
+
   removeOne(entity: T | any, options?: object): Promise<T | any>;
 
   removeMany(entities: T[] | any[], options?: object): Promise<T[] | any[]>;
