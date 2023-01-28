@@ -1,13 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, IsNull, Like, Not, Raw, Repository } from 'typeorm';
+import {
+  FindOptionsWhere,
+  IsNull,
+  Like,
+  Not,
+  Raw,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
-import { SwabTest } from '../entities/swab-test.entity';
+import { SwabStatus, SwabTest } from '../entities/swab-test.entity';
 
 @Injectable()
 export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
@@ -124,5 +132,120 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
     }
 
     return where;
+  }
+
+  toQuery(
+    dto: FilterSwabProductHistoryDto,
+  ): SelectQueryBuilder<SwabProductHistory> {
+    let {
+      productId,
+      facilityId,
+      facilityItemId,
+      swabPeriodId,
+      shift,
+      swabProductDate,
+      swabTestCode,
+      swabTestId,
+      bacteriaName,
+      hasBacteria,
+      fromDate,
+      toDate,
+      id,
+      swabStatus,
+      skip,
+      take,
+    } = dto;
+
+    const query = this.repository
+      .createQueryBuilder('swab_product_history')
+      .innerJoinAndSelect('swab_product_history.swabTest', 'swab_test')
+      .innerJoin('swab_product_history.swabPeriod', 'swab_period')
+      .leftJoin('swab_product_history.product', 'product')
+      .leftJoin('swab_product_history.facilityItem', 'facility_item')
+      .leftJoin('facility_item.facility', 'facility')
+      .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
+      .leftJoinAndSelect('swab_test.bacteriaSpecies', 'bacteria_specie')
+      .where('swab_product_history.id IS NOT NULL');
+
+    if (shift) {
+      query.andWhere('swab_product_history.shift = :shift', { shift });
+    }
+
+    if (productId) {
+      query.andWhere('product.id = :productId', { productId });
+    }
+
+    if (facilityId) {
+      query.andWhere('facility.id = :facilityId', { facilityId });
+    }
+
+    if (facilityItemId) {
+      query.andWhere('facility_item.id = :facilityItemId', { facilityItemId });
+    }
+
+    if (swabPeriodId) {
+      query.andWhere('swab_period.id = :swabPeriodId', { swabPeriodId });
+    }
+
+    if (swabProductDate) {
+      query.andWhere(
+        'swab_product_history.swabProductDate = :swabProductDate',
+        {
+          swabProductDate,
+        },
+      );
+    }
+
+    if (swabTestCode) {
+      query.andWhere(`swab_test.swabTestCode LIKE('%${swabTestCode}%')`);
+    }
+
+    if (swabTestId) {
+      query.andWhere('swab_test.id = :swabTestId', { swabTestId });
+    }
+
+    if (bacteriaName) {
+      query.andWhere('bacteria.bacteriaName = :bacteriaName', { bacteriaName });
+    }
+
+    if (fromDate || toDate) {
+      query.andWhere(
+        this.dateTransformer.dateRangeToSql(
+          'swab_product_history.swabProductDate',
+          fromDate,
+          toDate,
+        ),
+      );
+    }
+
+    if (id) {
+      query.andWhere('swab_product_history.id = :id', { id });
+    }
+
+    if (hasBacteria || swabStatus === SwabStatus.DETECTED) {
+      query
+        .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+        .andWhere(`bacteria.id IS NOT NULL`);
+    }
+
+    if (swabStatus === SwabStatus.PENDING) {
+      query.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
+    }
+
+    if (swabStatus === SwabStatus.NORMAL) {
+      query
+        .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+        .andWhere(`bacteria.id IS NULL`);
+    }
+
+    if (skip !== undefined) {
+      query.skip(skip);
+    }
+
+    if (take !== undefined) {
+      query.take(take);
+    }
+
+    return query;
   }
 }

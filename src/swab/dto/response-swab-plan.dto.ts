@@ -1,20 +1,24 @@
-import { Facility } from "~/facility/entities/facility.entity";
-import { Product } from "~/product/entities/product.entity";
-import { SwabAreaHistory } from "../entities/swab-area-history.entity";
-import { SwabArea } from "../entities/swab-area.entity";
-import { SwabPeriod } from "../entities/swab-period.entity";
-import { SwabProductHistory } from "../entities/swab-product-history.entity";
+import { Facility } from '~/facility/entities/facility.entity';
+import { Product } from '~/product/entities/product.entity';
+import { SwabAreaHistory } from '../entities/swab-area-history.entity';
+import { SwabArea } from '../entities/swab-area.entity';
+import { SwabPeriod } from '../entities/swab-period.entity';
+import { SwabProductHistory } from '../entities/swab-product-history.entity';
 
 export class ResponseSwabPlanDto {
-    swabPeriods: SwabPeriod[];
+  //   swabPeriods: SwabPeriod[];
 
-    swabAreaHistories: SwabAreaHistory[];
+  //   swabAreas: SwabArea[];
 
-    swabProductHistories: SwabProductHistory[];
+  //   products: Product[];
 
-    swabAreas: SwabArea[];
+  //   facilities: Facility[];
 
-    products: Product[];
+  swabAreaHistories: SwabAreaHistory[];
 
-    facilities: Facility[];
+  swabProductHistories: SwabProductHistory[];
+
+  totalSwabAreaHistories: number;
+
+  totalSwabProductHistories: number;
 }

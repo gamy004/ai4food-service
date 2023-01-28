@@ -131,7 +131,7 @@ export class SwabPlanQueryService {
   async queryExportSwabPlan(
     querySwabPlanDto: QuerySwabPlanDto,
   ): Promise<ResponseSwabPlanDto> {
-    const { fromDate, toDate, bacteriaSpecies, swabStatus } = querySwabPlanDto;
+    // const { fromDate, toDate, bacteriaSpecies, swabStatus } = querySwabPlanDto;
 
     // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
     //   this.swabAreaHistoryService.toFilter({ fromDate, toDate });
@@ -180,9 +180,10 @@ export class SwabPlanQueryService {
       .toQuery(querySwabPlanDto)
       .andWhere('swab_test.id IS NOT NULL');
 
-    const swabAreaHistories = await swabAreaHistoryQuery
-      .orderBy('swab_test.id', 'ASC')
-      .getMany();
+    const [swabAreaHistories, totalSwabAreaHistories] =
+      await swabAreaHistoryQuery
+        .orderBy('swab_test.id', 'ASC')
+        .getManyAndCount();
 
     // const swabAreaHistories = await this.swabAreaHistoryRepository.find({
     //   where: {
@@ -219,154 +220,165 @@ export class SwabPlanQueryService {
     //   },
     // });
 
-    let swabProductHistoryQuery = this.swabProductHistoryRepository
-      .createQueryBuilder('swabProductHistory')
-      .innerJoinAndSelect('swabProductHistory.swabTest', 'swab_test')
-      .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
-      .where('swab_test.id IS NOT NULL');
+    const swabProductHistoryQuery = this.swabProductHistoryService
+      .toQuery(querySwabPlanDto)
+      .andWhere('swab_test.id IS NOT NULL');
 
-    if (fromDate || toDate) {
-      swabProductHistoryQuery.andWhere(
-        this.dateTransformer.dateRangeToSql(
-          'swabProductHistory.swabProductDate',
-          fromDate,
-          toDate,
-        ),
-      );
-    }
+    const [swabProductHistories, totalSwabProductHistories] =
+      await swabProductHistoryQuery
+        .orderBy('swab_test.id', 'ASC')
+        .getManyAndCount();
 
-    if (bacteriaSpecies) {
-      swabProductHistoryQuery.leftJoinAndSelect(
-        'swab_test.bacteriaSpecies',
-        'bacteria_specie',
-      );
-    }
+    // let swabProductHistoryQuery = this.swabProductHistoryRepository
+    //   .createQueryBuilder('swabProductHistory')
+    //   .innerJoinAndSelect('swabProductHistory.swabTest', 'swab_test')
+    //   .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
+    //   .where('swab_test.id IS NOT NULL');
 
-    switch (swabStatus) {
-      case SwabStatus.PENDING:
-        swabProductHistoryQuery.andWhere(
-          `swab_test.swabTestRecordedAt IS NULL`,
-        );
-        break;
+    // if (fromDate || toDate) {
+    //   swabProductHistoryQuery.andWhere(
+    //     this.dateTransformer.dateRangeToSql(
+    //       'swabProductHistory.swabProductDate',
+    //       fromDate,
+    //       toDate,
+    //     ),
+    //   );
+    // }
 
-      case SwabStatus.NORMAL:
-        swabProductHistoryQuery
-          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
-          .andWhere(`bacteria.id IS NULL`);
-        break;
+    // if (bacteriaSpecies) {
+    //   swabProductHistoryQuery.leftJoinAndSelect(
+    //     'swab_test.bacteriaSpecies',
+    //     'bacteria_specie',
+    //   );
+    // }
 
-      case SwabStatus.DETECTED:
-        swabProductHistoryQuery
-          .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
-          .andWhere(`bacteria.id IS NOT NULL`);
-        break;
+    // switch (swabStatus) {
+    //   case SwabStatus.PENDING:
+    //     swabProductHistoryQuery.andWhere(
+    //       `swab_test.swabTestRecordedAt IS NULL`,
+    //     );
+    //     break;
 
-      default:
-        break;
-    }
+    //   case SwabStatus.NORMAL:
+    //     swabProductHistoryQuery
+    //       .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+    //       .andWhere(`bacteria.id IS NULL`);
+    //     break;
 
-    const swabProductHistories = await swabProductHistoryQuery
-      .orderBy('swab_test.id', 'ASC')
-      .getMany();
+    //   case SwabStatus.DETECTED:
+    //     swabProductHistoryQuery
+    //       .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
+    //       .andWhere(`bacteria.id IS NOT NULL`);
+    //     break;
 
-    let swabPeriodMapping = {};
-    let swabPeriods = [];
-    let facilities = [];
-    let products = [];
-    let swabAreas = [];
+    //   default:
+    //     break;
+    // }
 
-    if (swabAreaHistories.length) {
-      swabAreaHistories.forEach(
-        ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
-      );
+    // const swabProductHistories = await swabProductHistoryQuery
+    //   .orderBy('swab_test.id', 'ASC')
+    //   .getMany();
 
-      const swabAreaIds = [
-        ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
-      ].filter(Boolean);
+    // let swabPeriodMapping = {};
+    // let swabPeriods = [];
+    // let facilities = [];
+    // let products = [];
+    // let swabAreas = [];
 
-      if (swabAreaIds.length) {
-        swabAreas = await this.swabAreaRepository.find({
-          where: {
-            id: In(swabAreaIds),
-          },
-          select: {
-            id: true,
-            swabAreaName: true,
-            mainSwabAreaId: true,
-            facilityId: true,
-          },
-        });
-      }
+    // if (swabAreaHistories.length) {
+    //   swabAreaHistories.forEach(
+    //     ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
+    //   );
 
-      if (swabAreas.length) {
-        const facilityIds = [
-          ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
-        ].filter(Boolean);
+    //   const swabAreaIds = [
+    //     ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
+    //   ].filter(Boolean);
 
-        if (facilityIds.length) {
-          facilities = await this.facilityService.find({
-            where: {
-              id: In(facilityIds),
-            },
-            select: {
-              id: true,
-              facilityName: true,
-              facilityType: true,
-            },
-            order: {
-              facilityType: 'asc',
-              facilityName: 'asc',
-            },
-          });
-        }
-      }
-    }
+    //   if (swabAreaIds.length) {
+    //     swabAreas = await this.swabAreaRepository.find({
+    //       where: {
+    //         id: In(swabAreaIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         swabAreaName: true,
+    //         mainSwabAreaId: true,
+    //         facilityId: true,
+    //       },
+    //     });
+    //   }
 
-    if (swabProductHistories.length) {
-      swabProductHistories.forEach(
-        ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
-      );
+    //   if (swabAreas.length) {
+    //     const facilityIds = [
+    //       ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
+    //     ].filter(Boolean);
 
-      const productIds = [
-        ...new Set(swabProductHistories.map(({ productId }) => productId)),
-      ].filter(Boolean);
+    //     if (facilityIds.length) {
+    //       facilities = await this.facilityService.find({
+    //         where: {
+    //           id: In(facilityIds),
+    //         },
+    //         select: {
+    //           id: true,
+    //           facilityName: true,
+    //           facilityType: true,
+    //         },
+    //         order: {
+    //           facilityType: 'asc',
+    //           facilityName: 'asc',
+    //         },
+    //       });
+    //     }
+    //   }
+    // }
 
-      if (productIds.length) {
-        products = await this.productService.find({
-          where: {
-            id: In(productIds),
-          },
-          select: {
-            id: true,
-            productName: true,
-            productCode: true,
-            alternateProductCode: true,
-          },
-        });
-      }
-    }
+    // if (swabProductHistories.length) {
+    //   swabProductHistories.forEach(
+    //     ({ swabPeriodId }) => (swabPeriodMapping[swabPeriodId] = true),
+    //   );
 
-    const swabPeriodIds = Object.keys(swabPeriodMapping).filter(Boolean);
+    //   const productIds = [
+    //     ...new Set(swabProductHistories.map(({ productId }) => productId)),
+    //   ].filter(Boolean);
 
-    if (swabPeriodIds.length) {
-      swabPeriods = await this.swabPeriodService.find({
-        where: {
-          id: In(swabPeriodIds),
-        },
-        select: {
-          id: true,
-          swabPeriodName: true,
-        },
-      });
-    }
+    //   if (productIds.length) {
+    //     products = await this.productService.find({
+    //       where: {
+    //         id: In(productIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         productName: true,
+    //         productCode: true,
+    //         alternateProductCode: true,
+    //       },
+    //     });
+    //   }
+    // }
+
+    // const swabPeriodIds = Object.keys(swabPeriodMapping).filter(Boolean);
+
+    // if (swabPeriodIds.length) {
+    //   swabPeriods = await this.swabPeriodService.find({
+    //     where: {
+    //       id: In(swabPeriodIds),
+    //     },
+    //     select: {
+    //       id: true,
+    //       swabPeriodName: true,
+    //     },
+    //   });
+    // }
 
     return {
-      swabPeriods,
+      // swabPeriods,
+      // swabAreas,
+      // products,
+      // facilities,
       swabAreaHistories,
       swabProductHistories,
-      swabAreas,
-      products,
-      facilities,
+      totalSwabAreaHistories,
+      totalSwabProductHistories,
     };
   }
 

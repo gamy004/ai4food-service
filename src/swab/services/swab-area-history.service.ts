@@ -77,8 +77,6 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
     }
 
-    console.log(swabStatus);
-
     if (swabStatus === SwabStatus.PENDING) {
       whereSwabTest.swabTestRecordedAt = IsNull();
     }
@@ -88,10 +86,11 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
       whereBacteria.id = Not(IsNull());
     }
 
-    if (swabStatus === SwabStatus.NORMAL) {
-      whereSwabTest.bacteriaRecordedAt = Not(IsNull());
-      whereBacteria.id = IsNull();
-    }
+    // The implementation has issue with default where cause use inner join to query which make impossible to where `bacteria`.`id` IS NULL
+    // if (swabStatus === SwabStatus.NORMAL) {
+    //   whereSwabTest.bacteriaRecordedAt = Not(IsNull());
+    //   whereBacteria.id = IsNull();
+    // }
 
     if (bacteriaName && bacteriaName.length) {
       whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);

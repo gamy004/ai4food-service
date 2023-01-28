@@ -99,23 +99,15 @@ export class SwabLabQueryService {
   async queryLabSwabPlan(
     queryLabSwabPlanDto: QueryLabSwabPlanDto,
   ): Promise<ResponseQueryLabSwabPlanDto> {
-    const { skip, take, ...otherDtos } = queryLabSwabPlanDto;
-
     const query: SelectQueryBuilder<SwabAreaHistory> =
       this.swabAreaHistoryService
-        .toQuery({
-          ...otherDtos,
-          skip,
-          take,
-        })
+        .toQuery(queryLabSwabPlanDto)
         .andWhere('swab_area_history.swabAreaSwabedAt IS NOT NULL')
         .andWhere('swab_test.id IS NOT NULL');
 
-    const [result, total] = await query
+    const [swabAreaHistories, total] = await query
       .orderBy('swab_test.id', 'ASC')
       .getManyAndCount();
-
-    console.log(result, total);
 
     // const where: FindOptionsWhere<SwabAreaHistory> =
     //   this.swabAreaHistoryService.toFilter(queryLabSwabPlanDto);
@@ -147,92 +139,91 @@ export class SwabLabQueryService {
     // });
 
     let swabPeriods = [];
-    let swabAreaHistories = [];
     let swabTests = [];
     let swabAreas = [];
     let facilities = [];
     let facilityitems = [];
 
-    if (result.length) {
-      let swabAreaIds = [];
-      let swabPeriodIds = [];
-      let facilityIds = [];
-      let facilityItemIds = [];
+    // if (result.length) {
+    //   let swabAreaIds = [];
+    //   let swabPeriodIds = [];
+    //   let facilityIds = [];
+    //   let facilityItemIds = [];
 
-      result.forEach((record) => {
-        const {
-          swabTest,
-          swabAreaId,
-          swabPeriodId,
-          facilityItemId,
-          ...otherProps
-        } = record;
+    //   result.forEach((record) => {
+    //     const {
+    //       swabTest,
+    //       swabAreaId,
+    //       swabPeriodId,
+    //       facilityItemId,
+    //       ...otherProps
+    //     } = record;
 
-        swabTests.push(swabTest);
-        swabAreaIds.push(swabAreaId);
-        swabPeriodIds.push(swabPeriodId);
-        facilityItemIds.push(facilityItemId);
+    //     swabTests.push(swabTest);
+    //     swabAreaIds.push(swabAreaId);
+    //     swabPeriodIds.push(swabPeriodId);
+    //     facilityItemIds.push(facilityItemId);
 
-        swabAreaHistories.push(
-          this.swabAreaHistoryService.make({
-            ...otherProps,
-            swabAreaId,
-            swabPeriodId,
-            facilityItemId,
-          }),
-        );
-      });
+    //     swabAreaHistories.push(
+    //       this.swabAreaHistoryService.make({
+    //         ...otherProps,
+    //         swabAreaId,
+    //         swabPeriodId,
+    //         facilityItemId,
+    //       }),
+    //     );
+    //   });
 
-      swabAreaIds = [...new Set(swabAreaIds.filter(Boolean))];
+    //   swabAreaIds = [...new Set(swabAreaIds.filter(Boolean))];
 
-      facilityItemIds = [...new Set(facilityItemIds.filter(Boolean))];
+    //   facilityItemIds = [...new Set(facilityItemIds.filter(Boolean))];
 
-      if (swabAreaIds.length) {
-        swabAreas = await this.swabAreaService.find({
-          where: { id: In(swabAreaIds) },
-          select: { id: true, swabAreaName: true, facilityId: true },
-        });
+    //   if (swabAreaIds.length) {
+    //     swabAreas = await this.swabAreaService.find({
+    //       where: { id: In(swabAreaIds) },
+    //       select: { id: true, swabAreaName: true, facilityId: true },
+    //     });
 
-        if (swabAreas.length) {
-          swabAreas.forEach((swabArea) => {
-            const { facilityId } = swabArea;
+    //     if (swabAreas.length) {
+    //       swabAreas.forEach((swabArea) => {
+    //         const { facilityId } = swabArea;
 
-            facilityIds.push(facilityId);
-          });
-        }
-      }
+    //         facilityIds.push(facilityId);
+    //       });
+    //     }
+    //   }
 
-      if (swabPeriodIds.length) {
-        swabPeriods = await this.swabPeriodService.find({
-          where: { id: In(swabPeriodIds) },
-          select: { id: true, swabPeriodName: true },
-        });
-      }
+    //   if (swabPeriodIds.length) {
+    //     swabPeriods = await this.swabPeriodService.find({
+    //       where: { id: In(swabPeriodIds) },
+    //       select: { id: true, swabPeriodName: true },
+    //     });
+    //   }
 
-      if (facilityItemIds.length) {
-        facilityitems = await this.facilityItemService.find({
-          where: { id: In(facilityItemIds) },
-          select: { id: true, facilityItemName: true, facilityId: true },
-        });
+    //   if (facilityItemIds.length) {
+    //     facilityitems = await this.facilityItemService.find({
+    //       where: { id: In(facilityItemIds) },
+    //       select: { id: true, facilityItemName: true, facilityId: true },
+    //     });
 
-        if (facilityitems.length) {
-          facilityitems.forEach((facilityItem) => {
-            const { facilityId } = facilityItem;
+    //     if (facilityitems.length) {
+    //       facilityitems.forEach((facilityItem) => {
+    //         const { facilityId } = facilityItem;
 
-            facilityIds.push(facilityId);
-          });
-        }
-      }
+    //         facilityIds.push(facilityId);
+    //       });
+    //     }
+    //   }
 
-      facilityIds = [...new Set(facilityIds.filter(Boolean))];
+    //   facilityIds = [...new Set(facilityIds.filter(Boolean))];
 
-      if (facilityIds.length) {
-        facilities = await this.facilityService.find({
-          where: { id: In(facilityIds) },
-          select: { id: true, facilityName: true, facilityType: true },
-        });
-      }
-    }
+    //   if (facilityIds.length) {
+    //     facilities = await this.facilityService.find({
+    //       where: { id: In(facilityIds) },
+    //       select: { id: true, facilityName: true, facilityType: true },
+    //     });
+    //   }
+    // }
 
     return {
       swabAreaHistories,

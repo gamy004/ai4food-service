@@ -17,6 +17,8 @@ export class QuerySwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
   'bacteriaName',
   'hasBacteria',
   'swabStatus',
+  'skip',
+  'take',
 ]) {
   @IsOptional()
   @IsBoolean()
