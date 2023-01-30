@@ -59,11 +59,11 @@ export class SwabAreaHistoryController {
     );
   }
 
-  @Authenticated()
-  @Get('export')
-  queryExportSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
-    return this.swabPlanQueryService.queryExportSwabPlan(querySwabPlanDto);
-  }
+  // @Authenticated()
+  // @Get('export')
+  // queryExportSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
+  //   return this.swabPlanQueryService.queryExportSwabPlan(querySwabPlanDto);
+  // }
 
   @Authenticated()
   @Get('lab')

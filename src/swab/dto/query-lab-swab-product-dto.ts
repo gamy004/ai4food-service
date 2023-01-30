@@ -17,5 +17,6 @@ export class QueryLabSwabProductDto extends PickType(
     'hasBacteria',
     'skip',
     'take',
+    'swabStatus',
   ],
 ) {}
