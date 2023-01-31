@@ -42,6 +42,13 @@ import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaHistoryRelationManagerService } from './services/swab-area-history-relation-manager.service';
+import { CleaningModule } from '~/cleaning/cleaning.module';
+import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
+import { CleaningHistoryController } from '~/cleaning/controllers/cleaning-history.controller';
+import { CleaningHistoryExistsRule } from '~/cleaning/validators/cleaning-history-exists-validator';
+import { CleaningHistoryService } from '~/cleaning/services/cleaning-history.service';
+import { CleaningProgram } from '~/cleaning/entities/cleaning-program.entity';
+import { CleaningHistoryCleaningValidation } from '~/cleaning/entities/cleaning-history-cleaning-validation.entity';
 
 @Module({
   imports: [
@@ -55,11 +62,15 @@ import { SwabAreaHistoryRelationManagerService } from './services/swab-area-hist
       SwabProductHistory,
       SwabRound,
       FacilityItem,
+      CleaningHistory,
+      CleaningProgram,
+      CleaningHistoryCleaningValidation,
     ]),
     FacilityModule,
     ProductModule,
     LabModule,
     CommonModule,
+    CleaningModule,
   ],
   controllers: [
     SwabController,

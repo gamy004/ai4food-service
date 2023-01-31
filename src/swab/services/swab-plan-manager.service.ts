@@ -25,6 +25,7 @@ import { BacteriaService } from '~/lab/services/bacteria.service';
 import { BacteriaSpecieService } from '~/lab/services/bacteria-specie.service';
 import { SwabAreaService } from './swab-area.service';
 import { SwabRound } from '../entities/swab-round.entity';
+import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -171,7 +172,12 @@ export class SwabPlanManagerService {
   }
 
   async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
-    const { fromDate, toDate, roundNumberSwabTest = '' } = generateSwabPlanDto;
+    const {
+      fromDate,
+      toDate,
+      roundNumberSwabTest = '',
+      requiredValidateCleaning = false,
+    } = generateSwabPlanDto;
 
     let swabRound = null;
 
@@ -599,6 +605,7 @@ export class SwabPlanManagerService {
       swabPeriod,
       shift = null,
       createSwabTest = true,
+      requiredValidateCleaning = false,
     ) {
       const historyData = {
         swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
@@ -612,6 +619,7 @@ export class SwabPlanManagerService {
         swabRound: null,
         shift,
         productLot: '',
+        cleaningHistory: null,
       };
 
       if (createSwabTest) {
@@ -635,6 +643,15 @@ export class SwabPlanManagerService {
         historyData.swabRound = swabRound;
       }
 
+      if (requiredValidateCleaning) {
+        const cleaningHistoryData = CleaningHistory.create({
+          cleaningHistoryStartedAt: swabAreaDate,
+          cleaningHistoryEndedAt: swabAreaDate,
+        });
+
+        historyData.cleaningHistory = cleaningHistoryData;
+      }
+
       const swabAreaHistory = SwabAreaHistory.create(historyData);
 
       return swabAreaHistory;
@@ -644,6 +661,7 @@ export class SwabPlanManagerService {
       swabAreasAll,
       currentDate = new Date(),
       dateIndex,
+      requiredValidateCleaning = false,
     ) {
       currentDate.setDate(currentDate.getDate() + dateIndex);
       let shiftKeys = Object.keys(Shift);
@@ -696,6 +714,7 @@ export class SwabPlanManagerService {
                     bigCleaningSwabPeriod,
                     shift,
                     true,
+                    requiredValidateCleaning,
                   );
 
                   if (subSwabAreas && subSwabAreas.length > 0) {
@@ -714,6 +733,7 @@ export class SwabPlanManagerService {
                         bigCleaningSwabPeriod,
                         shift,
                         false,
+                        requiredValidateCleaning,
                       );
 
                       subSwabAreaHistories.push(subSwabAreaHistory);
@@ -734,6 +754,7 @@ export class SwabPlanManagerService {
                   bigCleaningSwabPeriod,
                   'day',
                   true,
+                  requiredValidateCleaning,
                 );
 
                 if (subSwabAreas && subSwabAreas.length > 0) {
@@ -748,6 +769,7 @@ export class SwabPlanManagerService {
                       bigCleaningSwabPeriod,
                       'day',
                       false,
+                      requiredValidateCleaning,
                     );
 
                     subSwabAreaHistories.push(subSwabAreaHistory);
@@ -845,7 +867,12 @@ export class SwabPlanManagerService {
     for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
       const currentDate = new Date(fromDate);
 
-      await generateHistory(swabAreas, currentDate, dateIndex);
+      await generateHistory(
+        swabAreas,
+        currentDate,
+        dateIndex,
+        requiredValidateCleaning,
+      );
     }
 
     await this.swabAreaHistoryRepository.save(swabAreaHistories);
