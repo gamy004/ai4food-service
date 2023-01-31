@@ -28,6 +28,7 @@ import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
 import { SwabStatus } from '../entities/swab-test.entity';
 import { QueryExportSwabHistoryDto } from '../dto/query-export-swab-history.dto';
+import { FilterSwabAreaHistoryDto } from '../dto/filter-swab-area-history.dto';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -493,303 +494,335 @@ export class SwabPlanQueryService {
     return swabAreaHistories;
   }
 
-  private async transformQueryUpdateSwabPlanV2Dto(
-    querySwabPlanDto: QueryUpdateSwabPlanV2Dto,
-  ): Promise<FindOptionsWhere<SwabAreaHistory>> {
-    let { swabAreaDate, shift, facilityId, swabAreaId, swabPeriodId } =
-      querySwabPlanDto;
+  // private async transformQueryUpdateSwabPlanV2Dto(
+  //   querySwabPlanDto: QueryUpdateSwabPlanV2Dto,
+  // ): Promise<FindOptionsWhere<SwabAreaHistory>> {
+  //   let { swabAreaDate, shift, facilityId, swabAreaId, swabPeriodId } =
+  //     querySwabPlanDto;
 
-    const where: FindOptionsWhere<SwabAreaHistory> =
-      this.swabAreaHistoryService.toFilter({
-        swabAreaId,
-        swabAreaDate,
-        shift,
-        facilityId,
-        swabPeriodId,
-      });
+  //   const where: FindOptionsWhere<SwabAreaHistory> =
+  //     this.swabAreaHistoryService.toFilter({
+  //       swabAreaId,
+  //       swabAreaDate,
+  //       shift,
+  //       facilityId,
+  //       swabPeriodId,
+  //     });
 
-    return where;
-  }
+  //   return where;
+  // }
 
-  async queryUpdateSwabPlanV2(
-    queryUpdateSwabPlanDto: QueryUpdateSwabPlanV2Dto,
+  async querySwabArea(
+    dto: FilterSwabAreaHistoryDto,
   ): Promise<ResponseQueryUpdateSwabPlanV2Dto> {
-    const where: FindOptionsWhere<SwabAreaHistory> =
-      await this.transformQueryUpdateSwabPlanV2Dto(queryUpdateSwabPlanDto);
+    const query = this.swabAreaHistoryService.toQuery(dto);
 
-    const params: FindManyOptions<SwabAreaHistory> = {
-      where: {
-        ...where,
-        swabTestId: Not(IsNull()),
-      },
-      relations: {
-        swabTest: true,
-        swabAreaHistoryImages: {
-          file: true,
-        },
-        swabEnvironments: true,
-      },
-      // select: {
-      //   id: true,
-      //   swabAreaDate: true,
-      //   swabAreaSwabedAt: true,
-      //   swabPeriodId: true,
-      //   swabAreaId: true,
-      //   shift: true,
-      //   swabTestId: true,
-      //   facilityItemId: true,
-      //   productDate: true,
-      //   productId: true,
-      //   swabAreaHistoryImages: {
-      //     id: true,
-      //     swabAreaHistoryId: true,
-      //     createdAt: true,
-      //     file: {
-      //       id: true,
-      //       fileKey: true,
-      //       fileSource: true,
-      //     },
-      //   },
-      //   swabEnvironments: {
-      //     id: true,
-      //     swabEnvironmentName: true,
-      //   },
-      //   swabTest: {
-      //     id: true,
-      //     swabTestCode: true,
-      //   },
-      // },
-      order: {
-        swabTest: {
-          id: {
-            direction: 'asc',
-          },
-        },
-      },
-    };
+    // const where: FindOptionsWhere<SwabAreaHistory> =
+    //   await this.transformQueryUpdateSwabPlanV2Dto(dto);
 
-    const paginationParams: FindManyOptions<SwabAreaHistory> = {};
+    const [swabAreaHistories, total] = await query
+      .leftJoinAndSelect(
+        'swab_area_history.swabAreaHistoryImages',
+        'swab_area_history_image',
+      )
+      .leftJoinAndSelect('swab_area_history_image.file', 'file')
+      .leftJoinAndSelect(
+        'swab_area_history.swabEnvironments',
+        'swab_environment',
+      )
+      .andWhere('swab_test.id IS NOT NULL')
+      .orderBy('swab_test.swabAreaDate', 'DESC')
+      .orderBy('swab_test.id', 'ASC')
+      .getManyAndCount();
 
-    if (queryUpdateSwabPlanDto.skip !== undefined) {
-      paginationParams.skip = queryUpdateSwabPlanDto.skip;
-    }
+    // const params: FindManyOptions<SwabAreaHistory> = {
+    //   where: {
+    //     ...where,
+    //     swabTestId: Not(IsNull()),
+    //   },
+    //   relations: {
+    //     swabTest: true,
+    //     swabAreaHistoryImages: {
+    //       file: true,
+    //     },
+    //     swabEnvironments: true,
+    //   },
+    //   // select: {
+    //   //   id: true,
+    //   //   swabAreaDate: true,
+    //   //   swabAreaSwabedAt: true,
+    //   //   swabPeriodId: true,
+    //   //   swabAreaId: true,
+    //   //   shift: true,
+    //   //   swabTestId: true,
+    //   //   facilityItemId: true,
+    //   //   productDate: true,
+    //   //   productId: true,
+    //   //   swabAreaHistoryImages: {
+    //   //     id: true,
+    //   //     swabAreaHistoryId: true,
+    //   //     createdAt: true,
+    //   //     file: {
+    //   //       id: true,
+    //   //       fileKey: true,
+    //   //       fileSource: true,
+    //   //     },
+    //   //   },
+    //   //   swabEnvironments: {
+    //   //     id: true,
+    //   //     swabEnvironmentName: true,
+    //   //   },
+    //   //   swabTest: {
+    //   //     id: true,
+    //   //     swabTestCode: true,
+    //   //   },
+    //   // },
+    //   order: {
+    //     swabTest: {
+    //       id: {
+    //         direction: 'asc',
+    //       },
+    //     },
+    //   },
+    // };
 
-    if (queryUpdateSwabPlanDto.take !== undefined) {
-      paginationParams.take = queryUpdateSwabPlanDto.take;
-    }
+    // const paginationParams: FindManyOptions<SwabAreaHistory> = {};
 
-    const swabAreaHistories = await this.swabAreaHistoryRepository.find({
-      ...params,
-      ...paginationParams,
-    });
+    // if (queryUpdateSwabPlanDto.skip !== undefined) {
+    //   paginationParams.skip = queryUpdateSwabPlanDto.skip;
+    // }
 
-    let total;
+    // if (queryUpdateSwabPlanDto.take !== undefined) {
+    //   paginationParams.take = queryUpdateSwabPlanDto.take;
+    // }
 
-    if (paginationParams.skip || paginationParams.take) {
-      total = await this.swabAreaHistoryRepository.count(params);
-    } else {
-      total = swabAreaHistories.length;
-    }
+    // const swabAreaHistories = await this.swabAreaHistoryRepository.find({
+    //   ...params,
+    //   ...paginationParams,
+    // });
+
+    // let total;
+
+    // if (paginationParams.skip || paginationParams.take) {
+    //   total = await this.swabAreaHistoryRepository.count(params);
+    // } else {
+    //   total = swabAreaHistories.length;
+    // }
 
     let facilities = [];
     let facilityItems = [];
     let swabAreas = [];
     let subSwabAreaHistories = [];
 
-    if (swabAreaHistories.length) {
-      let facilityIds = [];
+    // if (swabAreaHistories.length) {
+    //   let facilityIds = [];
 
-      const swabAreaIds = [
-        ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
-      ].filter(Boolean);
+    //   const swabAreaIds = [
+    //     ...new Set(swabAreaHistories.map(({ swabAreaId }) => swabAreaId)),
+    //   ].filter(Boolean);
 
-      const facilityitemIds = [
-        ...new Set(
-          swabAreaHistories.map(({ facilityItemId }) => facilityItemId),
-        ),
-      ].filter(Boolean);
+    //   const facilityitemIds = [
+    //     ...new Set(
+    //       swabAreaHistories.map(({ facilityItemId }) => facilityItemId),
+    //     ),
+    //   ].filter(Boolean);
 
-      if (swabAreaIds.length) {
-        swabAreas = await this.swabAreaRepository.find({
-          where: {
-            id: In(swabAreaIds),
-          },
-          select: {
-            id: true,
-            swabAreaName: true,
-            mainSwabAreaId: true,
-            facilityId: true,
-          },
-        });
+    //   if (swabAreaIds.length) {
+    //     swabAreas = await this.swabAreaRepository.find({
+    //       where: {
+    //         id: In(swabAreaIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         swabAreaName: true,
+    //         mainSwabAreaId: true,
+    //         facilityId: true,
+    //       },
+    //     });
 
-        const subSwabAreas = await this.swabAreaRepository.find({
-          where: {
-            mainSwabAreaId: In(swabAreaIds),
-          },
-          select: {
-            id: true,
-            swabAreaName: true,
-            mainSwabAreaId: true,
-            facilityId: true,
-          },
-        });
+    //     const subSwabAreas = await this.swabAreaRepository.find({
+    //       where: {
+    //         mainSwabAreaId: In(swabAreaIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         swabAreaName: true,
+    //         mainSwabAreaId: true,
+    //         facilityId: true,
+    //       },
+    //     });
 
-        if (subSwabAreas.length) {
-          swabAreas = [...swabAreas, ...subSwabAreas];
+    //     if (subSwabAreas.length) {
+    //       swabAreas = [...swabAreas, ...subSwabAreas];
 
-          const subSwabAreaIds = [
-            ...new Set(subSwabAreas.map(({ id }) => id)),
-          ].filter(Boolean);
+    //       const subSwabAreaIds = [
+    //         ...new Set(subSwabAreas.map(({ id }) => id)),
+    //       ].filter(Boolean);
 
-          subSwabAreaHistories = await this.swabAreaHistoryRepository.find({
-            where: {
-              ...where,
-              swabAreaId: In(subSwabAreaIds),
-            },
-            relations: {
-              swabEnvironments: true,
-            },
-          });
-        }
+    //       subSwabAreaHistories = await this.swabAreaHistoryRepository.find({
+    //         where: {
+    //           ...where,
+    //           swabAreaId: In(subSwabAreaIds),
+    //         },
+    //         relations: {
+    //           swabEnvironments: true,
+    //         },
+    //       });
+    //     }
 
-        // console.log(subSwabAreaHistories);
+    //     // console.log(subSwabAreaHistories);
 
-        if (swabAreas.length) {
-          facilityIds = [
-            ...facilityIds,
-            ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
-          ].filter(Boolean);
-        }
-      }
+    //     if (swabAreas.length) {
+    //       facilityIds = [
+    //         ...facilityIds,
+    //         ...new Set(swabAreas.map(({ facilityId }) => facilityId)),
+    //       ].filter(Boolean);
+    //     }
+    //   }
 
-      if (facilityitemIds.length) {
-        facilityItems = await this.facilityItemService.find({
-          where: {
-            id: In(facilityitemIds),
-          },
-          select: {
-            id: true,
-            facilityItemName: true,
-            facilityId: true,
-          },
-        });
+    //   if (facilityitemIds.length) {
+    //     facilityItems = await this.facilityItemService.find({
+    //       where: {
+    //         id: In(facilityitemIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         facilityItemName: true,
+    //         facilityId: true,
+    //       },
+    //     });
 
-        if (facilityItems.length) {
-          facilityIds = [
-            ...facilityIds,
-            ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
-          ].filter(Boolean);
-        }
-      }
+    //     if (facilityItems.length) {
+    //       facilityIds = [
+    //         ...facilityIds,
+    //         ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
+    //       ].filter(Boolean);
+    //     }
+    //   }
 
-      facilityIds = [...new Set(facilityIds)].filter(Boolean);
+    //   facilityIds = [...new Set(facilityIds)].filter(Boolean);
 
-      if (facilityIds.length) {
-        facilities = await this.facilityService.find({
-          where: {
-            id: In(facilityIds),
-          },
-          select: {
-            id: true,
-            facilityName: true,
-            facilityType: true,
-          },
-          order: {
-            facilityType: 'asc',
-            facilityName: 'asc',
-          },
-        });
-      }
-    }
+    //   if (facilityIds.length) {
+    //     facilities = await this.facilityService.find({
+    //       where: {
+    //         id: In(facilityIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         facilityName: true,
+    //         facilityType: true,
+    //       },
+    //       order: {
+    //         facilityType: 'asc',
+    //         facilityName: 'asc',
+    //       },
+    //     });
+    //   }
+    // }
 
     return {
-      total,
       swabAreaHistories,
       subSwabAreaHistories,
       swabAreas,
       facilities,
       facilityItems,
+      total,
     };
   }
 
   async queryUpdateSwabPlanById(
-    queryUpdateSwabPlanByIdDto: QueryUpdateSwabPlanByIdDto,
+    dto: QueryUpdateSwabPlanByIdDto,
   ): Promise<SwabAreaHistory> {
-    const where: FindOptionsWhere<SwabAreaHistory> = {
-      id: queryUpdateSwabPlanByIdDto.id,
-    };
+    const query = this.swabAreaHistoryService.toQuery(dto);
 
-    const swabAreaHistory = await this.swabAreaHistoryRepository.findOne({
-      where,
-      relations: {
-        swabTest: true,
-        swabArea: {
-          facility: true,
-          subSwabAreas: true,
-        },
-        swabPeriod: true,
-        swabAreaHistoryImages: {
-          file: true,
-        },
-        swabEnvironments: true,
-      },
-      select: {
-        id: true,
-        swabAreaDate: true,
-        swabAreaSwabedAt: true,
-        swabPeriodId: true,
-        swabAreaId: true,
-        shift: true,
-        swabAreaTemperature: true,
-        swabAreaHumidity: true,
-        swabAreaAtp: true,
-        swabAreaNote: true,
-        productId: true,
-        productLot: true,
-        productDate: true,
-        facilityItemId: true,
-        swabTestId: true,
-        swabTest: {
-          id: true,
-          swabTestCode: true,
-        },
-        swabArea: {
-          id: true,
-          swabAreaName: true,
-          facilityId: true,
-          mainSwabAreaId: true,
-          facility: {
-            id: true,
-            facilityName: true,
-          },
-        },
-        swabPeriod: {
-          id: true,
-          swabPeriodName: true,
-        },
-        swabAreaHistoryImages: {
-          id: true,
-          swabAreaHistoryId: true,
-          createdAt: true,
-          file: {
-            id: true,
-            fileKey: true,
-            fileSource: true,
-          },
-        },
-        swabEnvironments: {
-          id: true,
-          swabEnvironmentName: true,
-        },
-      },
-      order: {
-        swabAreaHistoryImages: {
-          createdAt: {
-            direction: 'desc',
-          },
-        },
-      },
-    });
+    const swabAreaHistory = await query
+      .leftJoinAndSelect('swab_area.subSwabAreas', 'sub_swab_area')
+      .leftJoinAndSelect(
+        'swab_area_history.swabAreaHistoryImages',
+        'swab_area_history_image',
+      )
+      .leftJoinAndSelect('swab_area_history_image.file', 'file')
+      .leftJoinAndSelect(
+        'swab_area_history.swabEnvironments',
+        'swab_environment',
+      )
+      .getOne();
+
+    // const where: FindOptionsWhere<SwabAreaHistory> = {
+    //   id: queryUpdateSwabPlanByIdDto.id,
+    // };
+
+    // const swabAreaHistory = await this.swabAreaHistoryRepository.findOne({
+    //   where,
+    //   relations: {
+    //     swabTest: true,
+    //     swabArea: {
+    //       facility: true,
+    //       subSwabAreas: true,
+    //     },
+    //     swabPeriod: true,
+    //     swabAreaHistoryImages: {
+    //       file: true,
+    //     },
+    //     swabEnvironments: true,
+    //   },
+    //   select: {
+    //     id: true,
+    //     swabAreaDate: true,
+    //     swabAreaSwabedAt: true,
+    //     swabPeriodId: true,
+    //     swabAreaId: true,
+    //     shift: true,
+    //     swabAreaTemperature: true,
+    //     swabAreaHumidity: true,
+    //     swabAreaAtp: true,
+    //     swabAreaNote: true,
+    //     productId: true,
+    //     productLot: true,
+    //     productDate: true,
+    //     facilityItemId: true,
+    //     swabTestId: true,
+    //     swabTest: {
+    //       id: true,
+    //       swabTestCode: true,
+    //     },
+    //     swabArea: {
+    //       id: true,
+    //       swabAreaName: true,
+    //       facilityId: true,
+    //       mainSwabAreaId: true,
+    //       facility: {
+    //         id: true,
+    //         facilityName: true,
+    //       },
+    //     },
+    //     swabPeriod: {
+    //       id: true,
+    //       swabPeriodName: true,
+    //     },
+    //     swabAreaHistoryImages: {
+    //       id: true,
+    //       swabAreaHistoryId: true,
+    //       createdAt: true,
+    //       file: {
+    //         id: true,
+    //         fileKey: true,
+    //         fileSource: true,
+    //       },
+    //     },
+    //     swabEnvironments: {
+    //       id: true,
+    //       swabEnvironmentName: true,
+    //     },
+    //   },
+    //   order: {
+    //     swabAreaHistoryImages: {
+    //       createdAt: {
+    //         direction: 'desc',
+    //       },
+    //     },
+    //   },
+    // });
 
     return swabAreaHistory;
   }

@@ -17,6 +17,7 @@ import {
   ParamCommandUpdateSwabPlanByIdDto,
   BodyCommandUpdateSwabPlanByIdDto,
 } from '../dto/command-update-swab-plan-by-id.dto';
+import { FilterSwabAreaHistoryDto } from '../dto/filter-swab-area-history.dto';
 import { GenerateSwabPlanDto } from '../dto/generate-swab-plan.dto';
 import { ParamLabSwabPlanByIdDto } from '../dto/param-lab-swab-plan-by-id.dto';
 import { QueryLabSwabPlanDto } from '../dto/query-lab-swab-plan.dto';
@@ -51,12 +52,8 @@ export class SwabAreaHistoryController {
 
   @Authenticated()
   @Get('v2')
-  queryUpdateSwabPlanV2(
-    @Query() queryUpdateSwabPlanV2Dto: QueryUpdateSwabPlanV2Dto,
-  ) {
-    return this.swabPlanQueryService.queryUpdateSwabPlanV2(
-      queryUpdateSwabPlanV2Dto,
-    );
+  queryUpdateSwabPlanV2(@Query() dto: FilterSwabAreaHistoryDto) {
+    return this.swabPlanQueryService.querySwabArea(dto);
   }
 
   // @Authenticated()
