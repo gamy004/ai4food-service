@@ -224,16 +224,24 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
 
     if (hasBacteria || swabStatus === SwabStatus.DETECTED) {
       query
+        .andWhere(`swab_product_history.swabProductSwabedAt IS NOT NULL`)
         .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
         .andWhere(`bacteria.id IS NOT NULL`);
     }
 
+    if (swabStatus === SwabStatus.NOT_RECORDED) {
+      query.andWhere(`swab_product_history.swabProductSwabedAt IS NULL`);
+    }
+
     if (swabStatus === SwabStatus.PENDING) {
-      query.andWhere(`swab_test.swabTestRecordedAt IS NULL`);
+      query
+        .andWhere(`swab_product_history.swabProductSwabedAt IS NOT NULL`)
+        .andWhere(`swab_test.swabTestRecordedAt IS NULL`);
     }
 
     if (swabStatus === SwabStatus.NORMAL) {
       query
+        .andWhere(`swab_product_history.swabProductSwabedAt IS NOT NULL`)
         .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
         .andWhere(`bacteria.id IS NULL`);
     }

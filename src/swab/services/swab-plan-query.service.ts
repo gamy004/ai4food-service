@@ -27,6 +27,7 @@ import { SwabProductHistoryService } from './swab-product-history.service';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { ProductService } from '~/product/services/product.service';
 import { SwabStatus } from '../entities/swab-test.entity';
+import { QueryExportSwabHistoryDto } from '../dto/query-export-swab-history.dto';
 
 @Injectable()
 export class SwabPlanQueryService {
@@ -129,8 +130,10 @@ export class SwabPlanQueryService {
   // }
 
   async queryExportSwabPlan(
-    querySwabPlanDto: QuerySwabPlanDto,
+    queryExportSwabHistoryDto: QueryExportSwabHistoryDto,
   ): Promise<ResponseSwabPlanDto> {
+    console.log(queryExportSwabHistoryDto);
+
     // const { fromDate, toDate, bacteriaSpecies, swabStatus } = querySwabPlanDto;
 
     // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
@@ -177,7 +180,7 @@ export class SwabPlanQueryService {
     // });
 
     const swabAreaHistoryQuery = this.swabAreaHistoryService
-      .toQuery(querySwabPlanDto)
+      .toQuery(queryExportSwabHistoryDto)
       .andWhere('swab_test.id IS NOT NULL');
 
     const [swabAreaHistories, totalSwabAreaHistories] =
@@ -221,7 +224,7 @@ export class SwabPlanQueryService {
     // });
 
     const swabProductHistoryQuery = this.swabProductHistoryService
-      .toQuery(querySwabPlanDto)
+      .toQuery(queryExportSwabHistoryDto)
       .andWhere('swab_test.id IS NOT NULL');
 
     const [swabProductHistories, totalSwabProductHistories] =

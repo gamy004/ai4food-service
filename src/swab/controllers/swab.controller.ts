@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
-import { QuerySwabPlanDto } from '../dto/query-swab-plan.dto';
+import { QueryExportSwabHistoryDto } from '../dto/query-export-swab-history.dto';
 import { SwabPlanQueryService } from '../services/swab-plan-query.service';
 
 @Controller('swab')
@@ -11,7 +11,11 @@ export class SwabController {
 
   @Authenticated()
   @Get('export')
-  queryExportSwabPlan(@Query() querySwabPlanDto: QuerySwabPlanDto) {
-    return this.swabPlanQueryService.queryExportSwabPlan(querySwabPlanDto);
+  queryExportSwabPlan(
+    @Query() queryExportSwabHistoryDto: QueryExportSwabHistoryDto,
+  ) {
+    return this.swabPlanQueryService.queryExportSwabPlan(
+      queryExportSwabHistoryDto,
+    );
   }
 }
