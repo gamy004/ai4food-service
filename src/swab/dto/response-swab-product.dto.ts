@@ -8,4 +8,5 @@ export class ResponseSwabProductDto {
   products: Product[];
   facilities: Facility[];
   facilityItems: FacilityItem[];
+  total: number;
 }

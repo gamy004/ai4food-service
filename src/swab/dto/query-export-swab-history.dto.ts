@@ -1,33 +1,25 @@
+import { PickType } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
-  IsNotEmpty,
+  IsBoolean,
   IsEnum,
-  Validate,
+  IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsUUID,
-  IsNumber,
-  IsBoolean,
+  Validate,
 } from 'class-validator';
 import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
-import { SwabTestExistsRule } from '../validators/swab-test-exists-validator';
-import { SwabAreaHistoryExistsRule } from '../validators/swab-area-history-exists-validator';
 import { FacilityExistsRule } from '~/facility/validators/facility-exists-validator';
 import { FacilityItemExistsRule } from '~/facility/validators/facility-item-exists-validator';
+import { ProductExistsRule } from '~/product/validators/product-exists-validator';
+import { SwabStatus } from '../entities/swab-test.entity';
 import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator';
-import { Transform, Type } from 'class-transformer';
-import { SwabStatus } from '../entities/swab-test.entity';
+import { SwabTestExistsRule } from '../validators/swab-test-exists-validator';
 
-export class FilterSwabAreaHistoryDto {
-  @IsOptional()
-  @IsUUID()
-  @Validate(SwabAreaHistoryExistsRule)
-  id?: string;
-
-  @IsOptional()
-  @Validate(DateOnlyRule)
-  swabAreaDate?: string;
-
+export class QueryExportSwabHistoryDto {
   @IsOptional()
   @IsEnum(Shift)
   shift?: Shift;
@@ -66,13 +58,9 @@ export class FilterSwabAreaHistoryDto {
   swabAreaId?: string;
 
   @IsOptional()
-  @IsNotEmpty()
-  bacteriaName?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === 'true')
-  hasBacteria?: boolean;
+  @IsUUID()
+  @Validate(ProductExistsRule)
+  productId?: string;
 
   @IsOptional()
   @Validate(DateOnlyRule)

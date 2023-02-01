@@ -15,7 +15,8 @@ import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator
 import { SwabProductHistoryExistsRule } from '../validators/swab-product-history-exists-validator';
 import { ProductExistsRule } from '~/product/validators/product-exists-validator';
 import { Shift } from '~/common/enums/shift';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 export class FilterSwabProductHistoryDto {
   @IsOptional()
@@ -26,6 +27,10 @@ export class FilterSwabProductHistoryDto {
   @IsOptional()
   @IsEnum(Shift)
   shift?: Shift;
+
+  @IsOptional()
+  @IsEnum(SwabStatus)
+  swabStatus?: SwabStatus;
 
   @IsOptional()
   @Validate(DateOnlyRule)
@@ -68,4 +73,22 @@ export class FilterSwabProductHistoryDto {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   hasBacteria?: boolean;
+
+  @IsOptional()
+  @Validate(DateOnlyRule)
+  fromDate?: string;
+
+  @IsOptional()
+  @Validate(DateOnlyRule)
+  toDate?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  skip?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  take?: number;
 }

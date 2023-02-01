@@ -3,6 +3,8 @@ import { FilterSwabAreaHistoryDto } from './filter-swab-area-history.dto';
 
 export class QueryLabSwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
   'swabAreaDate',
+  'fromDate',
+  'toDate',
   'shift',
   'swabTestCode',
   'swabPeriodId',
@@ -11,4 +13,7 @@ export class QueryLabSwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
   'swabAreaId',
   'bacteriaName',
   'hasBacteria',
+  'skip',
+  'take',
+  'swabStatus',
 ]) {}

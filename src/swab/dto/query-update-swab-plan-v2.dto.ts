@@ -34,7 +34,7 @@ export class QueryUpdateSwabPlanV2Dto {
   @IsOptional()
   @IsUUID()
   @Validate(SwabAreaExistsRule)
-  mainSwabAreaId: string;
+  swabAreaId: string;
 
   @IsOptional()
   @IsUUID()
@@ -44,10 +44,10 @@ export class QueryUpdateSwabPlanV2Dto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  skip: number;
+  skip?: number;
 
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  take: number;
+  take?: number;
 }

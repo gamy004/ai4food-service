@@ -80,4 +80,32 @@ export class DateTransformer {
 
     return dateObject;
   }
+
+  public dateRangeToSql(field, fromDateString, toDateString) {
+    let expression;
+
+    let rangeToDateString;
+
+    if (toDateString) {
+      const rangeToDate = this.toObject(toDateString);
+
+      rangeToDate.setDate(rangeToDate.getDate() + 1);
+
+      rangeToDateString = this.toString(rangeToDate);
+    }
+
+    if (fromDateString && rangeToDateString) {
+      expression = `${field} >= '${fromDateString}' and ${field} < '${rangeToDateString}'`;
+    } else {
+      if (fromDateString) {
+        expression = `${field} >= '${fromDateString}'`;
+      }
+
+      if (rangeToDateString) {
+        expression = `${field} < '${rangeToDateString}'`;
+      }
+    }
+
+    return expression;
+  }
 }
