@@ -178,11 +178,11 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
 
     const query = this.repository
       .createQueryBuilder('swab_area_history')
-      .innerJoinAndSelect('swab_area_history.swabTest', 'swab_test')
-      .innerJoin('swab_area_history.swabPeriod', 'swab_period')
-      .innerJoin('swab_area_history.swabArea', 'swab_area')
-      .innerJoin('swab_area.facility', 'facility')
-      .leftJoin('swab_area_history.facilityItem', 'facility_item')
+      .innerJoinAndSelect('swab_area_history.swabPeriod', 'swab_period')
+      .innerJoinAndSelect('swab_area_history.swabArea', 'swab_area')
+      .leftJoinAndSelect('swab_area.facility', 'facility')
+      .leftJoinAndSelect('swab_area_history.facilityItem', 'facility_item')
+      .leftJoinAndSelect('swab_area_history.swabTest', 'swab_test')
       .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
       .leftJoinAndSelect('swab_test.bacteriaSpecies', 'bacteria_specie')
       .where('swab_area_history.id IS NOT NULL');
