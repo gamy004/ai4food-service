@@ -133,8 +133,6 @@ export class SwabPlanQueryService {
   async queryExportSwabPlan(
     queryExportSwabHistoryDto: QueryExportSwabHistoryDto,
   ): Promise<ResponseSwabPlanDto> {
-    console.log(queryExportSwabHistoryDto);
-
     // const { fromDate, toDate, bacteriaSpecies, swabStatus } = querySwabPlanDto;
 
     // const whereSwabAreaHistory: FindOptionsWhere<SwabAreaHistory> =
@@ -529,6 +527,10 @@ export class SwabPlanQueryService {
       .leftJoinAndSelect(
         'swab_area_history.swabEnvironments',
         'swab_environment',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history.subSwabAreaHistories',
+        'sub_swab_area_histories',
       )
       .andWhere('swab_test.id IS NOT NULL')
       .orderBy('swab_test.swabAreaDate', 'DESC')
