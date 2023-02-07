@@ -532,6 +532,10 @@ export class SwabPlanQueryService {
         'swab_area_history.subSwabAreaHistories',
         'sub_swab_area_histories',
       )
+      .leftJoinAndSelect(
+        'sub_swab_area_histories.swabEnvironments',
+        'sub_swab_environment',
+      )
       .andWhere('swab_test.id IS NOT NULL')
       .orderBy('swab_test.swabAreaDate', 'DESC')
       .orderBy('swab_test.id', 'ASC')
