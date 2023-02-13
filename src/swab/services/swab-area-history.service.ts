@@ -28,8 +28,6 @@ export class SwabAreaHistoryService extends CrudService<SwabAreaHistory> {
     super(repository);
   }
 
-  transformDateRangeFIlter;
-
   toFilter(dto: FilterSwabAreaHistoryDto): FindOptionsWhere<SwabAreaHistory> {
     let {
       swabAreaId,

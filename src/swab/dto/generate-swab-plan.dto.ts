@@ -10,7 +10,4 @@ export class GenerateSwabPlanDto {
 
   @IsNotEmpty()
   roundNumberSwabTest: string;
-
-  @IsOptional()
-  requiredValidateCleaning?: boolean;
 }

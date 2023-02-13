@@ -6,20 +6,22 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { User } from '~/auth/entities/user.entity';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaHistory } from '~/swab/entities/swab-area-history.entity';
+import { SwabRound } from '~/swab/entities/swab-round.entity';
 import { CleaningHistoryCleaningValidation } from './cleaning-history-cleaning-validation.entity';
 import { CleaningProgram } from './cleaning-program.entity';
 import { CleaningValidation } from './cleaning-validation.entity';
 
 @Entity()
 export class CleaningHistory extends BaseSoftDeletableEntity {
-  @Column({ type: 'timestamp' })
-  cleaningHistoryStartedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  cleaningHistoryStartedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  cleaningHistoryEndedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  cleaningHistoryEndedAt: Date;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   cleaningProgramId: string;
@@ -40,4 +42,19 @@ export class CleaningHistory extends BaseSoftDeletableEntity {
     },
   )
   cleaningHistoryValidations: CleaningHistoryCleaningValidation[];
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  recordedUserId?: string;
+
+  @ManyToOne(() => User, (entity) => entity.recordedCleaningHistories, {
+    onDelete: 'SET NULL',
+  })
+  recordedUser: User;
+
+  @Column({ nullable: true })
+  swabRoundId: number;
+
+  @ManyToOne(() => SwabRound, (entity) => entity.cleaningHistories)
+  @JoinColumn()
+  swabRound?: SwabRound;
 }

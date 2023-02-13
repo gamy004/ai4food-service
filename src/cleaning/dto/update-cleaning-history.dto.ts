@@ -1,6 +1,7 @@
 import { PickType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsUUID,
@@ -8,7 +9,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CleaningHistoryCleaningValidation } from '../entities/cleaning-history-cleaning-validation.entity';
+import { CleaningHistoryCleaningValidationExistsRule } from '../validators/cleaning-history-cleaning-validation-exists-validator';
 import { CleaningHistoryExistsRule } from '../validators/cleaning-history-exists-validator';
+import { CleaningProgramExistsRule } from '../validators/cleaning-program-exists-validator';
+import { CleaningValidationExistsRule } from '../validators/cleaning-validation-exists-validator';
 import { ConnectCleaningHistoryDto } from './connect-cleaning-history.dto';
 
 export class ParamUpdateCleaningHistoryDto extends PickType(
@@ -18,6 +22,8 @@ export class ParamUpdateCleaningHistoryDto extends PickType(
 
 export class BodyUpdateCleaningHistoryDto {
   @IsNotEmpty()
+  @IsUUID()
+  @Validate(CleaningProgramExistsRule)
   cleaningProgramId!: string;
 
   @IsNotEmpty()
@@ -37,8 +43,15 @@ export class CleaningHistoryValidationsDto {
   @IsOptional()
   @IsNotEmpty()
   @IsUUID()
-  id!: string;
+  @Validate(CleaningHistoryCleaningValidationExistsRule)
+  id?: string;
 
   @IsNotEmpty()
+  @IsUUID()
+  @Validate(CleaningValidationExistsRule)
+  cleaningValidationId?: string;
+
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
   pass!: boolean;
 }
