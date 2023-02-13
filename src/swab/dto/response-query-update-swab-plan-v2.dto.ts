@@ -4,8 +4,6 @@ import { SwabAreaHistory } from '../entities/swab-area-history.entity';
 import { SwabArea } from '../entities/swab-area.entity';
 
 export class ResponseQueryUpdateSwabPlanV2Dto {
-  total: number;
-
   swabAreaHistories: SwabAreaHistory[];
 
   subSwabAreaHistories: SwabAreaHistory[];
@@ -15,4 +13,6 @@ export class ResponseQueryUpdateSwabPlanV2Dto {
   facilities: Facility[];
 
   facilityItems: FacilityItem[];
+
+  total: number;
 }

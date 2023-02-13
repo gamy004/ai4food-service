@@ -15,6 +15,7 @@ import { SwabRound } from './swab-round.entity';
 export const SWAB_TEST_CODE_PREFIX = 'AI';
 
 export enum SwabStatus {
+  NOT_RECORDED = 'notRecorded',
   PENDING = 'pending',
   DETECTED = 'detected',
   NORMAL = 'normal',

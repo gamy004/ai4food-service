@@ -16,6 +16,7 @@ import { SwabProductHistoryExistsRule } from '../validators/swab-product-history
 import { ProductExistsRule } from '~/product/validators/product-exists-validator';
 import { Shift } from '~/common/enums/shift';
 import { Transform, Type } from 'class-transformer';
+import { SwabStatus } from '../entities/swab-test.entity';
 
 export class FilterSwabProductHistoryDto {
   @IsOptional()
@@ -26,6 +27,10 @@ export class FilterSwabProductHistoryDto {
   @IsOptional()
   @IsEnum(Shift)
   shift?: Shift;
+
+  @IsOptional()
+  @IsEnum(SwabStatus)
+  swabStatus?: SwabStatus;
 
   @IsOptional()
   @Validate(DateOnlyRule)

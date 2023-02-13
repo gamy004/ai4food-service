@@ -13,16 +13,17 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
-import { BodyCommandCreateSwabProductByIdDto } from '../dto/command-create-swab-product-history.dto';
+// import { BodyCommandCreateSwabProductByIdDto } from '../dto/command-create-swab-product-history.dto';
 import {
   ParamCommandUpdateSwabProductByIdDto,
   BodyCommandUpdateSwabProductByIdDto,
 } from '../dto/command-update-swab-product-history-by-id.dto';
+import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
 import { GenerateSwabProductPlanDto } from '../dto/generate-swab-product-plan.dto';
-import { ParamCommandDeleteSwabProductByIdDto } from '../dto/param-command-delete-swab-product-history-by-id.dto';
+// import { ParamCommandDeleteSwabProductByIdDto } from '../dto/param-command-delete-swab-product-history-by-id.dto';
 import { ParamQuerySwabProductByIdDto } from '../dto/param-query-swab-product-by-id.dto';
 import { QueryLabSwabProductDto } from '../dto/query-lab-swab-product-dto';
-import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
+// import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
 import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabProductManagerService } from '../services/swab-product-manager.service';
 import { SwabProductQueryService } from '../services/swab-product-query.service';
@@ -38,8 +39,8 @@ export class SwabProductHistoryController {
 
   @Authenticated()
   @Get()
-  querySwabProduct(@Query() querySwabProductDto: QuerySwabProductDto) {
-    return this.swabProductQueryService.querySwabProduct(querySwabProductDto);
+  querySwabProduct(@Query() dto: FilterSwabProductHistoryDto) {
+    return this.swabProductQueryService.querySwabProduct(dto);
   }
 
   @Authenticated()

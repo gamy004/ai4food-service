@@ -146,7 +146,6 @@ export class SwabLabManagerService {
       });
 
       swabTest.swabTestRecordedAt = swabTestRecordedAt;
-      console.log(swabTestRecordedAt);
 
       swabTest.bacteriaRecordedAt = swabTestRecordedAt;
 
