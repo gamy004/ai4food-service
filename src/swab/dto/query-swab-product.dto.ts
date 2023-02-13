@@ -8,5 +8,7 @@ export class QuerySwabProductDto extends PickType(FilterSwabProductHistoryDto, [
   'facilityId',
   'facilityItemId',
   'productId',
-  'bacteriaName'
-]) { }
+  'skip',
+  'take',
+  'bacteriaName',
+]) {}

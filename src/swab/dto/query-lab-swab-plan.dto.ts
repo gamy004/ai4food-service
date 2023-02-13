@@ -15,4 +15,5 @@ export class QueryLabSwabPlanDto extends PickType(FilterSwabAreaHistoryDto, [
   'hasBacteria',
   'skip',
   'take',
+  'swabStatus',
 ]) {}

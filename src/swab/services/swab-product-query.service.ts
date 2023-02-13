@@ -16,6 +16,7 @@ import { SwabTest } from '../entities/swab-test.entity';
 import { Facility } from '~/facility/entities/facility.entity';
 import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { ProductService } from '~/product/services/product.service';
+import { SwabProductHistoryService } from './swab-product-history.service';
 
 @Injectable()
 export class SwabProductQueryService {
@@ -25,6 +26,7 @@ export class SwabProductQueryService {
     protected readonly facilityItemService: FacilityItemService,
     protected readonly swabPeriodService: SwabPeriodService,
     protected readonly productService: ProductService,
+    protected readonly swabProductHistoryService: SwabProductHistoryService,
     @InjectRepository(SwabProductHistory)
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
   ) {}
@@ -122,126 +124,135 @@ export class SwabProductQueryService {
   // }
 
   async querySwabProduct(
-    querySwabProductDto: QuerySwabProductDto,
+    dto: FilterSwabProductHistoryDto,
   ): Promise<ResponseSwabProductDto> {
-    const where: FindOptionsWhere<SwabProductHistory> =
-      this.transformQuerySwabProductDto(querySwabProductDto);
+    const query = this.swabProductHistoryService.toQuery(dto);
+
+    const [swabProductHistories, total] = await query
+      .andWhere('swab_test.id IS NOT NULL')
+      .orderBy('swab_test.swabProductDate', 'DESC')
+      .orderBy('swab_test.id', 'ASC')
+      .getManyAndCount();
+
+    // const where: FindOptionsWhere<SwabProductHistory> =
+    //   this.transformQuerySwabProductDto(querySwabProductDto);
 
     let products: Product[] = [];
     let facilityItems: FacilityItem[] = [];
     let facilities: Facility[] = [];
 
-    const swabProductHistories = await this.swabProductHistoryRepository.find({
-      where: {
-        ...where,
-      },
-      relations: {
-        swabTest: true,
-        // swabPeriod: true,
-        // product: true,
-        // facilityItem: true
-      },
-      select: {
-        id: true,
-        productId: true,
-        // product: {
-        //     id: true,
-        //     productName: true,
-        //     productCode: true,
-        //     alternateProductCode: true
-        // },
-        productLot: true,
-        productDate: true,
-        swabProductDate: true,
-        swabPeriodId: true,
-        // swabPeriod: {
-        //     id: true,
-        //     swabPeriodName: true
-        // },
-        shift: true,
-        swabProductSwabedAt: true,
-        swabTestId: true,
-        swabTest: {
-          id: true,
-          swabTestCode: true,
-        },
-        facilityItemId: true,
-        // facilityItem: {
-        //     facilityItemName: true,
-        //     facilityId: true,
-        //     roomId: true,
-        //     zoneId: true
-        // }
-      },
-      order: {
-        swabProductDate: 'desc',
-        swabTestId: 'asc',
-        // swabProductSwabedAt: 'desc',
-      },
-    });
+    // const swabProductHistories = await this.swabProductHistoryRepository.find({
+    //   where: {
+    //     ...where,
+    //   },
+    //   relations: {
+    //     swabTest: true,
+    //     // swabPeriod: true,
+    //     // product: true,
+    //     // facilityItem: true
+    //   },
+    //   select: {
+    //     id: true,
+    //     productId: true,
+    //     // product: {
+    //     //     id: true,
+    //     //     productName: true,
+    //     //     productCode: true,
+    //     //     alternateProductCode: true
+    //     // },
+    //     productLot: true,
+    //     productDate: true,
+    //     swabProductDate: true,
+    //     swabPeriodId: true,
+    //     // swabPeriod: {
+    //     //     id: true,
+    //     //     swabPeriodName: true
+    //     // },
+    //     shift: true,
+    //     swabProductSwabedAt: true,
+    //     swabTestId: true,
+    //     swabTest: {
+    //       id: true,
+    //       swabTestCode: true,
+    //     },
+    //     facilityItemId: true,
+    //     // facilityItem: {
+    //     //     facilityItemName: true,
+    //     //     facilityId: true,
+    //     //     roomId: true,
+    //     //     zoneId: true
+    //     // }
+    //   },
+    //   order: {
+    //     swabProductDate: 'desc',
+    //     swabTestId: 'asc',
+    //     // swabProductSwabedAt: 'desc',
+    //   },
+    // });
 
-    if (swabProductHistories.length) {
-      const facilityItemIds = [
-        ...new Set(
-          swabProductHistories.map(({ facilityItemId }) => facilityItemId),
-        ),
-      ].filter(Boolean);
+    // if (swabProductHistories.length) {
+    //   const facilityItemIds = [
+    //     ...new Set(
+    //       swabProductHistories.map(({ facilityItemId }) => facilityItemId),
+    //     ),
+    //   ].filter(Boolean);
 
-      if (facilityItemIds.length) {
-        facilityItems = await this.facilityItemService.find({
-          where: {
-            id: In(facilityItemIds),
-          },
-          select: {
-            id: true,
-            facilityItemName: true,
-            facilityId: true,
-          },
-        });
-      }
+    //   if (facilityItemIds.length) {
+    //     facilityItems = await this.facilityItemService.find({
+    //       where: {
+    //         id: In(facilityItemIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         facilityItemName: true,
+    //         facilityId: true,
+    //       },
+    //     });
+    //   }
 
-      if (facilityItems.length) {
-        const facilityIds = [
-          ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
-        ].filter(Boolean);
+    //   if (facilityItems.length) {
+    //     const facilityIds = [
+    //       ...new Set(facilityItems.map(({ facilityId }) => facilityId)),
+    //     ].filter(Boolean);
 
-        if (facilityIds.length) {
-          facilities = await this.facilityService.find({
-            where: {
-              id: In(facilityIds),
-            },
-            select: {
-              id: true,
-              facilityName: true,
-            },
-          });
-        }
-      }
+    //     if (facilityIds.length) {
+    //       facilities = await this.facilityService.find({
+    //         where: {
+    //           id: In(facilityIds),
+    //         },
+    //         select: {
+    //           id: true,
+    //           facilityName: true,
+    //         },
+    //       });
+    //     }
+    //   }
 
-      const productIds = [
-        ...new Set(swabProductHistories.map(({ productId }) => productId)),
-      ].filter(Boolean);
+    //   const productIds = [
+    //     ...new Set(swabProductHistories.map(({ productId }) => productId)),
+    //   ].filter(Boolean);
 
-      if (productIds.length) {
-        products = await this.productService.find({
-          where: {
-            id: In(productIds),
-          },
-          select: {
-            id: true,
-            productName: true,
-            productCode: true,
-            alternateProductCode: true,
-          },
-        });
-      }
-    }
+    //   if (productIds.length) {
+    //     products = await this.productService.find({
+    //       where: {
+    //         id: In(productIds),
+    //       },
+    //       select: {
+    //         id: true,
+    //         productName: true,
+    //         productCode: true,
+    //         alternateProductCode: true,
+    //       },
+    //     });
+    //   }
+    // }
 
     return {
       swabProductHistories,
       products,
       facilities,
       facilityItems,
+      total,
     };
   }
 
