@@ -118,6 +118,8 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
   })
   subSwabAreaHistories: SwabAreaHistory[];
 
-  @OneToOne(() => CleaningHistory, (entity) => entity.swabAreaHistory)
+  @OneToOne(() => CleaningHistory, (entity) => entity.swabAreaHistory, {
+    cascade: ['insert', 'soft-remove'],
+  })
   cleaningHistory: CleaningHistory;
 }

@@ -637,7 +637,10 @@ export class SwabPlanManagerService {
         historyData.swabRound = swabRound;
       }
 
-      if (swabPeriod.requiredValidateCleaning) {
+      if (
+        swabArea.mainSwabAreaId === null &&
+        swabPeriod.requiredValidateCleaning
+      ) {
         const cleaningHistoryData = CleaningHistory.create();
 
         if (swabRound) {
