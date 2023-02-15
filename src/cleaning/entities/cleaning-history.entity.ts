@@ -31,8 +31,14 @@ export class CleaningHistory extends BaseSoftDeletableEntity {
   })
   cleaningProgram: CleaningProgram;
 
-  @OneToOne(() => SwabAreaHistory, (entity) => entity.cleaningHistory)
-  swabAreaHistory: SwabAreaHistory[];
+  @Column({ type: 'varchar', length: 36 })
+  swabAreaHistoryId: string;
+
+  @OneToOne(() => SwabAreaHistory, (entity) => entity.cleaningHistory, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  swabAreaHistory?: SwabAreaHistory;
 
   @OneToMany(
     () => CleaningHistoryCleaningValidation,
