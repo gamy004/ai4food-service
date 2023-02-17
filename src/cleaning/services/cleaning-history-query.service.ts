@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '~/auth/entities/user.entity';
-import { QueryCleaningHistoryDto } from '../dto/query-cleaning-history.dto';
+import { FilterCleaningHistoryDto } from '../dto/filter-cleaning-history.dto';
+import { ResponseQueryCleaningHistoryDto } from '../dto/response-query-cleaning-history.dto';
 import {
   BodyUpdateCleaningHistoryDto,
   ParamUpdateCleaningHistoryDto,
@@ -18,10 +19,18 @@ export class CleaningHistoryQueryService {
     private readonly cleaningHistoryService: CleaningHistoryService,
   ) {}
 
-  async query(query: QueryCleaningHistoryDto): Promise<CleaningHistory[]> {
-    // to filter
-    // const where = this.cleaningHistoryService.toFilter(query);
+  async query(
+    dto: FilterCleaningHistoryDto,
+  ): Promise<ResponseQueryCleaningHistoryDto> {
+    const query = this.cleaningHistoryService.toQuery(dto);
 
-    return this.cleaningHistoryService.find();
+    const [cleaningHistories, total] = await query
+      .orderBy('swab_test.id', 'ASC')
+      .getManyAndCount();
+
+    return {
+      cleaningHistories,
+      total,
+    };
   }
 }

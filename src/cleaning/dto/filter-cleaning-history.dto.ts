@@ -5,6 +5,7 @@ import {
   Validate,
   IsEnum,
   IsNumber,
+  IsNotEmpty,
 } from 'class-validator';
 import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
@@ -14,7 +15,7 @@ import { SwabAreaExistsRule } from '~/swab/validators/swab-area-exists-validator
 import { SwabPeriodExistsRule } from '~/swab/validators/swab-period-exists-validator';
 import { CleaningHistoryExistsRule } from '../validators/cleaning-history-exists-validator';
 
-export class FilteCleaningHistoryDto {
+export class FilterCleaningHistoryDto {
   @IsOptional()
   @IsUUID()
   @Validate(CleaningHistoryExistsRule)
@@ -35,6 +36,10 @@ export class FilteCleaningHistoryDto {
   @IsOptional()
   @IsEnum(Shift)
   shift?: Shift;
+
+  @IsOptional()
+  @IsNotEmpty()
+  swabTestCode?: string;
 
   @IsOptional()
   @IsUUID()
