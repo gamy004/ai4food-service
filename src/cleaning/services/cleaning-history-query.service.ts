@@ -19,7 +19,7 @@ export class CleaningHistoryQueryService {
     private readonly cleaningHistoryService: CleaningHistoryService,
   ) {}
 
-  async query(
+  async queryByDto(
     dto: FilterCleaningHistoryDto,
   ): Promise<ResponseQueryCleaningHistoryDto> {
     const query = this.cleaningHistoryService.toQuery(dto);
@@ -32,5 +32,13 @@ export class CleaningHistoryQueryService {
       cleaningHistories,
       total,
     };
+  }
+
+  async queryById(id: string): Promise<CleaningHistory> {
+    const query = this.cleaningHistoryService.toQuery({ id });
+
+    const cleaningHistory = await query.getOneOrFail();
+
+    return cleaningHistory;
   }
 }

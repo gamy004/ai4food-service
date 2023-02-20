@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { query } from 'express';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
 import { QueryCleaningHistoryDto } from '../dto/query-cleaning-history.dto';
 import {
   BodyUpdateCleaningHistoryDto,
+  ParamFindCleaningHistoryByIdDto,
   ParamUpdateCleaningHistoryDto,
 } from '../dto/update-cleaning-history.dto';
 import { CleaningHistoryManagerService } from '../services/cleaning-history-manager.service';
@@ -23,7 +25,12 @@ export class CleaningHistoryController {
 
   @Get()
   async find(@Query() query: QueryCleaningHistoryDto) {
-    return this.cleaningHistoryQueryService.query(query);
+    return this.cleaningHistoryQueryService.queryByDto(query);
+  }
+
+  @Get(':id')
+  async findById(@Param() param: ParamFindCleaningHistoryByIdDto) {
+    return this.cleaningHistoryQueryService.queryById(param.id);
   }
 
   @Authenticated()

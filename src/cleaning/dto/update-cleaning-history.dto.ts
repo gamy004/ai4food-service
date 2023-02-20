@@ -15,6 +15,11 @@ import { CleaningProgramExistsRule } from '../validators/cleaning-program-exists
 import { CleaningValidationExistsRule } from '../validators/cleaning-validation-exists-validator';
 import { ConnectCleaningHistoryDto } from './connect-cleaning-history.dto';
 
+export class ParamFindCleaningHistoryByIdDto extends PickType(
+  ConnectCleaningHistoryDto,
+  ['id'],
+) {}
+
 export class ParamUpdateCleaningHistoryDto extends PickType(
   ConnectCleaningHistoryDto,
   ['id'],
