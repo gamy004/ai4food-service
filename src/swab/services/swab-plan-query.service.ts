@@ -532,6 +532,7 @@ export class SwabPlanQueryService {
         'swab_area_history.subSwabAreaHistories',
         'sub_swab_area_histories',
       )
+      .leftJoinAndSelect('sub_swab_area_histories.swabArea', 'sub_swab_area')
       .leftJoinAndSelect(
         'sub_swab_area_histories.swabEnvironments',
         'sub_swab_environment',
@@ -742,11 +743,16 @@ export class SwabPlanQueryService {
     const query = this.swabAreaHistoryService.toQuery(dto);
 
     const swabAreaHistory = await query
-      .leftJoinAndSelect('swab_area.subSwabAreas', 'sub_swab_area')
+      // .leftJoinAndSelect('swab_area.subSwabAreas', 'sub_swab_area')
       .leftJoinAndSelect(
         'swab_area_history.swabAreaHistoryImages',
         'swab_area_history_image',
       )
+      .leftJoinAndSelect(
+        'swab_area_history.subSwabAreaHistories',
+        'sub_swab_area_histories',
+      )
+      .leftJoinAndSelect('sub_swab_area_histories.swabArea', 'sub_swab_area')
       .leftJoinAndSelect('swab_area_history_image.file', 'file')
       .leftJoinAndSelect(
         'swab_area_history.swabEnvironments',
