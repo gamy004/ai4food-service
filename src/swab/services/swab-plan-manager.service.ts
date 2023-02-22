@@ -244,16 +244,6 @@ export class SwabPlanManagerService {
       {
         facilityName: 'ขึ้นรูป',
         mainSwabAreas: [
-          // {
-          //     swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter", // not collected in 22-29 July
-          //     subSwabAreas: [
-          //         { swabAreaName: "ชุดเติมข้าว" },
-          //         { swabAreaName: "สายพานลำเลียง" },
-          //         { swabAreaName: "แกนซุย" },
-          //         { swabAreaName: "ชุด Hopper" },
-          //         { swabAreaName: "Shutter" },
-          //     ]
-          // },
           {
             swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์',
             subSwabAreas: [
@@ -484,19 +474,6 @@ export class SwabPlanManagerService {
           },
         ],
       },
-      // {
-      //     facilityName: "กล่องเครื่องมือวิศวะ",
-      //     mainSwabAreas: [
-      //       {
-      //         swabAreaName: 'กล่องเครื่องมือวิศวะ',
-      //         subSwabAreas: [
-      //           { swabAreaName: 'ฝากล่อง' },
-      //           { swabAreaName: 'ขอบมุม' },
-      //           { swabAreaName: 'ประแจ' },
-      //         ],
-      //       }
-      //     ]
-      // },
       {
         facilityName: 'รถเข็นกะบะ',
         mainSwabAreas: [
@@ -506,6 +483,48 @@ export class SwabPlanManagerService {
               { swabAreaName: 'กันชน' },
               { swabAreaName: 'ระหว่างรอยต่อ' },
               { swabAreaName: 'โครงล้อ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ขึ้นรูป',
+        mainSwabAreas: [
+          {
+            swabAreaName:
+              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
+            subSwabAreas: [
+              { swabAreaName: 'ชุดเติมข้าว' },
+              { swabAreaName: 'สายพานลำเลียง' },
+              { swabAreaName: 'แกนซุย' },
+              { swabAreaName: 'ชุด Hopper' },
+              { swabAreaName: 'Shutter' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'กล่องเครื่องมือวิศวะ',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'กล่องเครื่องมือวิศวะ', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
+            subSwabAreas: [
+              { swabAreaName: 'ฝากล่อง' },
+              { swabAreaName: 'ขอบมุม' },
+              { swabAreaName: 'ประแจ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ขึ้นรูป',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'แกน roller, สายพาน PVC, ปีกสายพานสแตนเลส', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
+            subSwabAreas: [
+              { swabAreaName: 'แกน roller' },
+              { swabAreaName: 'สายพาน PVC' },
+              { swabAreaName: 'ปีกสายพานสแตนเลส' },
             ],
           },
         ],

@@ -12,7 +12,7 @@ export default class SwabSeeder implements Seeder {
         mainSwabAreas: [
           {
             swabAreaName:
-              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // not collected
+              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter',
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว', contactZoneName: 'Zone 1' },
@@ -226,6 +226,15 @@ export default class SwabSeeder implements Seeder {
             swabAreaName: 'เครื่องชั่ง Topping',
             subSwabAreas: [],
           },
+          {
+            swabAreaName: 'แกน roller, สายพาน PVC, ปีกสายพานสแตนเลส',
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'แกน roller', contactZoneName: null },
+              { swabAreaName: 'สายพาน PVC', contactZoneName: null },
+              { swabAreaName: 'ปีกสายพานสแตนเลส', contactZoneName: null },
+            ],
+          },
         ],
       },
       {
@@ -375,16 +384,12 @@ export default class SwabSeeder implements Seeder {
                 contactZoneName: subContactZoneName,
               } = subSwabAreaData;
 
-              if (!subContactZoneName) {
-                throw new Error(
-                  'Sub swab area require `contactZoneName` attibute',
-                );
-              }
-
               const savedSubSwabAreaEntity = swabAreaRepository.create({
                 swabAreaName: subSwabAreaName,
                 facility,
-                contactZone: contactZoneMapping[subContactZoneName],
+                contactZone: subContactZoneName
+                  ? contactZoneMapping[subContactZoneName]
+                  : null,
               });
 
               if (existMainSwabArea) {
