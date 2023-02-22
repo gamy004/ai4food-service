@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '~/common/common.module';
 import { ImportTransactionModule } from '~/import-transaction/import-transaction.module';
 import { CleaningHistoryController } from './controllers/cleaning-history.controller';
+import { CleaningProgramController } from './controllers/cleaning-program.controller';
 import { CleaningRoomHistoryController } from './controllers/cleaning-room-history.controller';
 import { CleaningHistoryCleaningValidation } from './entities/cleaning-history-cleaning-validation.entity';
 import { CleaningHistory } from './entities/cleaning-history.entity';
@@ -37,7 +38,11 @@ import { CleaningValidationExistsRule } from './validators/cleaning-validation-e
       CleaningValidation,
     ]),
   ],
-  controllers: [CleaningRoomHistoryController, CleaningHistoryController],
+  controllers: [
+    CleaningProgramController,
+    CleaningRoomHistoryController,
+    CleaningHistoryController,
+  ],
 
   providers: [
     CleaningPlanService,
