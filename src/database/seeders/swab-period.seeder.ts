@@ -14,6 +14,17 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลัง Super Big Cleaning',
         requiredValidateCleaning: true,
+        cleaningValidations: [
+          {
+            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+          },
+          {
+            cleaningValidationName: 'ลงโฟมฆ่าเชื้อตามเวลาที่กำหนด',
+          },
+          {
+            cleaningValidationName: 'ผ่าน steam ฆ่าเชือ',
+          },
+        ],
       },
       {
         swabPeriodName: 'หลังประกอบเครื่อง',
@@ -26,6 +37,14 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลังล้างระหว่างงาน',
         requiredValidateCleaning: true,
+        cleaningValidations: [
+          {
+            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+          },
+          {
+            cleaningValidationName: 'เช็ดแห้งสนิท',
+          },
+        ],
       },
       {
         swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.',
@@ -38,6 +57,14 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลังล้างท้ายกะ',
         requiredValidateCleaning: true,
+        cleaningValidations: [
+          {
+            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+          },
+          {
+            cleaningValidationName: 'เช็ดแห้งสนิท',
+          },
+        ],
       },
     ];
 

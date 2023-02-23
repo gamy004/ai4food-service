@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
+import { SwabPeriod } from '~/swab/entities/swab-period.entity';
 import { CleaningHistoryCleaningValidation } from './cleaning-history-cleaning-validation.entity';
 
 @Entity()
@@ -10,8 +11,14 @@ export class CleaningValidation extends BaseSoftDeletableEntity {
   @Column({ type: 'text', nullable: true })
   cleaningValidationDescription: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   active: boolean;
+
+  @Column({ type: 'varchar', length: 36 })
+  swabPeriodId!: string;
+
+  @ManyToOne(() => SwabPeriod, (entity) => entity.cleaningValidations)
+  swabPeriod: SwabPeriod;
 
   @OneToMany(
     () => CleaningHistoryCleaningValidation,
