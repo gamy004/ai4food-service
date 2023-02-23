@@ -1,10 +1,13 @@
 import { Seeder } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { SwabPeriod } from '~/swab/entities/swab-period.entity';
+import { CleaningValidation } from '~/cleaning/entities/cleaning-validation.entity';
 
 export default class SwabPeriodSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
     const swabPeriodRepository = dataSource.getRepository(SwabPeriod);
+    const cleaningValidationRepository =
+      dataSource.getRepository(CleaningValidation);
 
     let swabPeriods = [
       {
@@ -68,6 +71,50 @@ export default class SwabPeriodSeeder implements Seeder {
       },
     ];
 
-    await swabPeriodRepository.upsert(swabPeriods, ['swabPeriodName']);
+    for (let index = 0; index < swabPeriods.length; index++) {
+      let { cleaningValidations = [], ...otherProps } = swabPeriods[index];
+
+      const swabPeriod = swabPeriodRepository.create(otherProps);
+
+      const existSwabPeriod = await swabPeriodRepository.findOneBy({
+        swabPeriodName: swabPeriod.swabPeriodName,
+      });
+
+      if (existSwabPeriod) {
+        swabPeriod.id = existSwabPeriod.id;
+      }
+
+      if (swabPeriod.requiredValidateCleaning && cleaningValidations.length) {
+        const upsertCleaningValidations = [];
+
+        for (
+          let cleaningValidationIndex = 0;
+          cleaningValidationIndex < cleaningValidations.length;
+          cleaningValidationIndex++
+        ) {
+          const { cleaningValidationName } =
+            cleaningValidations[cleaningValidationIndex];
+
+          let cleaningValidation = cleaningValidationRepository.create({
+            cleaningValidationName,
+          });
+
+          const existCleaningValidation =
+            await cleaningValidationRepository.findOneBy({
+              cleaningValidationName,
+            });
+
+          if (existCleaningValidation) {
+            cleaningValidation.id = existCleaningValidation.id;
+          }
+
+          upsertCleaningValidations.push(cleaningValidation);
+        }
+
+        swabPeriod.cleaningValidations = [...upsertCleaningValidations];
+      }
+
+      await swabPeriodRepository.save(swabPeriod);
+    }
   }
 }

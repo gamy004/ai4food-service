@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { CleaningValidation } from '~/cleaning/entities/cleaning-validation.entity';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
 import { SwabAreaHistory } from './swab-area-history.entity';
@@ -18,8 +18,7 @@ export class SwabPeriod extends BaseSoftDeletableEntity {
   @OneToMany(() => SwabProductHistory, (entity) => entity.swabPeriod)
   swabProductHistories: SwabProductHistory[];
 
-  @OneToMany(() => CleaningValidation, (entity) => entity.swabPeriod, {
-    cascade: ['insert', 'update', 'soft-remove'],
-  })
+  @ManyToMany(() => CleaningValidation, { cascade: ['insert', 'update'] })
+  @JoinTable()
   cleaningValidations: CleaningValidation[];
 }

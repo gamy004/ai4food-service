@@ -35,7 +35,12 @@ export class CleaningHistoryQueryService {
   }
 
   async queryById(id: string): Promise<CleaningHistory> {
-    const query = this.cleaningHistoryService.toQuery({ id });
+    const query = this.cleaningHistoryService
+      .toQuery({ id })
+      .leftJoinAndSelect(
+        'swab_period.cleaningValidations',
+        'cleaning_validation',
+      );
 
     const cleaningHistory = await query.getOneOrFail();
 
