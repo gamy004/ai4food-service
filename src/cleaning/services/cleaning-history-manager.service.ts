@@ -29,6 +29,7 @@ export class CleaningHistoryManagerService {
       cleaningProgramId,
       cleaningHistoryStartedAt,
       cleaningHistoryEndedAt,
+      cleaningType,
       cleaningHistoryValidations = [],
     } = body;
 
@@ -39,6 +40,7 @@ export class CleaningHistoryManagerService {
     cleaningHistory.cleaningHistoryStartedAt = cleaningHistoryStartedAt;
     cleaningHistory.cleaningHistoryEndedAt = cleaningHistoryEndedAt;
     cleaningHistory.cleaningProgram = cleaningProgram;
+    cleaningHistory.cleaningType = cleaningType;
 
     if (recordedUser) {
       cleaningHistory.recordedUser = recordedUser;

@@ -15,6 +15,11 @@ import { CleaningHistoryCleaningValidation } from './cleaning-history-cleaning-v
 import { CleaningProgram } from './cleaning-program.entity';
 import { CleaningValidation } from './cleaning-validation.entity';
 
+export enum CleaningType {
+  DRY = 'dry',
+  WET = 'wet',
+}
+
 @Entity()
 export class CleaningHistory extends BaseSoftDeletableEntity {
   @Column({ type: 'timestamp', nullable: true })
@@ -63,4 +68,7 @@ export class CleaningHistory extends BaseSoftDeletableEntity {
   @ManyToOne(() => SwabRound, (entity) => entity.cleaningHistories)
   @JoinColumn()
   swabRound?: SwabRound;
+
+  @Column({ type: 'enum', enum: CleaningType, nullable: true })
+  cleaningType: CleaningType;
 }

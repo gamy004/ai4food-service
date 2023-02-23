@@ -2,15 +2,15 @@ import { PickType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsUUID,
   Validate,
   ValidateNested,
 } from 'class-validator';
-import { CleaningHistoryCleaningValidation } from '../entities/cleaning-history-cleaning-validation.entity';
+import { CleaningType } from '../entities/cleaning-history.entity';
 import { CleaningHistoryCleaningValidationExistsRule } from '../validators/cleaning-history-cleaning-validation-exists-validator';
-import { CleaningHistoryExistsRule } from '../validators/cleaning-history-exists-validator';
 import { CleaningProgramExistsRule } from '../validators/cleaning-program-exists-validator';
 import { CleaningValidationExistsRule } from '../validators/cleaning-validation-exists-validator';
 import { ConnectCleaningHistoryDto } from './connect-cleaning-history.dto';
@@ -36,6 +36,9 @@ export class BodyUpdateCleaningHistoryDto {
 
   @IsNotEmpty()
   cleaningHistoryEndedAt!: Date;
+
+  @IsEnum(CleaningType)
+  cleaningType!: CleaningType;
 
   @IsOptional()
   @IsNotEmpty()
