@@ -42,6 +42,10 @@ export class CleaningHistoryService extends CrudService<CleaningHistory> {
       .innerJoinAndSelect('swab_area_history.swabPeriod', 'swab_period')
       .innerJoinAndSelect('swab_area_history.swabArea', 'swab_area')
       .innerJoinAndSelect('swab_area_history.swabTest', 'swab_test')
+      .leftJoinAndSelect(
+        'cleaning_history.cleaningHistoryValidations',
+        'cleaning_history_validation',
+      )
       .leftJoinAndSelect('swab_area_history.facilityItem', 'facility_item')
       .leftJoinAndSelect('swab_area.facility', 'facility')
       .where('cleaning_history.id IS NOT NULL');
