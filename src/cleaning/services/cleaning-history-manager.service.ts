@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '~/auth/entities/user.entity';
+import { CollectionTransformer } from '~/common/transformers/collection-transformer';
 import {
   BodyUpdateCleaningHistoryDto,
   ParamUpdateCleaningHistoryDto,
@@ -14,6 +15,7 @@ import { CleaningProgramService } from './cleaning-program.service';
 @Injectable()
 export class CleaningHistoryManagerService {
   constructor(
+    private readonly collectionTransformer: CollectionTransformer,
     private readonly cleaningHistoryService: CleaningHistoryService,
     private readonly cleaningProgramService: CleaningProgramService,
     @InjectRepository(CleaningHistoryCleaningValidation)
@@ -46,35 +48,66 @@ export class CleaningHistoryManagerService {
       cleaningHistory.recordedUser = recordedUser;
     }
 
+    const originalCleaningHistoryValidations =
+      await this.cleaningHistoryCleaningValidationRepository.findBy({
+        cleaningHistoryId: cleaningHistory.id,
+      });
+
+    const updatedCleaningHistoryValidations = [];
+
+    const mapOriginalCleaningHistoryValidations =
+      this.collectionTransformer.toMap(
+        originalCleaningHistoryValidations,
+        'id',
+      );
+
     if (cleaningHistoryValidations.length) {
-      let cleaningHistoryValidations = [];
-
       for (let index = 0; index < cleaningHistoryValidations.length; index++) {
-        const element = cleaningHistoryValidations[index];
+        const cleaningHistoryValidation = cleaningHistoryValidations[index];
 
-        const cleaningHistoryValidationEntity =
+        const updatedCleaningHistoryValidation =
           this.cleaningHistoryCleaningValidationRepository.create({
-            cleaningValidationId: element.cleaningValidationId,
-            pass: element.pass,
+            cleaningValidationId:
+              cleaningHistoryValidation.cleaningValidationId,
+            pass: cleaningHistoryValidation.pass,
           });
 
-        if (element.id) {
+        if (cleaningHistoryValidation.id) {
           const targetCleaningHistoryValidation =
-            await this.cleaningHistoryCleaningValidationRepository.findOneBy({
-              id: element.id,
-            });
+            mapOriginalCleaningHistoryValidations.get(
+              cleaningHistoryValidation.id,
+            );
 
           if (targetCleaningHistoryValidation) {
-            cleaningHistoryValidationEntity.id =
-              targetCleaningHistoryValidation.id;
+            targetCleaningHistoryValidation.pass =
+              cleaningHistoryValidation.pass;
+
+            updatedCleaningHistoryValidations.push(
+              targetCleaningHistoryValidation,
+            );
+
+            mapOriginalCleaningHistoryValidations.delete(
+              cleaningHistoryValidation.id,
+            );
           }
+        } else {
+          updatedCleaningHistoryValidations.push(
+            updatedCleaningHistoryValidation,
+          );
         }
-
-        cleaningHistoryValidations.push(cleaningHistoryValidationEntity);
       }
-
-      cleaningHistory.cleaningHistoryValidations = cleaningHistoryValidations;
     }
+
+    mapOriginalCleaningHistoryValidations.forEach(
+      (originalCleaningHistoryValidation) => {
+        updatedCleaningHistoryValidations.push(
+          originalCleaningHistoryValidation,
+        );
+      },
+    );
+
+    cleaningHistory.cleaningHistoryValidations =
+      updatedCleaningHistoryValidations;
 
     return this.cleaningHistoryService.save(cleaningHistory);
   }

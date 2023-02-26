@@ -60,6 +60,5 @@ export class CleaningHistoryValidationsDto {
   cleaningValidationId?: string;
 
   @IsBoolean()
-  @Transform(({ value }) => value === 'true')
   pass!: boolean;
 }
