@@ -12,7 +12,7 @@ export default class SwabSeeder implements Seeder {
         mainSwabAreas: [
           {
             swabAreaName:
-              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // not collected
+              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter',
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว', contactZoneName: 'Zone 1' },
@@ -153,7 +153,7 @@ export default class SwabSeeder implements Seeder {
           },
           {
             swabAreaName:
-              'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control',
+              'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control', // splitted to individual spots
             contactZoneName: null,
             subSwabAreas: [
               { swabAreaName: 'ขาตั้งเครื่อง', contactZoneName: 'Zone 3' },
@@ -168,7 +168,22 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
+            swabAreaName: 'ขาตั้งเครื่อง',
+            contactZoneName: 'Zone 3',
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'ใต้ฐานขาตั้งเครื่อง',
+            contactZoneName: 'Zone 3',
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'ช่องข้างขาตั้งชุด Control',
+            contactZoneName: 'Zone 3',
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ', // splitted to individual spots
             contactZoneName: null,
             subSwabAreas: [
               {
@@ -177,6 +192,16 @@ export default class SwabSeeder implements Seeder {
               },
               { swabAreaName: 'สายไฟ', contactZoneName: 'Zone 3' },
             ],
+          },
+          {
+            swabAreaName: 'ด้านบนตู้ Control Infeed',
+            contactZoneName: 'Zone 3',
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'สายไฟ',
+            contactZoneName: 'Zone 3',
+            subSwabAreas: [],
           },
           {
             contactZoneName: 'Zone 3',
@@ -224,7 +249,38 @@ export default class SwabSeeder implements Seeder {
           {
             contactZoneName: 'Zone 2',
             swabAreaName: 'เครื่องชั่ง Topping',
-            subSwabAreas: [],
+            subSwabAreas: [
+              {
+                swabAreaName: 'ถาดรองสแตนเลส',
+                contactZoneName: 'Zone 2',
+              },
+              {
+                swabAreaName: 'หน้าจอ control',
+                contactZoneName: 'Zone 2',
+              },
+              {
+                swabAreaName: 'ฐานขาตั้ง',
+                contactZoneName: 'Zone 2',
+              },
+            ],
+          },
+          {
+            ContactZoneName: null,
+            swabAreaName: 'แกน roller , สายพาน PVC. , ปีกสายพานสแตนเลส',
+            subSwabAreas: [
+              {
+                swabAreaName: 'แกน roller',
+                contactZoneName: null,
+              },
+              {
+                swabAreaName: 'สายพาน PVC.',
+                contactZoneName: null,
+              },
+              {
+                swabAreaName: 'ปีกสายพานสแตนเลส',
+                contactZoneName: null,
+              },
+            ],
           },
         ],
       },
@@ -375,16 +431,12 @@ export default class SwabSeeder implements Seeder {
                 contactZoneName: subContactZoneName,
               } = subSwabAreaData;
 
-              if (!subContactZoneName) {
-                throw new Error(
-                  'Sub swab area require `contactZoneName` attibute',
-                );
-              }
-
               const savedSubSwabAreaEntity = swabAreaRepository.create({
                 swabAreaName: subSwabAreaName,
                 facility,
-                contactZone: contactZoneMapping[subContactZoneName],
+                contactZone: subContactZoneName
+                  ? contactZoneMapping[subContactZoneName]
+                  : null,
               });
 
               if (existMainSwabArea) {
