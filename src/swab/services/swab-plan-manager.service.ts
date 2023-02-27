@@ -381,7 +381,7 @@ export class SwabPlanManagerService {
         facilityName: 'ขึ้นรูป',
         mainSwabAreas: [
           {
-            swabAreaName: 'แกน roller , สายพาน PVC. , ปีกสายพานสแตนเลส', // no.16
+            swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส', // no.16
             subSwabAreas: [
               {
                 swabAreaName: 'แกน roller',
@@ -660,6 +660,8 @@ export class SwabPlanManagerService {
         );
         swabAreas.push(fetchSwabAreas);
       }
+
+      console.log(swabAreas);
 
       async function generateSwabAreaHistory(
         swabAreaDate,
@@ -966,13 +968,15 @@ export class SwabPlanManagerService {
             for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
               const swabAreasGroupByFacility = swabAreasAll[index3];
 
+              console.log(swabAreasGroupByFacility);
+
               for (
                 let index = 0;
                 index < swabAreasGroupByFacility.length;
                 index++
               ) {
                 const swabAreas = swabAreasGroupByFacility[index];
-
+                console.log(swabAreas);
                 const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
 
                 if (

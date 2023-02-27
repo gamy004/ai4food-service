@@ -39,6 +39,7 @@ export class CleaningHistoryManagerService {
       id: cleaningProgramId,
     });
 
+    cleaningHistory.cleaningHistoryRecordedAt = new Date();
     cleaningHistory.cleaningHistoryStartedAt = cleaningHistoryStartedAt;
     cleaningHistory.cleaningHistoryEndedAt = cleaningHistoryEndedAt;
     cleaningHistory.cleaningProgram = cleaningProgram;

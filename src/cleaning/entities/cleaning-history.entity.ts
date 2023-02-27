@@ -23,6 +23,9 @@ export enum CleaningType {
 @Entity()
 export class CleaningHistory extends BaseSoftDeletableEntity {
   @Column({ type: 'timestamp', nullable: true })
+  cleaningHistoryRecordedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
   cleaningHistoryStartedAt: Date;
 
   @Column({ type: 'timestamp', nullable: true })
