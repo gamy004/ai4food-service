@@ -19,10 +19,12 @@ import { SwabArea } from '../entities/swab-area.entity';
 import { Shift } from '~/common/enums/shift';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ProductService } from '~/product/services/product.service';
+import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 
 @Injectable()
 export class SwabProductManagerService {
   constructor(
+    private readonly transaction: TransactionDatasource,
     private readonly dateTransformer: DateTransformer,
     protected readonly facilityItemService: FacilityItemService,
     protected readonly productService: ProductService,
@@ -151,21 +153,39 @@ export class SwabProductManagerService {
     const {
       fromDate,
       toDate,
-      roundNumberSwabTest = '',
+      roundNumberSwabTest,
+      skipBigCleaning = false,
+      includeDayShiftFirstDay = false,
+      includeNightShiftFirstDay = true,
+      includeNightShiftLastDay = false,
     } = generateSwabProductPlanDto;
 
-    let swabRound = null;
+    let swabRound = await this.swabRoundService.findOneBy({
+      swabRoundNumber: roundNumberSwabTest,
+    });
 
-    if (roundNumberSwabTest) {
-      swabRound = await this.swabRoundService.findOneBy({
+    if (!swabRound) {
+      swabRound = await this.swabRoundService.create({
         swabRoundNumber: roundNumberSwabTest,
       });
+    }
 
-      if (!swabRound) {
-        swabRound = await this.swabRoundService.create({
-          swabRoundNumber: roundNumberSwabTest,
-        });
-      }
+    const runningNumberKey = `swab-product-history-round-${swabRound.swabRoundNumber}`;
+
+    let latestRunningNumber = 1;
+
+    const latestRunningNumberEntity = await this.runningNumberService.findOneBy(
+      {
+        key: runningNumberKey,
+      },
+    );
+
+    if (!latestRunningNumberEntity) {
+      latestRunningNumber = await this.runningNumberService.generate({
+        key: runningNumberKey,
+      });
+    } else {
+      latestRunningNumber = latestRunningNumberEntity.latestRunningNumber + 1;
     }
 
     const NUMBER_OF_HISTORY_DAY: number = differenceInDays(
@@ -173,15 +193,19 @@ export class SwabProductManagerService {
       new Date(fromDate),
     );
 
-    const bigCleaningSwabPeriodsTemplate = [
-      { swabPeriodName: 'ก่อน Super Big Cleaning' },
-      // { swabPeriodName: "หลัง Super Big Cleaning" }
-    ];
+    let bigCleaningSwabPeriodsTemplate = [];
+    let result_bigClean = [];
 
-    let result_bigClean = await this.swabPeriodService.findBy([
-      { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
-      // { swabPeriodName: "หลัง Super Big Cleaning", deletedAt: null },
-    ]);
+    if (!skipBigCleaning) {
+      bigCleaningSwabPeriodsTemplate = [
+        { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
+        // { swabPeriodName: "หลัง Super Big Cleaning", deletedAt: null },
+      ];
+
+      result_bigClean = await this.swabPeriodService.findBy(
+        bigCleaningSwabPeriodsTemplate,
+      );
+    }
 
     const bigCleaningSwabPeriods = result_bigClean.reduce((acc, obj) => {
       let key = obj['swabPeriodName'];
@@ -193,22 +217,17 @@ export class SwabProductManagerService {
     }, {});
 
     const generalSwabPeriodsTemplate = [
-      { swabPeriodName: 'หลังประกอบเครื่อง' },
-      { swabPeriodName: 'ก่อนล้างระหว่างงาน' },
-      // { swabPeriodName: "หลังล้างระหว่างงาน" },
-      // { swabPeriodName: "เดินไลน์หลังพัก 4 ชม." },
-      { swabPeriodName: 'ก่อนล้างท้ายกะ' },
-      // { swabPeriodName: "หลังล้างท้ายกะ" }
-    ];
-
-    let result_general = await this.swabPeriodService.findBy([
       { swabPeriodName: 'หลังประกอบเครื่อง', deletedAt: null },
       { swabPeriodName: 'ก่อนล้างระหว่างงาน', deletedAt: null },
       // { swabPeriodName: "หลังล้างระหว่างงาน", deletedAt: null },
       // { swabPeriodName: "เดินไลน์หลังพัก 4 ชม.", deletedAt: null },
       { swabPeriodName: 'ก่อนล้างท้ายกะ', deletedAt: null },
-      // { swabPeriodName: "หลังล้างท้ายกะ", deletedAt: null },
-    ]);
+      // { swabPeriodName: "หลังล้างท้ายกะ", deletedAt: null }
+    ];
+
+    let result_general = await this.swabPeriodService.findBy(
+      generalSwabPeriodsTemplate,
+    );
 
     const generalSwabPeriods = result_general.reduce((acc, obj) => {
       let key = obj['swabPeriodName'];
@@ -219,30 +238,30 @@ export class SwabProductManagerService {
       return acc;
     }, {});
 
-    const generalProductTemplate = [
-      { productName: 'ข้าวไข่เจียวกุ้ง' },
-      { productName: 'ปลาผัดพริก' },
-      { productName: 'กะเพราไก่' },
-      { productName: 'ข้าวพะแนง' },
-      { productName: 'กะเพราหมู' },
-    ];
+    // const generalProductTemplate = [
+    //   { productName: 'ข้าวไข่เจียวกุ้ง' },
+    //   { productName: 'ปลาผัดพริก' },
+    //   { productName: 'กะเพราไก่' },
+    //   { productName: 'ข้าวพะแนง' },
+    //   { productName: 'กะเพราหมู' },
+    // ];
 
-    let result_product = await this.productService.findBy([
-      { productName: 'ข้าวไข่เจียวกุ้ง', deletedAt: null },
-      { productName: 'ปลาผัดพริก', deletedAt: null },
-      { productName: 'กะเพราไก่', deletedAt: null },
-      { productName: 'ข้าวพะแนง', deletedAt: null },
-      { productName: 'กะเพราหมู', deletedAt: null },
-    ]);
+    // let result_product = await this.productService.findBy([
+    //   { productName: 'ข้าวไข่เจียวกุ้ง', deletedAt: null },
+    //   { productName: 'ปลาผัดพริก', deletedAt: null },
+    //   { productName: 'กะเพราไก่', deletedAt: null },
+    //   { productName: 'ข้าวพะแนง', deletedAt: null },
+    //   { productName: 'กะเพราหมู', deletedAt: null },
+    // ]);
 
-    const generalProduct = result_product.reduce((acc, obj) => {
-      let key = obj['productName'];
-      if (!acc[key]) {
-        acc[key] = {};
-      }
-      acc[key] = obj;
-      return acc;
-    }, {});
+    // const generalProduct = result_product.reduce((acc, obj) => {
+    //   let key = obj['productName'];
+    //   if (!acc[key]) {
+    //     acc[key] = {};
+    //   }
+    //   acc[key] = obj;
+    //   return acc;
+    // }, {});
 
     const facilitysTemplate = [
       {
@@ -317,136 +336,155 @@ export class SwabProductManagerService {
 
     const swabProductHistories = [];
     const SWAB_TEST_CODE_PREFIX = 'FG';
-    let SWAB_TEST_START_NUMBER_PREFIX = 1;
+    let SWAB_TEST_START_NUMBER_PREFIX = latestRunningNumber;
 
-    function generateSwabProductHistory(
-      swabProductDate,
-      swabPeriod,
-      shift = null,
-      createSwabTest = true,
-    ) {
-      const historyData = {
-        swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
-        swabProductSwabedAt: null,
-        swabProductNote: null,
-        product: null,
+    this.transaction.execute(async () => {
+      function generateSwabProductHistory(
+        swabProductDate,
         swabPeriod,
-        swabTest: null,
-        facilityItem: null,
-        shift,
-        productLot: null,
-        recordedUser: null,
-        swabRound: null,
-      };
+        shift = null,
+        createSwabTest = true,
+      ) {
+        const historyData = {
+          swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
+          swabProductSwabedAt: null,
+          swabProductNote: null,
+          product: null,
+          swabPeriod,
+          swabTest: null,
+          facilityItem: null,
+          shift,
+          productLot: null,
+          recordedUser: null,
+          swabRound: null,
+        };
 
-      if (createSwabTest) {
-        const swabTestData = SwabTest.create({
-          swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${
-            roundNumberSwabTest ? '/' + roundNumberSwabTest : ''
-          }`,
-          swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-        });
+        if (createSwabTest) {
+          const swabTestData = SwabTest.create({
+            swabTestCode: `${
+              roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+            }${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}`,
+            swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+          });
+
+          if (swabRound) {
+            swabTestData.swabRound = swabRound;
+          }
+
+          historyData.swabTest = swabTestData;
+
+          SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+        }
 
         if (swabRound) {
-          swabTestData.swabRound = swabRound;
+          historyData.swabRound = swabRound;
         }
 
-        historyData.swabTest = swabTestData;
+        const swabProductHistory = SwabProductHistory.create(historyData);
 
-        SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+        swabProductHistories.push(swabProductHistory);
       }
 
-      if (swabRound) {
-        historyData.swabRound = swabRound;
-      }
+      function generateHistory(currentDate, dateIndex) {
+        let shiftKeys = Object.keys(Shift);
 
-      const swabProductHistory = SwabProductHistory.create(historyData);
-
-      swabProductHistories.push(swabProductHistory);
-    }
-
-    function generateHistory(currentDate, dateIndex) {
-      let shiftKeys = Object.keys(Shift);
-
-      if (dateIndex === 0) {
-        for (
-          let index = 0;
-          index < bigCleaningSwabPeriodsTemplate.length;
-          index++
-        ) {
-          const bigCleaningSwabPeriod =
-            bigCleaningSwabPeriods[
-              bigCleaningSwabPeriodsTemplate[index].swabPeriodName
-            ];
-
-          generateSwabProductHistory(
-            currentDate,
-            bigCleaningSwabPeriod,
-            'day',
-            true,
-          );
-        }
-
-        shiftKeys = [Object.keys(Shift)[1]];
-      }
-
-      if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
-        shiftKeys = [Object.keys(Shift)[0]];
-      }
-
-      for (let index2 = 0; index2 < shiftKeys.length; index2++) {
-        const shiftKey = shiftKeys[index2];
-
-        for (
-          let index = 0;
-          index < generalSwabPeriodsTemplate.length;
-          index++
-        ) {
-          const swabPeriod =
-            generalSwabPeriods[
-              generalSwabPeriodsTemplate[index].swabPeriodName
-            ];
-
-          for (let index3 = 0; index3 < facilitysTemplate.length; index3++) {
-            const { swabPeriodMapping = [] } = facilitysTemplate[index3];
-
-            if (
-              swabPeriodMapping.length &&
-              !swabPeriodMapping.includes(swabPeriod.swabPeriodName)
-            ) {
-              continue;
-            }
+        if (dateIndex === 0) {
+          for (
+            let index = 0;
+            index < bigCleaningSwabPeriodsTemplate.length;
+            index++
+          ) {
+            const bigCleaningSwabPeriod =
+              bigCleaningSwabPeriods[
+                bigCleaningSwabPeriodsTemplate[index].swabPeriodName
+              ];
 
             generateSwabProductHistory(
               currentDate,
-              swabPeriod,
-              Shift[shiftKey],
+              bigCleaningSwabPeriod,
+              'day',
               true,
             );
           }
+
+          if (!includeDayShiftFirstDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'DAY');
+          }
+
+          if (!includeNightShiftFirstDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+          }
         }
+
+        if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
+          if (!includeNightShiftLastDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+          }
+        }
+
+        for (let index2 = 0; index2 < shiftKeys.length; index2++) {
+          const shiftKey = shiftKeys[index2];
+
+          for (
+            let index = 0;
+            index < generalSwabPeriodsTemplate.length;
+            index++
+          ) {
+            const swabPeriod =
+              generalSwabPeriods[
+                generalSwabPeriodsTemplate[index].swabPeriodName
+              ];
+
+            for (let index3 = 0; index3 < facilitysTemplate.length; index3++) {
+              const { swabPeriodMapping = [] } = facilitysTemplate[index3];
+
+              if (
+                swabPeriodMapping.length &&
+                !swabPeriodMapping.includes(swabPeriod.swabPeriodName)
+              ) {
+                continue;
+              }
+
+              generateSwabProductHistory(
+                currentDate,
+                swabPeriod,
+                Shift[shiftKey],
+                true,
+              );
+            }
+          }
+        }
+
+        // special case of final day (latest swab round 3 doesn't have this case anymore)
+        // if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
+        //   generateSwabProductHistory(
+        //     currentDate,
+        //     generalSwabPeriods['หลังประกอบเครื่อง'],
+        //     'night',
+        //     true,
+        //   );
+        // }
       }
 
-      // special case of final day
-      if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
-        generateSwabProductHistory(
-          currentDate,
-          generalSwabPeriods['หลังประกอบเครื่อง'],
-          'night',
-          true,
+      const currentDate = new Date(fromDate);
+
+      for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
+        generateHistory(currentDate, dateIndex);
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      await this.swabProductHistoryRepository.save(swabProductHistories, {
+        transaction: false,
+      });
+
+      if (SWAB_TEST_START_NUMBER_PREFIX > latestRunningNumber) {
+        await this.runningNumberService.update(
+          { key: runningNumberKey },
+          { latestRunningNumber: SWAB_TEST_START_NUMBER_PREFIX - 1 },
         );
       }
-    }
-
-    const currentDate = new Date(fromDate);
-
-    for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
-      generateHistory(currentDate, dateIndex);
-
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    await this.swabProductHistoryRepository.save(swabProductHistories);
+    });
 
     return;
   }

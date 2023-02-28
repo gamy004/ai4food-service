@@ -10,6 +10,7 @@ import { RunningNumberService } from './services/running-number.service';
 import { RunningNumberController } from './controllers/running-number.controller';
 import { RunningNumber } from './entities/running-number.entity';
 import { Unique } from './validators/unique-validator';
+import { CollectionTransformer } from './transformers/collection-transformer';
 @Module({
   imports: [TypeOrmModule.forFeature([File, RunningNumber])],
 
@@ -22,6 +23,7 @@ import { Unique } from './validators/unique-validator';
     TransactionDatasource,
     Unique,
     DateTransformer,
+    CollectionTransformer,
   ],
 
   exports: [
@@ -31,6 +33,7 @@ import { Unique } from './validators/unique-validator';
     RunningNumberService,
     TransactionDatasource,
     DateTransformer,
+    CollectionTransformer,
   ],
 })
 export class CommonModule {}
