@@ -271,6 +271,116 @@ export class SwabPlanManagerService {
         facilityName: 'ขึ้นรูป',
         mainSwabAreas: [
           {
+            swabAreaName: 'ถาดรองเศษใต้ Portion', // no.1
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName:
+              'คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว', //no.2
+            subSwabAreas: [
+              { swabAreaName: 'คานตู้ control หน้าเครื่อง Portion' },
+              { swabAreaName: 'Cover ด้านบนเครื่อง' },
+              { swabAreaName: 'ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว' },
+            ],
+          },
+          {
+            swabAreaName: 'สายพานลำเลียงถาด', //no.3
+            subSwabAreas: [
+              { swabAreaName: 'ตัวแผ่น' },
+              { swabAreaName: 'ตัวกั้น' },
+            ],
+          },
+          {
+            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน', // no.4
+            subSwabAreas: [
+              { swabAreaName: 'เลื่อนสายพาน' },
+              { swabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน' },
+            ],
+          },
+          // {
+          //   swabAreaName:
+          //     'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control', // แยกจุดย่อยมาเป็นจุดหลักตั้งแต่ 3 มี.ค.
+          //   subSwabAreas: [
+          //     { swabAreaName: 'ขาตั้งเครื่อง' },
+          //     { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง' },
+          //     { swabAreaName: 'ช่องข้างขาตั้งชุด Control' },
+          //   ],
+          // },
+          { swabAreaName: 'ขาตั้งเครื่อง', subSwabAreas: [] }, // no.5
+          { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง', subSwabAreas: [] }, // no.6
+          { swabAreaName: 'ช่องข้างขาตั้งชุด Control', subSwabAreas: [] }, //no.7
+          // {
+          //   swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
+          //   subSwabAreas: [
+          //     { swabAreaName: 'ด้านบนตู้ Control Infeed' },
+          //     { swabAreaName: 'สายไฟ' },
+          //   ],
+          // },
+          { swabAreaName: 'ด้านบนตู้ Control Infeed', subSwabAreas: [] }, //no.8
+          { swabAreaName: 'สายไฟ', subSwabAreas: [] }, //no.9
+          {
+            swabAreaName: 'พื้นใต้เครื่อง Portion', // no.10
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'รางระบายน้ำห้อง', // no.11
+            subSwabAreas: [
+              { swabAreaName: 'กลางราง' },
+              { swabAreaName: 'ขอบรางซ้าย' },
+              { swabAreaName: 'ขอบรางขวา' },
+              { swabAreaName: 'Main Hole' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ตู้ Vac.',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'พื้นและ Slope', // no.12
+            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+          },
+        ],
+      },
+      {
+        facilityName: 'ตู้ Steam',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'พื้นและ Slope', // no.13
+            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+          },
+        ],
+      },
+      {
+        facilityName: 'รถเข็นกะบะ',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'ล้อรถเข็นกะบะ', // no.14
+            subSwabAreas: [
+              { swabAreaName: 'กันชน' },
+              { swabAreaName: 'ระหว่างรอยต่อ' },
+              { swabAreaName: 'โครงล้อ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'กล่องเครื่องมือวิศวะ',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'กล่องเครื่องมือวิศวะ', // no.15
+            subSwabAreas: [
+              { swabAreaName: 'ฝากล่อง' },
+              { swabAreaName: 'ขอบมุม' },
+              { swabAreaName: 'ประแจ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ขึ้นรูป',
+        mainSwabAreas: [
+          {
             swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส', // no.16
             subSwabAreas: [
               {
@@ -449,16 +559,8 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'พื้นและ Slope',
-            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
-          },
-        ],
-      },
-      {
-        facilityName: 'รถเข็นกะบะ',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'ล้อรถเข็นกะบะ',
+            swabAreaName:
+              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // no.31
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว' },
               { swabAreaName: 'สายพานลำเลียง' },
@@ -471,48 +573,6 @@ export class SwabPlanManagerService {
               'หลัง Super Big Cleaning',
             ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
             shiftMapping: ['day'],
-          },
-        ],
-      },
-      {
-        facilityName: 'ขึ้นรูป',
-        mainSwabAreas: [
-          {
-            swabAreaName:
-              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
-            subSwabAreas: [
-              { swabAreaName: 'ชุดเติมข้าว' },
-              { swabAreaName: 'สายพานลำเลียง' },
-              { swabAreaName: 'แกนซุย' },
-              { swabAreaName: 'ชุด Hopper' },
-              { swabAreaName: 'Shutter' },
-            ],
-          },
-        ],
-      },
-      {
-        facilityName: 'กล่องเครื่องมือวิศวะ',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'กล่องเครื่องมือวิศวะ', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
-            subSwabAreas: [
-              { swabAreaName: 'ฝากล่อง' },
-              { swabAreaName: 'ขอบมุม' },
-              { swabAreaName: 'ประแจ' },
-            ],
-          },
-        ],
-      },
-      {
-        facilityName: 'ขึ้นรูป',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส', // เพิ่มตรวจเริ่มตั้งแต่ mar 2023
-            subSwabAreas: [
-              { swabAreaName: 'แกน roller' },
-              { swabAreaName: 'สายพาน PVC.' },
-              { swabAreaName: 'ปีกสายพานสแตนเลส' },
-            ],
           },
         ],
       },
