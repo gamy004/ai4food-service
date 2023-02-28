@@ -282,6 +282,15 @@ export default class SwabSeeder implements Seeder {
               },
             ],
           },
+          {
+            swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'แกน roller', contactZoneName: null },
+              { swabAreaName: 'สายพาน PVC.', contactZoneName: null },
+              { swabAreaName: 'ปีกสายพานสแตนเลส', contactZoneName: null },
+            ],
+          },
         ],
       },
       {
