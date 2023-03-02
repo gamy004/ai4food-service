@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { CleaningPlan } from '~/cleaning/entities/cleaning-plan.entity';
 import { CleaningRoomHistory } from '~/cleaning/entities/cleaning-room-history.entity';
+import { SwabTest } from '~/swab/entities/swab-test.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
 import { ProductSchedule } from '../../product/entities/product-schedule.entity';
@@ -14,6 +15,7 @@ export enum ImportType {
   PRODUCT_SCHEDULE = 'product_schedule',
   CLEANING_PLAN = 'cleaning_plan',
   CLEANING_ROOM_HISTORY = 'cleaning_room_history',
+  SWAB_TEST = 'swab_test',
 }
 
 export enum ImportStatus {
@@ -57,4 +59,7 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
 
   @OneToMany(() => CleaningRoomHistory, (entity) => entity.importTransaction)
   cleaningRoomHistories: CleaningRoomHistory[];
+
+  @OneToMany(() => SwabTest, (entity) => entity.importTransaction)
+  swabTests: SwabTest[];
 }

@@ -4,6 +4,8 @@ import {
   Body,
   Param,
   Put,
+  Post,
+  Inject,
 } from '@nestjs/common';
 import { SwabLabManagerService } from '../services/swab-lab-manager.service';
 import {
@@ -15,11 +17,32 @@ import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { User } from '~/auth/entities/user.entity';
 import { CommandUpdateSwabTestBacteriaSpecieDto } from '../dto/command-update-swab-test-bacteria-specie.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ImportSwabTestDto } from '../dto/import-swab-test.dto';
+import { SwabTest } from '../entities/swab-test.entity';
+import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
+import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
 
 @Controller('swab-test')
 @ApiTags('Swab')
 export class SwabTestController {
-  constructor(private readonly swabLabManagerService: SwabLabManagerService) {}
+  constructor(
+    private readonly importTransactionService: ImportTransactionService,
+    private readonly swabLabManagerService: SwabLabManagerService,
+    @Inject('DataCollectorImporterInterface<SwabTest>')
+    private readonly swabTestImporter: DataCollectorImporterInterface<SwabTest>,
+  ) {}
+
+  @Post('import')
+  async import(@Body() importSwabTestDto: ImportSwabTestDto): Promise<void> {
+    const importTransaction = await this.importTransactionService.findOneBy(
+      importSwabTestDto.importTransaction,
+    );
+
+    return this.swabTestImporter.import(
+      importTransaction,
+      SwabTest.create<SwabTest>(importSwabTestDto.records),
+    );
+  }
 
   @Authenticated()
   @Put(':id')

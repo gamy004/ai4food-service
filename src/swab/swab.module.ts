@@ -42,9 +42,12 @@ import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaHistoryRelationManagerService } from './services/swab-area-history-relation-manager.service';
+import { ImportTransactionModule } from '~/import-transaction/import-transaction.module';
+import { SwabTestImporter } from './services/swab-test.importer';
 
 @Module({
   imports: [
+    ImportTransactionModule,
     TypeOrmModule.forFeature([
       SwabAreaHistory,
       SwabAreaHistoryImage,
@@ -93,6 +96,10 @@ import { SwabAreaHistoryRelationManagerService } from './services/swab-area-hist
     SwabProductQueryService,
     SwabProductHistoryService,
     SwabProductManagerService,
+    {
+      provide: 'DataCollectorImporterInterface<SwabTest>',
+      useClass: SwabTestImporter,
+    },
   ],
 })
 export class SwabModule {}

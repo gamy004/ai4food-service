@@ -6,6 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
 } from 'typeorm';
+import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableIncrementEntity } from '../../common/entities/base-softdeletable-increment.entity';
 import { BacteriaSpecie } from '../../lab/entities/bacteria-specie.entity';
@@ -86,4 +87,10 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
   //         swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${this.id}`
   //     });
   // }
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  importTransactionId?: string;
+
+  @ManyToOne(() => ImportTransaction, (entity) => entity.swabTests)
+  importTransaction?: ImportTransaction;
 }
