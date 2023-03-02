@@ -2,7 +2,7 @@ import { differenceInDays, parse } from 'date-fns';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns-tz';
-import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { Shift } from '~/common/enums/shift';
 import { BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { UpsertSwabAreaHistoryImageDto } from '../dto/upsert-swab-area-history-image.dto';
@@ -612,6 +612,7 @@ export class SwabPlanManagerService {
           mainSwabAreas.map(async (mainSwabArea) => {
             const swabArea = await this.swabAreaRepository.findOne({
               where: {
+                mainSwabAreaId: IsNull(),
                 swabAreaName: mainSwabArea.swabAreaName,
                 facility: {
                   facilityName,
@@ -658,6 +659,7 @@ export class SwabPlanManagerService {
             }
           }),
         );
+
         swabAreas.push(fetchSwabAreas);
       }
 
