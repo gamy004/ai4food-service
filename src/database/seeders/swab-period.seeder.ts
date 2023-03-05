@@ -17,17 +17,17 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลัง Super Big Cleaning',
         requiredValidateCleaning: true,
-        cleaningValidations: [
-          {
-            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
-          },
-          {
-            cleaningValidationName: 'ลงโฟมฆ่าเชื้อตามเวลาที่กำหนด',
-          },
-          {
-            cleaningValidationName: 'ผ่าน steam ฆ่าเชือ',
-          },
-        ],
+        // cleaningValidations: [
+        //   {
+        //     cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+        //   },
+        //   {
+        //     cleaningValidationName: 'ลงโฟมฆ่าเชื้อตามเวลาที่กำหนด',
+        //   },
+        //   {
+        //     cleaningValidationName: 'ผ่าน steam ฆ่าเชือ',
+        //   },
+        // ],
       },
       {
         swabPeriodName: 'หลังประกอบเครื่อง',
@@ -40,14 +40,14 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลังล้างระหว่างงาน',
         requiredValidateCleaning: true,
-        cleaningValidations: [
-          {
-            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
-          },
-          {
-            cleaningValidationName: 'เช็ดแห้งสนิท',
-          },
-        ],
+        // cleaningValidations: [
+        //   {
+        //     cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+        //   },
+        //   {
+        //     cleaningValidationName: 'เช็ดแห้งสนิท',
+        //   },
+        // ],
       },
       {
         swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.',
@@ -60,21 +60,21 @@ export default class SwabPeriodSeeder implements Seeder {
       {
         swabPeriodName: 'หลังล้างท้ายกะ',
         requiredValidateCleaning: true,
-        cleaningValidations: [
-          {
-            cleaningValidationName: 'เคลียร์เศษอาหารหมด',
-          },
-          {
-            cleaningValidationName: 'เช็ดแห้งสนิท',
-          },
-        ],
+        // cleaningValidations: [
+        //   {
+        //     cleaningValidationName: 'เคลียร์เศษอาหารหมด',
+        //   },
+        //   {
+        //     cleaningValidationName: 'เช็ดแห้งสนิท',
+        //   },
+        // ],
       },
     ];
 
     for (let index = 0; index < swabPeriods.length; index++) {
-      let { cleaningValidations = [], ...otherProps } = swabPeriods[index];
+      let props = swabPeriods[index];
 
-      const swabPeriod = swabPeriodRepository.create(otherProps);
+      const swabPeriod = swabPeriodRepository.create(props);
 
       const existSwabPeriod = await swabPeriodRepository.findOneBy({
         swabPeriodName: swabPeriod.swabPeriodName,
@@ -84,35 +84,35 @@ export default class SwabPeriodSeeder implements Seeder {
         swabPeriod.id = existSwabPeriod.id;
       }
 
-      if (swabPeriod.requiredValidateCleaning && cleaningValidations.length) {
-        const upsertCleaningValidations = [];
+      // if (swabPeriod.requiredValidateCleaning && cleaningValidations.length) {
+      //   const upsertCleaningValidations = [];
 
-        for (
-          let cleaningValidationIndex = 0;
-          cleaningValidationIndex < cleaningValidations.length;
-          cleaningValidationIndex++
-        ) {
-          const { cleaningValidationName } =
-            cleaningValidations[cleaningValidationIndex];
+      //   for (
+      //     let cleaningValidationIndex = 0;
+      //     cleaningValidationIndex < cleaningValidations.length;
+      //     cleaningValidationIndex++
+      //   ) {
+      //     const { cleaningValidationName } =
+      //       cleaningValidations[cleaningValidationIndex];
 
-          let cleaningValidation = cleaningValidationRepository.create({
-            cleaningValidationName,
-          });
+      //     let cleaningValidation = cleaningValidationRepository.create({
+      //       cleaningValidationName,
+      //     });
 
-          const existCleaningValidation =
-            await cleaningValidationRepository.findOneBy({
-              cleaningValidationName,
-            });
+      //     const existCleaningValidation =
+      //       await cleaningValidationRepository.findOneBy({
+      //         cleaningValidationName,
+      //       });
 
-          if (existCleaningValidation) {
-            cleaningValidation.id = existCleaningValidation.id;
-          }
+      //     if (existCleaningValidation) {
+      //       cleaningValidation.id = existCleaningValidation.id;
+      //     }
 
-          upsertCleaningValidations.push(cleaningValidation);
-        }
+      //     upsertCleaningValidations.push(cleaningValidation);
+      //   }
 
-        swabPeriod.cleaningValidations = [...upsertCleaningValidations];
-      }
+      //   swabPeriod.cleaningValidations = [...upsertCleaningValidations];
+      // }
 
       await swabPeriodRepository.save(swabPeriod);
     }
