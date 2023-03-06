@@ -50,6 +50,9 @@ import { CleaningHistoryService } from '~/cleaning/services/cleaning-history.ser
 import { CleaningProgram } from '~/cleaning/entities/cleaning-program.entity';
 import { CleaningHistoryCleaningValidation } from '~/cleaning/entities/cleaning-history-cleaning-validation.entity';
 import { SwabCleaningValidation } from './entities/swab-cleaning-validation.entity';
+import { SwabCleaningValidationController } from './controllers/swab-cleaning-validation.controller';
+import { SwabCleaningValidationService } from './services/swab-cleaning-validation.service';
+import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
 
 @Module({
   imports: [
@@ -82,6 +85,7 @@ import { SwabCleaningValidation } from './entities/swab-cleaning-validation.enti
     SwabEnvironmentController,
     SwabTestController,
     SwabProductHistoryController,
+    SwabCleaningValidationController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -106,6 +110,8 @@ import { SwabCleaningValidation } from './entities/swab-cleaning-validation.enti
     SwabProductQueryService,
     SwabProductHistoryService,
     SwabProductManagerService,
+    SwabCleaningValidationService,
+    SwabCleaningValidationQueryService,
   ],
 })
 export class SwabModule {}
