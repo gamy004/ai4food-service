@@ -36,8 +36,9 @@ export class SwabTestController {
     private readonly swabTestImporter: DataCollectorImporterInterface<SwabTest>,
   ) {}
 
+  @Authenticated()
   @Post('extact-xlsx')
-  async extactXlsx(): Promise<void> {
+  async extactXlsx(@AuthUser() user: User): Promise<void> {
     var workbook = XLSX.readFile('RunReport_211165-1.xls', {});
     const { Sheets = {} } = workbook;
     const bacteriaData = await this.bacteriaService.find({
@@ -117,6 +118,10 @@ export class SwabTestController {
 
           if (swabTestCode !== undefined) {
             records.push({
+              recordedUser: user,
+              bacteriaRecordedUser: user,
+              swabTestRecordedAt: new Date(),
+              bacteriaRecordedAt: new Date(),
               bacteria,
               swabTestCode,
             });
@@ -134,6 +139,10 @@ export class SwabTestController {
     const importTransaction = await this.importTransactionService.findOneBy(
       importSwabTestDto.importTransaction,
     );
+
+    if (importSwabTestDto.timezone) {
+      this.swabTestImporter.setTimezone(importSwabTestDto.timezone);
+    }
 
     return this.swabTestImporter.import(
       importTransaction,
