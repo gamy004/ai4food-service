@@ -17,18 +17,23 @@ export class SwabCleaningValidation extends TypeOrmBaseEntity {
   @ManyToOne(
     () => CleaningValidation,
     (entity) => entity.swabCleaningValidations,
+    { onDelete: 'CASCADE' },
   )
   cleaningValidation!: CleaningValidation;
 
   @PrimaryColumn({ type: 'varchar', length: 36 })
   swabPeriodId!: string;
 
-  @ManyToOne(() => SwabPeriod, (entity) => entity.swabCleaningValidations)
+  @ManyToOne(() => SwabPeriod, (entity) => entity.swabCleaningValidations, {
+    onDelete: 'CASCADE',
+  })
   swabPeriod!: SwabPeriod;
 
   @PrimaryColumn({ type: 'varchar', length: 36 })
   swabAreaId!: string;
 
-  @ManyToOne(() => SwabArea, (entity) => entity.swabCleaningValidations)
+  @ManyToOne(() => SwabArea, (entity) => entity.swabCleaningValidations, {
+    onDelete: 'CASCADE',
+  })
   swabArea!: SwabArea;
 }
