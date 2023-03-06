@@ -774,6 +774,10 @@ export class SwabPlanQueryService {
         'swab_area_history.cleaningHistory',
         'swab_area_history_cleaning_history',
       )
+      .leftJoinAndSelect(
+        'swab_area_history_cleaning_history.cleaningHistoryValidations',
+        'swab_area_history_cleaning_history_validation',
+      )
       .getOne();
 
     // const where: FindOptionsWhere<SwabAreaHistory> = {
