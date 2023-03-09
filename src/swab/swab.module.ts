@@ -53,6 +53,7 @@ import { SwabCleaningValidation } from './entities/swab-cleaning-validation.enti
 import { SwabCleaningValidationController } from './controllers/swab-cleaning-validation.controller';
 import { SwabCleaningValidationService } from './services/swab-cleaning-validation.service';
 import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
+import { SwabCleaningValidationSeedService } from './services/swab-cleaning-validation-seed.service';
 
 @Module({
   imports: [
@@ -112,6 +113,7 @@ import { SwabCleaningValidationQueryService } from './services/swab-cleaning-val
     SwabProductManagerService,
     SwabCleaningValidationService,
     SwabCleaningValidationQueryService,
+    SwabCleaningValidationSeedService,
   ],
 })
 export class SwabModule {}

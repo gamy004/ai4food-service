@@ -5,6 +5,7 @@ import { ImportTransactionModule } from '~/import-transaction/import-transaction
 import { CleaningHistoryController } from './controllers/cleaning-history.controller';
 import { CleaningProgramController } from './controllers/cleaning-program.controller';
 import { CleaningRoomHistoryController } from './controllers/cleaning-room-history.controller';
+import { CleaningValidationController } from './controllers/cleaning-validation.controller';
 import { CleaningHistoryCleaningValidation } from './entities/cleaning-history-cleaning-validation.entity';
 import { CleaningHistory } from './entities/cleaning-history.entity';
 import { CleaningPlan } from './entities/cleaning-plan.entity';
@@ -18,6 +19,7 @@ import { CleaningPlanService } from './services/cleaning-plan.service';
 import { CleaningProgramService } from './services/cleaning-program.service';
 import { CleaningRoomHistoryImporter } from './services/cleaning-room-history.importer';
 import { CleaningRoomHistoryService } from './services/cleaning-room-history.service';
+import { CleaningValidationService } from './services/cleaning-validation.service';
 import { CleaningHistoryCleaningValidationExistsRule } from './validators/cleaning-history-cleaning-validation-exists-validator';
 import { CleaningHistoryExistsRule } from './validators/cleaning-history-exists-validator';
 import { CleaningPlanExistsRule } from './validators/cleaning-plan-exists-validator';
@@ -42,6 +44,7 @@ import { CleaningValidationExistsRule } from './validators/cleaning-validation-e
     CleaningProgramController,
     CleaningRoomHistoryController,
     CleaningHistoryController,
+    CleaningValidationController,
   ],
 
   providers: [
@@ -49,6 +52,7 @@ import { CleaningValidationExistsRule } from './validators/cleaning-validation-e
     CleaningProgramService,
     CleaningRoomHistoryService,
     CleaningHistoryService,
+    CleaningValidationService,
     CleaningHistoryManagerService,
     CleaningHistoryQueryService,
     CleaningPlanExistsRule,
@@ -67,6 +71,7 @@ import { CleaningValidationExistsRule } from './validators/cleaning-validation-e
     CleaningProgramService,
     CleaningRoomHistoryService,
     CleaningHistoryService,
+    CleaningValidationService,
     CleaningHistoryManagerService,
     CleaningHistoryQueryService,
     CleaningPlanExistsRule,

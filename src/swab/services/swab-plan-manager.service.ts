@@ -685,59 +685,51 @@ export class SwabPlanManagerService {
           shift,
         });
 
-        let historyData = await this.swabAreaHistoryRepository.findOne({
+        let swabAreaHistory = await this.swabAreaHistoryService.findOne({
           where: whereSwabAreaHistory,
         });
 
-        if (!historyData) {
-          historyData = SwabAreaHistory.create({
-            swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
-            swabPeriod,
-            swabArea,
-            shift,
-            swabAreaSwabedAt: null,
-            swabAreaTemperature: null,
-            swabAreaHumidity: null,
-            swabAreaAtp: null,
-            swabTest: null,
-            swabRound: null,
-            productLot: '',
-            cleaningHistory: null,
-          });
+        if (!swabAreaHistory) {
+          swabAreaHistory = await this.swabAreaHistoryService.save(
+            this.swabAreaHistoryService.make({
+              swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
+              swabPeriod,
+              swabArea,
+              shift,
+              swabRound,
+              swabAreaSwabedAt: null,
+              swabAreaTemperature: null,
+              swabAreaHumidity: null,
+              swabAreaAtp: null,
+              swabTest: null,
+              productLot: '',
+              cleaningHistory: null,
+            }),
+          );
         }
 
         if (createSwabTest) {
-          let swabTestData;
+          let swabTest;
 
-          if (historyData.swabTestId) {
-            swabTestData = await this.swabTestService.findOneBy({
-              id: historyData.swabTestId,
+          if (swabAreaHistory.swabTestId) {
+            swabTest = await this.swabTestService.findOneBy({
+              id: swabAreaHistory.swabTestId,
             });
           }
 
-          if (!swabTestData) {
-            swabTestData = SwabTest.create({
-              // swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${
-              //   roundNumberSwabTest ? '/' + roundNumberSwabTest : ''
-              // }`,
-              swabTestCode: `${
-                roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
-              }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
-              swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-            });
+          if (!swabTest) {
+            swabTest = await this.swabTestService.save(
+              this.swabTestService.make({
+                swabTestCode: `${
+                  roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+                }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+                swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+                swabRound,
+              }),
+            );
 
             SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
-
-            if (swabRound) {
-              swabTestData.swabRound = swabRound;
-            }
           }
-
-          historyData.swabTest = swabTestData;
-        }
-
-        if (swabRound) {
-          historyData.swabRound = swabRound;
         }
 
         const swabCleaningValidations =
@@ -747,26 +739,19 @@ export class SwabPlanManagerService {
           });
 
         if (swabCleaningValidations.length) {
-          let cleaningHistoryData;
+          let cleaningHistory = await this.cleaningHistoryService.findOneBy({
+            swabAreaHistoryId: swabAreaHistory.id,
+          });
 
-          if (historyData.id) {
-            cleaningHistoryData = await this.cleaningHistoryService.findOneBy({
-              swabAreaHistoryId: historyData.id,
-            });
+          if (!cleaningHistory) {
+            cleaningHistory = await this.cleaningHistoryService.save(
+              this.cleaningHistoryService.make({
+                swabAreaHistory,
+                swabRound,
+              }),
+            );
           }
-
-          if (!cleaningHistoryData) {
-            cleaningHistoryData = CleaningHistory.create();
-
-            if (swabRound) {
-              cleaningHistoryData.swabRound = swabRound;
-            }
-          }
-
-          historyData.cleaningHistory = cleaningHistoryData;
         }
-
-        const swabAreaHistory = SwabAreaHistory.create(historyData);
 
         return swabAreaHistory;
       };
@@ -1073,9 +1058,9 @@ export class SwabPlanManagerService {
         await generateHistory(swabAreas, currentDate, dateIndex);
       }
 
-      await this.swabAreaHistoryRepository.save(swabAreaHistories, {
-        transaction: false,
-      });
+      // await this.swabAreaHistoryRepository.save(swabAreaHistories, {
+      //   transaction: false,
+      // });
 
       if (SWAB_TEST_START_NUMBER_PREFIX > latestRunningNumber) {
         await this.runningNumberService.update(
