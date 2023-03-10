@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
+import { SwabCleaningValidation } from '~/swab/entities/swab-cleaning-validation.entity';
 import { SwabPeriod } from '~/swab/entities/swab-period.entity';
 import { CleaningHistoryCleaningValidation } from './cleaning-history-cleaning-validation.entity';
 
@@ -32,4 +33,13 @@ export class CleaningValidation extends BaseSoftDeletableEntity {
 
   @ManyToMany(() => SwabPeriod, (entity) => entity.cleaningValidations)
   swabPeriods: SwabPeriod[];
+
+  @OneToMany(
+    () => SwabCleaningValidation,
+    (entity) => entity.cleaningValidation,
+    {
+      cascade: ['insert', 'update', 'soft-remove'],
+    },
+  )
+  swabCleaningValidations: SwabCleaningValidation[];
 }

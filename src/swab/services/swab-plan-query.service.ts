@@ -758,6 +758,26 @@ export class SwabPlanQueryService {
         'swab_area_history.swabEnvironments',
         'swab_environment',
       )
+      .leftJoinAndSelect(
+        'swab_area_history.mainSwabAreaHistory',
+        'main_swab_area_history',
+      )
+      .leftJoinAndSelect(
+        'main_swab_area_history.swabTest',
+        'main_swab_area_history_swab_test',
+      )
+      .leftJoinAndSelect(
+        'main_swab_area_history.swabArea',
+        'main_swab_area_history_swab_area',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history.cleaningHistory',
+        'swab_area_history_cleaning_history',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history_cleaning_history.cleaningHistoryValidations',
+        'swab_area_history_cleaning_history_validation',
+      )
       .getOne();
 
     // const where: FindOptionsWhere<SwabAreaHistory> = {
