@@ -28,22 +28,34 @@ export class CleaningHistoryManagerService {
     recordedUser?: User,
   ): Promise<CleaningHistory> {
     const {
-      cleaningProgramId,
-      cleaningHistoryStartedAt,
-      cleaningHistoryEndedAt,
-      cleaningType,
+      cleaningProgramId = null,
+      cleaningHistoryStartedAt = null,
+      cleaningHistoryEndedAt = null,
+      cleaningType = null,
       cleaningHistoryValidations = [],
     } = body;
 
-    const cleaningProgram = await this.cleaningProgramService.make({
-      id: cleaningProgramId,
-    });
-
     cleaningHistory.cleaningHistoryRecordedAt = new Date();
-    cleaningHistory.cleaningHistoryStartedAt = cleaningHistoryStartedAt;
-    cleaningHistory.cleaningHistoryEndedAt = cleaningHistoryEndedAt;
-    cleaningHistory.cleaningProgram = cleaningProgram;
-    cleaningHistory.cleaningType = cleaningType;
+
+    if (cleaningProgramId) {
+      const cleaningProgram = await this.cleaningProgramService.make({
+        id: cleaningProgramId,
+      });
+
+      cleaningHistory.cleaningProgram = cleaningProgram;
+    }
+
+    if (cleaningHistoryStartedAt) {
+      cleaningHistory.cleaningHistoryStartedAt = cleaningHistoryStartedAt;
+    }
+
+    if (cleaningHistoryEndedAt) {
+      cleaningHistory.cleaningHistoryEndedAt = cleaningHistoryEndedAt;
+    }
+
+    if (cleaningType) {
+      cleaningHistory.cleaningType = cleaningType;
+    }
 
     if (recordedUser) {
       cleaningHistory.recordedUser = recordedUser;

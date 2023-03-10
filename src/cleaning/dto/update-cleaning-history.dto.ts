@@ -26,17 +26,21 @@ export class ParamUpdateCleaningHistoryDto extends PickType(
 ) {}
 
 export class BodyUpdateCleaningHistoryDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsUUID()
   @Validate(CleaningProgramExistsRule)
   cleaningProgramId!: string;
 
+  @IsOptional()
   @IsNotEmpty()
   cleaningHistoryStartedAt!: Date;
 
+  @IsOptional()
   @IsNotEmpty()
   cleaningHistoryEndedAt!: Date;
 
+  @IsOptional()
   @IsEnum(CleaningType)
   cleaningType!: CleaningType;
 
