@@ -476,6 +476,10 @@ export class SwabCleaningValidationSeedService {
                 facilityName: 'กล่องเครื่องมือวิศวะ',
                 swabAreas: [{ mainSwabAreaName: 'กล่องเครื่องมือวิศวะ' }],
               },
+              {
+                facilityName: 'รถเข็นกะบะ',
+                swabAreas: [{ mainSwabAreaName: 'ล้อรถเข็นกะบะ' }],
+              },
             ],
           },
         ],
@@ -679,6 +683,10 @@ export class SwabCleaningValidationSeedService {
                 facilityName: 'กล่องเครื่องมือวิศวะ',
                 swabAreas: [{ mainSwabAreaName: 'กล่องเครื่องมือวิศวะ' }],
               },
+              {
+                facilityName: 'รถเข็นกะบะ',
+                swabAreas: [{ mainSwabAreaName: 'ล้อรถเข็นกะบะ' }],
+              },
             ],
           },
         ],
@@ -783,6 +791,20 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'ใต้ฐานขาตั้งเครื่อง' },
                   { mainSwabAreaName: 'ช่องข้างขาตั้งชุด Control' },
                 ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        cleaningValidationName: 'ถอดล้อ',
+        swabCleaningValidations: [
+          {
+            swabPeriodName: 'หลัง Super Big Cleaning',
+            facilities: [
+              {
+                facilityName: 'รถเข็นกะบะ',
+                swabAreas: [{ mainSwabAreaName: 'ล้อรถเข็นกะบะ' }],
               },
             ],
           },
