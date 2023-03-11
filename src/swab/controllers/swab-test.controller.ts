@@ -6,6 +6,7 @@ import {
   Put,
   Post,
   Inject,
+  Get,
 } from '@nestjs/common';
 import { SwabLabManagerService } from '../services/swab-lab-manager.service';
 import {
@@ -24,6 +25,7 @@ import { ImportTransactionService } from '~/import-transaction/import-transactio
 import * as XLSX from 'xlsx';
 import { BacteriaService } from '~/lab/services/bacteria.service';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
+import { SwabTestService } from '../services/swab-test.service';
 
 @Controller('swab-test')
 @ApiTags('Swab')
@@ -32,9 +34,20 @@ export class SwabTestController {
     private readonly importTransactionService: ImportTransactionService,
     private readonly swabLabManagerService: SwabLabManagerService,
     private readonly bacteriaService: BacteriaService,
+    private readonly swabtestService: SwabTestService,
     @Inject('DataCollectorImporterInterface<SwabTest>')
     private readonly swabTestImporter: DataCollectorImporterInterface<SwabTest>,
   ) {}
+
+  @Get()
+  findAll() {
+    return this.swabtestService.find({
+      relations: ['bacteria'],
+      order: {
+        createdAt: 'asc',
+      },
+    });
+  }
 
   @Authenticated()
   @Post('extact-xlsx')
