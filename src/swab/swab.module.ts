@@ -53,6 +53,7 @@ import { SwabCleaningValidationController } from './controllers/swab-cleaning-va
 import { SwabCleaningValidationService } from './services/swab-cleaning-validation.service';
 import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
 import { SwabCleaningValidationSeedService } from './services/swab-cleaning-validation-seed.service';
+import { SwabTestQueryService } from './services/swab-test-query.service';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { SwabCleaningValidationSeedService } from './services/swab-cleaning-vali
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
+    SwabTestQueryService,
     SwabRoundService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,

@@ -7,6 +7,7 @@ import {
   Post,
   Inject,
   Get,
+  Query,
 } from '@nestjs/common';
 import { SwabLabManagerService } from '../services/swab-lab-manager.service';
 import {
@@ -25,7 +26,8 @@ import { ImportTransactionService } from '~/import-transaction/services/import-t
 import * as XLSX from 'xlsx';
 import { BacteriaService } from '~/lab/services/bacteria.service';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
-import { SwabTestService } from '../services/swab-test.service';
+import { FilterSwabTestDto } from '../dto/filter-swab-test.dto';
+import { SwabTestQueryService } from '../services/swab-test-query.service';
 
 @Controller('swab-test')
 @ApiTags('Swab')
@@ -34,19 +36,15 @@ export class SwabTestController {
     private readonly importTransactionService: ImportTransactionService,
     private readonly swabLabManagerService: SwabLabManagerService,
     private readonly bacteriaService: BacteriaService,
-    private readonly swabtestService: SwabTestService,
+    private readonly swabtestQueryService: SwabTestQueryService,
     @Inject('DataCollectorImporterInterface<SwabTest>')
     private readonly swabTestImporter: DataCollectorImporterInterface<SwabTest>,
   ) {}
 
+  @Authenticated()
   @Get()
-  findAll() {
-    return this.swabtestService.find({
-      relations: ['bacteria'],
-      order: {
-        createdAt: 'asc',
-      },
-    });
+  async query(@Query() dto: FilterSwabTestDto): Promise<SwabTest[]> {
+    return this.swabtestQueryService.query(dto);
   }
 
   @Authenticated()
