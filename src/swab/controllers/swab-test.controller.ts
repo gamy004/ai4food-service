@@ -7,6 +7,7 @@ import {
   Post,
   Inject,
   Get,
+  Query,
 } from '@nestjs/common';
 import { SwabLabManagerService } from '../services/swab-lab-manager.service';
 import {
@@ -26,6 +27,8 @@ import * as XLSX from 'xlsx';
 import { BacteriaService } from '~/lab/services/bacteria.service';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
 import { SwabTestService } from '../services/swab-test.service';
+import { QuerySwabTestByCodeDto } from '../dto/query-swab-test-by-code.dto';
+import { FindOptionsWhere, In } from 'typeorm';
 
 @Controller('swab-test')
 @ApiTags('Swab')
@@ -42,6 +45,25 @@ export class SwabTestController {
   @Get()
   findAll() {
     return this.swabtestService.find({
+      relations: ['bacteria'],
+      order: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
+  @Post('codes')
+  async queryByCodes(
+    @Body() bodyQueryByCodeDto: QuerySwabTestByCodeDto,
+  ): Promise<SwabTest[]> {
+    const where: FindOptionsWhere<SwabTest> = {};
+
+    if (bodyQueryByCodeDto.swabTestCodes) {
+      where.swabTestCode = In(bodyQueryByCodeDto.swabTestCodes);
+    }
+
+    return this.swabtestService.find({
+      where,
       relations: ['bacteria'],
       order: {
         createdAt: 'asc',

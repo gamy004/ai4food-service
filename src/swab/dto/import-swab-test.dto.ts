@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   Validate,
@@ -27,11 +28,11 @@ export class ImportSwabTestRecordDto extends ContextAwareDto {
   @IsNotEmpty()
   bacteriaRecordedUser: User;
 
-  @Validate(TimeOnlyRule)
-  swabTestRecordedAt: string;
+  @IsDateString()
+  swabTestRecordedAt: Date;
 
-  @Validate(TimeOnlyRule)
-  bacteriaRecordedAt: string;
+  @IsDateString()
+  bacteriaRecordedAt: Date;
 }
 
 export class ImportSwabTestDto {
