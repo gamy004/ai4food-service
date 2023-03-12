@@ -1,6 +1,14 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { CleaningPlan } from '~/cleaning/entities/cleaning-plan.entity';
 import { CleaningRoomHistory } from '~/cleaning/entities/cleaning-room-history.entity';
+import { File } from '~/common/entities/file.entity';
 import { SwabTest } from '~/swab/entities/swab-test.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletable.entity';
@@ -40,6 +48,13 @@ export class ImportTransaction extends BaseSoftDeletableEntity {
 
   @Column({ type: 'text', nullable: true })
   importedFileName?: string;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  importedFileId?: string;
+
+  @OneToOne(() => File, { cascade: ['insert', 'soft-remove'], nullable: true })
+  @JoinColumn()
+  importedFile?: File;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   importedUserId?: string;
