@@ -677,6 +677,7 @@ export class SwabPlanManagerService {
         swabPeriod,
         shift = null,
         createSwabTest = true,
+        refMainSwabAreaHistory = null,
       ) => {
         const whereSwabAreaHistory = this.swabAreaHistoryService.toFilter({
           swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
@@ -704,6 +705,7 @@ export class SwabPlanManagerService {
               swabTest: null,
               productLot: '',
               cleaningHistory: null,
+              mainSwabAreaHistory: refMainSwabAreaHistory,
             }),
           );
         }
@@ -725,6 +727,7 @@ export class SwabPlanManagerService {
                 }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
                 swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
                 swabRound,
+                swabAreaHistory,
               }),
             );
 
@@ -813,8 +816,6 @@ export class SwabPlanManagerService {
                   );
 
                   if (subSwabAreas && subSwabAreas.length > 0) {
-                    const subSwabAreaHistories = [];
-
                     for (
                       let index4 = 0;
                       index4 < subSwabAreas.length;
@@ -828,14 +829,10 @@ export class SwabPlanManagerService {
                         swabPeriod,
                         'day',
                         false,
+                        mainSwabAreaHistory,
                       );
 
-                      subSwabAreaHistories.push(subSwabAreaHistory);
-                    }
-
-                    if (subSwabAreaHistories.length) {
-                      mainSwabAreaHistory.subSwabAreaHistories =
-                        subSwabAreaHistories;
+                      swabAreaHistories.push(subSwabAreaHistory);
                     }
                   }
 
@@ -895,8 +892,6 @@ export class SwabPlanManagerService {
                     );
 
                     if (subSwabAreas && subSwabAreas.length > 0) {
-                      const subSwabAreaHistories = [];
-
                       for (
                         let indexSubSwabArea = 0;
                         indexSubSwabArea < subSwabAreas.length;
@@ -911,14 +906,10 @@ export class SwabPlanManagerService {
                             bigCleaningSwabPeriod,
                             shift,
                             false,
+                            mainSwabAreaHistory,
                           );
 
-                        subSwabAreaHistories.push(subSwabAreaHistory);
-                      }
-
-                      if (subSwabAreaHistories.length) {
-                        mainSwabAreaHistory.subSwabAreaHistories =
-                          subSwabAreaHistories;
+                        swabAreaHistories.push(subSwabAreaHistory);
                       }
                     }
 
@@ -934,8 +925,6 @@ export class SwabPlanManagerService {
                   );
 
                   if (subSwabAreas && subSwabAreas.length > 0) {
-                    const subSwabAreaHistories = [];
-
                     for (
                       let index3 = 0;
                       index3 < subSwabAreas.length;
@@ -949,14 +938,10 @@ export class SwabPlanManagerService {
                         bigCleaningSwabPeriod,
                         'day',
                         false,
+                        mainSwabAreaHistory,
                       );
 
-                      subSwabAreaHistories.push(subSwabAreaHistory);
-                    }
-
-                    if (subSwabAreaHistories.length) {
-                      mainSwabAreaHistory.subSwabAreaHistories =
-                        subSwabAreaHistories;
+                      swabAreaHistories.push(subSwabAreaHistory);
                     }
                   }
 
@@ -1023,8 +1008,6 @@ export class SwabPlanManagerService {
                 );
 
                 if (subSwabAreas && subSwabAreas.length > 0) {
-                  const subSwabAreaHistories = [];
-
                   for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
                     const swabArea = subSwabAreas[index4];
 
@@ -1034,14 +1017,10 @@ export class SwabPlanManagerService {
                       swabPeriod,
                       Shift[shiftKey],
                       false,
+                      mainSwabAreaHistory,
                     );
 
-                    subSwabAreaHistories.push(subSwabAreaHistory);
-                  }
-
-                  if (subSwabAreaHistories.length) {
-                    mainSwabAreaHistory.subSwabAreaHistories =
-                      subSwabAreaHistories;
+                    swabAreaHistories.push(subSwabAreaHistory);
                   }
                 }
 
