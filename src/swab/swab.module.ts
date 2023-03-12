@@ -44,6 +44,15 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaHistoryRelationManagerService } from './services/swab-area-history-relation-manager.service';
 import { ImportTransactionModule } from '~/import-transaction/import-transaction.module';
 import { SwabTestImporter } from './services/swab-test.importer';
+import { CleaningModule } from '~/cleaning/cleaning.module';
+import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
+import { CleaningProgram } from '~/cleaning/entities/cleaning-program.entity';
+import { CleaningHistoryCleaningValidation } from '~/cleaning/entities/cleaning-history-cleaning-validation.entity';
+import { SwabCleaningValidation } from './entities/swab-cleaning-validation.entity';
+import { SwabCleaningValidationController } from './controllers/swab-cleaning-validation.controller';
+import { SwabCleaningValidationService } from './services/swab-cleaning-validation.service';
+import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
+import { SwabCleaningValidationSeedService } from './services/swab-cleaning-validation-seed.service';
 
 @Module({
   imports: [
@@ -58,11 +67,16 @@ import { SwabTestImporter } from './services/swab-test.importer';
       SwabProductHistory,
       SwabRound,
       FacilityItem,
+      CleaningHistory,
+      CleaningProgram,
+      CleaningHistoryCleaningValidation,
+      SwabCleaningValidation,
     ]),
     FacilityModule,
     ProductModule,
     LabModule,
     CommonModule,
+    CleaningModule,
   ],
   controllers: [
     SwabController,
@@ -72,6 +86,7 @@ import { SwabTestImporter } from './services/swab-test.importer';
     SwabEnvironmentController,
     SwabTestController,
     SwabProductHistoryController,
+    SwabCleaningValidationController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -100,6 +115,9 @@ import { SwabTestImporter } from './services/swab-test.importer';
       provide: 'DataCollectorImporterInterface<SwabTest>',
       useClass: SwabTestImporter,
     },
+    SwabCleaningValidationService,
+    SwabCleaningValidationQueryService,
+    SwabCleaningValidationSeedService,
   ],
 })
 export class SwabModule {}

@@ -2,7 +2,7 @@ import { differenceInDays, parse } from 'date-fns';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns-tz';
-import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { Shift } from '~/common/enums/shift';
 import { BodyCommandUpdateSwabPlanByIdDto } from '../dto/command-update-swab-plan-by-id.dto';
 import { UpsertSwabAreaHistoryImageDto } from '../dto/upsert-swab-area-history-image.dto';
@@ -25,6 +25,12 @@ import { BacteriaService } from '~/lab/services/bacteria.service';
 import { BacteriaSpecieService } from '~/lab/services/bacteria-specie.service';
 import { SwabAreaService } from './swab-area.service';
 import { SwabRound } from '../entities/swab-round.entity';
+import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
+import { RunningNumberService } from '~/common/services/running-number.service';
+import { SwabCleaningValidationService } from './swab-cleaning-validation.service';
+import { CleaningHistoryService } from '~/cleaning/services/cleaning-history.service';
+import { SwabTestService } from './swab-test.service';
+import { SwabAreaHistoryService } from './swab-area-history.service';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -38,6 +44,7 @@ export class SwabPlanManagerService {
     protected readonly swabAreaService: SwabAreaService,
     protected readonly bacteriaService: BacteriaService,
     protected readonly bacteriaSpecieService: BacteriaSpecieService,
+    private readonly runningNumberService: RunningNumberService,
     @InjectRepository(SwabAreaHistory)
     protected readonly swabAreaHistoryRepository: Repository<SwabAreaHistory>,
     @InjectRepository(SwabArea)
@@ -47,6 +54,10 @@ export class SwabPlanManagerService {
     @InjectRepository(SwabAreaHistoryImage)
     protected readonly swabAreaHistoryImageRepository: Repository<SwabAreaHistoryImage>,
     protected readonly swabAreaHistoryImageService: SwabAreaHistoryImageService,
+    protected readonly swabCleaningValidationService: SwabCleaningValidationService,
+    protected readonly cleaningHistoryService: CleaningHistoryService,
+    protected readonly swabTestService: SwabTestService,
+    protected readonly swabAreaHistoryService: SwabAreaHistoryService,
   ) {}
 
   async commandUpdateSwabPlanById(
@@ -171,20 +182,43 @@ export class SwabPlanManagerService {
   }
 
   async generateSwabPlan(generateSwabPlanDto: GenerateSwabPlanDto) {
-    const { fromDate, toDate, roundNumberSwabTest = '' } = generateSwabPlanDto;
+    const {
+      fromDate,
+      toDate,
+      roundNumberSwabTest,
+      skipBigCleaning = false,
+      includeGeneralBeforeBigCleaning = false,
+      includeDayShiftFirstDay = false,
+      includeNightShiftFirstDay = true,
+      includeNightShiftLastDay = false,
+    } = generateSwabPlanDto;
 
-    let swabRound = null;
+    let swabRound = await this.swabRoundService.findOneBy({
+      swabRoundNumber: roundNumberSwabTest,
+    });
 
-    if (roundNumberSwabTest) {
-      swabRound = await this.swabRoundService.findOneBy({
+    if (!swabRound) {
+      swabRound = await this.swabRoundService.create({
         swabRoundNumber: roundNumberSwabTest,
       });
+    }
 
-      if (!swabRound) {
-        swabRound = await this.swabRoundService.create({
-          swabRoundNumber: roundNumberSwabTest,
-        });
-      }
+    const runningNumberKey = `swab-area-history-round-${swabRound.swabRoundNumber}`;
+
+    let latestRunningNumber = 1;
+
+    const latestRunningNumberEntity = await this.runningNumberService.findOneBy(
+      {
+        key: runningNumberKey,
+      },
+    );
+
+    if (!latestRunningNumberEntity) {
+      latestRunningNumber = await this.runningNumberService.generate({
+        key: runningNumberKey,
+      });
+    } else {
+      latestRunningNumber = latestRunningNumberEntity.latestRunningNumber + 1;
     }
 
     const NUMBER_OF_HISTORY_DAY: number = differenceInDays(
@@ -192,15 +226,20 @@ export class SwabPlanManagerService {
       new Date(fromDate),
     );
 
-    const bigCleaningSwabPeriodsTemplate = [
-      { swabPeriodName: 'ก่อน Super Big Cleaning' },
-      { swabPeriodName: 'หลัง Super Big Cleaning' },
-    ];
+    let bigCleaningSwabPeriodsTemplate = [];
 
-    let result_bigClean = await this.swabPeriodService.findBy([
-      { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
-      { swabPeriodName: 'หลัง Super Big Cleaning', deletedAt: null },
-    ]);
+    let result_bigClean = [];
+
+    if (!skipBigCleaning) {
+      bigCleaningSwabPeriodsTemplate = [
+        { swabPeriodName: 'ก่อน Super Big Cleaning', deletedAt: null },
+        { swabPeriodName: 'หลัง Super Big Cleaning', deletedAt: null },
+      ];
+
+      result_bigClean = await this.swabPeriodService.findBy(
+        bigCleaningSwabPeriodsTemplate,
+      );
+    }
 
     const bigCleaningSwabPeriods = result_bigClean.reduce((acc, obj) => {
       let key = obj['swabPeriodName'];
@@ -212,22 +251,17 @@ export class SwabPlanManagerService {
     }, {});
 
     const generalSwabPeriodsTemplate = [
-      { swabPeriodName: 'หลังประกอบเครื่อง' },
-      { swabPeriodName: 'ก่อนล้างระหว่างงาน' },
-      { swabPeriodName: 'หลังล้างระหว่างงาน' },
-      { swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.' },
-      { swabPeriodName: 'ก่อนล้างท้ายกะ' },
-      { swabPeriodName: 'หลังล้างท้ายกะ' },
-    ];
-
-    let result_general = await this.swabPeriodService.findBy([
       { swabPeriodName: 'หลังประกอบเครื่อง', deletedAt: null },
       { swabPeriodName: 'ก่อนล้างระหว่างงาน', deletedAt: null },
       { swabPeriodName: 'หลังล้างระหว่างงาน', deletedAt: null },
       { swabPeriodName: 'เดินไลน์หลังพัก 4 ชม.', deletedAt: null },
       { swabPeriodName: 'ก่อนล้างท้ายกะ', deletedAt: null },
       { swabPeriodName: 'หลังล้างท้ายกะ', deletedAt: null },
-    ]);
+    ];
+
+    let result_general = await this.swabPeriodService.findBy(
+      generalSwabPeriodsTemplate,
+    );
 
     const allSwabPeriods = [...result_bigClean, ...result_general];
 
@@ -244,18 +278,132 @@ export class SwabPlanManagerService {
       {
         facilityName: 'ขึ้นรูป',
         mainSwabAreas: [
-          // {
-          //     swabAreaName: "ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter", // not collected in 22-29 July
-          //     subSwabAreas: [
-          //         { swabAreaName: "ชุดเติมข้าว" },
-          //         { swabAreaName: "สายพานลำเลียง" },
-          //         { swabAreaName: "แกนซุย" },
-          //         { swabAreaName: "ชุด Hopper" },
-          //         { swabAreaName: "Shutter" },
-          //     ]
-          // },
           {
-            swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์',
+            swabAreaName: 'ถาดรองเศษใต้ Portion', // no.1
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName:
+              'คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว', //no.2
+            subSwabAreas: [
+              { swabAreaName: 'คานตู้ control หน้าเครื่อง Portion' },
+              { swabAreaName: 'Cover ด้านบนเครื่อง' },
+              { swabAreaName: 'ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว' },
+            ],
+          },
+          {
+            swabAreaName: 'สายพานลำเลียงถาด', //no.3
+            subSwabAreas: [
+              { swabAreaName: 'ตัวแผ่น' },
+              { swabAreaName: 'ตัวกั้น' },
+            ],
+          },
+          {
+            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน', // no.4
+            subSwabAreas: [
+              { swabAreaName: 'เลื่อนสายพาน' },
+              { swabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน' },
+            ],
+          },
+          // {
+          //   swabAreaName:
+          //     'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control', // แยกจุดย่อยมาเป็นจุดหลักตั้งแต่ 3 มี.ค.
+          //   subSwabAreas: [
+          //     { swabAreaName: 'ขาตั้งเครื่อง' },
+          //     { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง' },
+          //     { swabAreaName: 'ช่องข้างขาตั้งชุด Control' },
+          //   ],
+          // },
+          { swabAreaName: 'ขาตั้งเครื่อง', subSwabAreas: [] }, // no.5
+          { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง', subSwabAreas: [] }, // no.6
+          { swabAreaName: 'ช่องข้างขาตั้งชุด Control', subSwabAreas: [] }, //no.7
+          // {
+          //   swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
+          //   subSwabAreas: [
+          //     { swabAreaName: 'ด้านบนตู้ Control Infeed' },
+          //     { swabAreaName: 'สายไฟ' },
+          //   ],
+          // },
+          { swabAreaName: 'ด้านบนตู้ Control Infeed', subSwabAreas: [] }, //no.8
+          { swabAreaName: 'สายไฟ', subSwabAreas: [] }, //no.9
+          {
+            swabAreaName: 'พื้นใต้เครื่อง Portion', // no.10
+            subSwabAreas: [],
+          },
+          {
+            swabAreaName: 'รางระบายน้ำห้อง', // no.11
+            subSwabAreas: [
+              { swabAreaName: 'กลางราง' },
+              { swabAreaName: 'ขอบรางซ้าย' },
+              { swabAreaName: 'ขอบรางขวา' },
+              { swabAreaName: 'Main Hole' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ตู้ Vac.',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'พื้นและ Slope', // no.12
+            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+          },
+        ],
+      },
+      {
+        facilityName: 'ตู้ Steam',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'พื้นและ Slope', // no.13
+            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
+          },
+        ],
+      },
+      {
+        facilityName: 'รถเข็นกะบะ',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'ล้อรถเข็นกะบะ', // no.14
+            subSwabAreas: [
+              { swabAreaName: 'กันชน' },
+              { swabAreaName: 'ระหว่างรอยต่อ' },
+              { swabAreaName: 'โครงล้อ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'กล่องเครื่องมือวิศวะ',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'กล่องเครื่องมือวิศวะ', // no.15
+            subSwabAreas: [
+              { swabAreaName: 'ฝากล่อง' },
+              { swabAreaName: 'ขอบมุม' },
+              { swabAreaName: 'ประแจ' },
+            ],
+          },
+        ],
+      },
+      {
+        facilityName: 'ขึ้นรูป',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส', // no.16
+            subSwabAreas: [
+              {
+                swabAreaName: 'แกน roller',
+              },
+              {
+                swabAreaName: 'สายพาน PVC.',
+              },
+              {
+                swabAreaName: 'ปีกสายพานสแตนเลส',
+              },
+            ],
+          },
+          {
+            swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์', // no.17
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight' },
               { swabAreaName: 'แขนชัตเตอร์' },
@@ -268,7 +416,7 @@ export class SwabPlanManagerService {
           },
           {
             swabAreaName:
-              'ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด',
+              'ชุดกดหน้าข้าว และ ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด', // no.18
             subSwabAreas: [
               { swabAreaName: 'ชุดกดหน้าข้าว' },
               { swabAreaName: 'ชิ้นส่วนที่ถอดออกได้ ไปล้างทำความสะอาด' },
@@ -280,21 +428,8 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'ถาดรองเศษใต้ Portion',
-            subSwabAreas: [],
-          },
-          {
             swabAreaName:
-              'คานตู้ Control หน้าเครื่อง Portion, Cover ด้านบนเครื่อง และ ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว',
-            subSwabAreas: [
-              { swabAreaName: 'คานตู้ control หน้าเครื่อง Portion' },
-              { swabAreaName: 'Cover ด้านบนเครื่อง' },
-              { swabAreaName: 'ช่องด้านบนเครื่องใกล้ชุด Hopper ข้าว' },
-            ],
-          },
-          {
-            swabAreaName:
-              'โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และ โครงชุดแขนชัตเตอร์',
+              'โครงชุดเติมข้าว ส่วน Sup Weight, แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight และ โครงชุดแขนชัตเตอร์', // no.19
             subSwabAreas: [
               { swabAreaName: 'โครงชุดเติมข้าว ส่วน Sup Weight' },
               { swabAreaName: 'แถบด้านในโครงชุดเติมข้าว ส่วน Sup Weight' },
@@ -307,7 +442,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'Cover มอเตอร์ แกนกลางเครื่อง',
+            swabAreaName: 'Cover มอเตอร์ แกนกลางเครื่อง', // no.20
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -317,7 +452,7 @@ export class SwabPlanManagerService {
           },
           {
             swabAreaName:
-              'Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด',
+              'Cover หน้าเครื่องจุดวางถาด และ ชุดกันรอบสายพานลำเลียงถาด', // no.21
             subSwabAreas: [
               { swabAreaName: 'Cover หน้าเครื่องจุดวางถาด' },
               { swabAreaName: 'ชุดกันรอบสายพานลำเลียงถาด' },
@@ -330,7 +465,7 @@ export class SwabPlanManagerService {
           },
           {
             swabAreaName:
-              'ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว',
+              'ช่องยกคานลิฟท์ด้านหลัง, ใต้ฐานลิฟท์ยกข้าว และ แขนชุดลิฟท์ยกข้าว', // no.22
             subSwabAreas: [
               { swabAreaName: 'ช่องยกคานลิฟท์ด้านหลัง' },
               { swabAreaName: 'ใต้ฐานลิฟท์ยกข้าว' },
@@ -343,7 +478,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง',
+            swabAreaName: 'Cover ใส, Cover สแตนเลส และ Slope ท้ายเครื่อง', // no.23
             subSwabAreas: [
               { swabAreaName: 'Cover ใส' },
               { swabAreaName: 'Cover สแตนเลส' },
@@ -356,21 +491,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'สายพานลำเลียงถาด',
-            subSwabAreas: [
-              { swabAreaName: 'ตัวแผ่น' },
-              { swabAreaName: 'ตัวกั้น' },
-            ],
-          },
-          {
-            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
-            subSwabAreas: [
-              { swabAreaName: 'เลื่อนสายพาน' },
-              { swabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน' },
-            ],
-          },
-          {
-            swabAreaName: 'ช่องใต้เฟรมสายพาน',
+            swabAreaName: 'ช่องใต้เฟรมสายพาน', // no.24
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -379,27 +500,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName:
-              'ขาตั้งเครื่อง, ใต้ฐานขาตั้งเครื่อง และ ช่องข้างขาตั้งชุด Control',
-            subSwabAreas: [
-              { swabAreaName: 'ขาตั้งเครื่อง' },
-              { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง' },
-              { swabAreaName: 'ช่องข้างขาตั้งชุด Control' },
-            ],
-          },
-          {
-            swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
-            subSwabAreas: [
-              { swabAreaName: 'ด้านบนตู้ Control Infeed' },
-              { swabAreaName: 'สายไฟ' },
-            ],
-          },
-          {
-            swabAreaName: 'พื้นใต้เครื่อง Portion',
-            subSwabAreas: [],
-          },
-          {
-            swabAreaName: 'พื้นห้อง',
+            swabAreaName: 'พื้นห้อง', // no.25
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -408,7 +509,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'ผนังห้อง',
+            swabAreaName: 'ผนังห้อง', // no.26
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -417,16 +518,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'รางระบายน้ำห้อง',
-            subSwabAreas: [
-              { swabAreaName: 'กลางราง' },
-              { swabAreaName: 'ขอบรางซ้าย' },
-              { swabAreaName: 'ขอบรางขวา' },
-              { swabAreaName: 'Main Hole' },
-            ],
-          },
-          {
-            swabAreaName: 'แป้นกดสบู่ และ อ่างล้างมือ',
+            swabAreaName: 'แป้นกดสบู่ และ อ่างล้างมือ', // no.27
             subSwabAreas: [
               { swabAreaName: 'แป้นกดสบู่' },
               { swabAreaName: 'อ่างล้างมือ' },
@@ -438,7 +530,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'มือพนักงานช่างประกอบเครื่องหลังล้าง',
+            swabAreaName: 'มือพนักงานช่างประกอบเครื่องหลังล้าง', // no.28
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -447,7 +539,7 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'สายลมเครื่อง Portion',
+            swabAreaName: 'สายลมเครื่อง Portion', // no.29
             subSwabAreas: [],
             swabPeriodMapping: [
               'ก่อน Super Big Cleaning',
@@ -456,57 +548,39 @@ export class SwabPlanManagerService {
             shiftMapping: ['day'],
           },
           {
-            swabAreaName: 'เครื่องชั่ง Topping',
-            subSwabAreas: [],
-            swabPeriodMapping: [
-              'ก่อน Super Big Cleaning',
-              'หลัง Super Big Cleaning',
-            ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
-            shiftMapping: ['day'],
-          },
-        ],
-      },
-      {
-        facilityName: 'ตู้ Vac.',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'พื้นและ Slope',
-            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
-          },
-        ],
-      },
-      {
-        facilityName: 'ตู้ Steam',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'พื้นและ Slope',
-            subSwabAreas: [{ swabAreaName: 'พื้น' }, { swabAreaName: 'Slope' }],
-          },
-        ],
-      },
-      // {
-      //     facilityName: "กล่องเครื่องมือวิศวะ",
-      //     mainSwabAreas: [
-      //       {
-      //         swabAreaName: 'กล่องเครื่องมือวิศวะ',
-      //         subSwabAreas: [
-      //           { swabAreaName: 'ฝากล่อง' },
-      //           { swabAreaName: 'ขอบมุม' },
-      //           { swabAreaName: 'ประแจ' },
-      //         ],
-      //       }
-      //     ]
-      // },
-      {
-        facilityName: 'รถเข็นกะบะ',
-        mainSwabAreas: [
-          {
-            swabAreaName: 'ล้อรถเข็นกะบะ',
+            swabAreaName: 'เครื่องชั่ง Topping', // no.30
             subSwabAreas: [
-              { swabAreaName: 'กันชน' },
-              { swabAreaName: 'ระหว่างรอยต่อ' },
-              { swabAreaName: 'โครงล้อ' },
+              {
+                swabAreaName: 'ถาดรองสแตนเลส',
+              },
+              {
+                swabAreaName: 'หน้าจอ control',
+              },
+              {
+                swabAreaName: 'ฐานขาตั้ง',
+              },
             ],
+            swabPeriodMapping: [
+              'ก่อน Super Big Cleaning',
+              'หลัง Super Big Cleaning',
+            ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+            shiftMapping: ['day'],
+          },
+          {
+            swabAreaName:
+              'ชุดเติมข้าว, สายพานลำเลียง, แกนซุย, ชุด Hopper และ Shutter', // no.31
+            subSwabAreas: [
+              { swabAreaName: 'ชุดเติมข้าว' },
+              { swabAreaName: 'สายพานลำเลียง' },
+              { swabAreaName: 'แกนซุย' },
+              { swabAreaName: 'ชุด Hopper' },
+              { swabAreaName: 'Shutter' },
+            ],
+            swabPeriodMapping: [
+              'ก่อน Super Big Cleaning',
+              'หลัง Super Big Cleaning',
+            ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+            shiftMapping: ['day'],
           },
         ],
       },
@@ -536,165 +610,205 @@ export class SwabPlanManagerService {
     const swabAreaHistories = [];
     const swabAreas = [];
     const SWAB_TEST_CODE_PREFIX = 'AI';
-    let SWAB_TEST_START_NUMBER_PREFIX = 1;
+    let SWAB_TEST_START_NUMBER_PREFIX = latestRunningNumber;
 
-    for (let index = 0; index < swabAreasTemplate.length; index++) {
-      const { facilityName, mainSwabAreas = [] } = swabAreasTemplate[index];
+    this.transaction.execute(async () => {
+      for (let index = 0; index < swabAreasTemplate.length; index++) {
+        const { facilityName, mainSwabAreas = [] } = swabAreasTemplate[index];
 
-      const fetchSwabAreas = await Promise.all(
-        mainSwabAreas.map(async (mainSwabArea) => {
-          const swabArea = await this.swabAreaRepository.findOne({
-            where: {
-              swabAreaName: mainSwabArea.swabAreaName,
-              facility: {
-                facilityName,
+        const fetchSwabAreas = await Promise.all(
+          mainSwabAreas.map(async (mainSwabArea) => {
+            const swabArea = await this.swabAreaRepository.findOne({
+              where: {
+                mainSwabAreaId: IsNull(),
+                swabAreaName: mainSwabArea.swabAreaName,
+                facility: {
+                  facilityName,
+                },
               },
-            },
-            relations: ['subSwabAreas'],
-          });
+              relations: ['subSwabAreas'],
+              transaction: false,
+            });
 
-          if (swabArea) {
-            const { subSwabAreas: subSwabAreasByApi } = swabArea;
-            const {
-              subSwabAreas: subSwabAreasByTemplate,
-              swabPeriodMapping = [],
-              shiftMapping = [],
-            } = mainSwabArea;
-
-            const subSwabAreaDatas = subSwabAreasByApi.reduce((acc, obj) => {
-              let key = obj['swabAreaName'];
-              if (!acc[key]) {
-                acc[key] = {};
-              }
-              acc[key] = obj;
-              return acc;
-            }, {});
-
-            let subSwabAreas = [];
-
-            for (
-              let index = 0;
-              index < subSwabAreasByTemplate.length;
-              index++
-            ) {
-              const element =
-                subSwabAreaDatas[subSwabAreasByTemplate[index].swabAreaName];
-              subSwabAreas.push(element);
-            }
-            return {
-              ...swabArea,
-              subSwabAreas: [...subSwabAreas],
-              swabPeriodMapping,
-              shiftMapping,
-            };
-          }
-        }),
-      );
-      swabAreas.push(fetchSwabAreas);
-    }
-
-    async function generateSwabAreaHistory(
-      swabAreaDate,
-      swabArea,
-      swabPeriod,
-      shift = null,
-      createSwabTest = true,
-    ) {
-      const historyData = {
-        swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
-        swabAreaSwabedAt: null,
-        swabAreaTemperature: null,
-        swabAreaHumidity: null,
-        swabAreaAtp: null,
-        swabPeriod,
-        swabTest: null,
-        swabArea,
-        swabRound: null,
-        shift,
-        productLot: '',
-      };
-
-      if (createSwabTest) {
-        const swabTestData = SwabTest.create({
-          swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}${
-            roundNumberSwabTest ? '/' + roundNumberSwabTest : ''
-          }`,
-          swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-        });
-
-        if (swabRound) {
-          swabTestData.swabRound = swabRound;
-        }
-
-        historyData.swabTest = swabTestData;
-
-        SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
-      }
-
-      if (swabRound) {
-        historyData.swabRound = swabRound;
-      }
-
-      const swabAreaHistory = SwabAreaHistory.create(historyData);
-
-      return swabAreaHistory;
-    }
-
-    async function generateHistory(
-      swabAreasAll,
-      currentDate = new Date(),
-      dateIndex,
-    ) {
-      currentDate.setDate(currentDate.getDate() + dateIndex);
-      let shiftKeys = Object.keys(Shift);
-
-      if (dateIndex === 0) {
-        for (
-          let index = 0;
-          index < bigCleaningSwabPeriodsTemplate.length;
-          index++
-        ) {
-          const bigCleaningSwabPeriod =
-            bigCleaningSwabPeriods[
-              bigCleaningSwabPeriodsTemplate[index].swabPeriodName
-            ];
-          for (let index = 0; index < swabAreasAll.length; index++) {
-            const swabAreasGroupByFacility = swabAreasAll[index];
-
-            for (
-              let indexSwabArea = 0;
-              indexSwabArea < swabAreasGroupByFacility.length;
-              indexSwabArea++
-            ) {
-              const swabAreas = swabAreasGroupByFacility[indexSwabArea];
+            if (swabArea) {
+              const { subSwabAreas: subSwabAreasByApi } = swabArea;
               const {
-                subSwabAreas = [],
+                subSwabAreas: subSwabAreasByTemplate,
                 swabPeriodMapping = [],
                 shiftMapping = [],
-              } = swabAreas;
-              // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+              } = mainSwabArea;
+
+              const subSwabAreaDatas = subSwabAreasByApi.reduce((acc, obj) => {
+                let key = obj['swabAreaName'];
+                if (!acc[key]) {
+                  acc[key] = {};
+                }
+                acc[key] = obj;
+                return acc;
+              }, {});
+
+              let subSwabAreas = [];
+
+              for (
+                let index = 0;
+                index < subSwabAreasByTemplate.length;
+                index++
+              ) {
+                const element =
+                  subSwabAreaDatas[subSwabAreasByTemplate[index].swabAreaName];
+                subSwabAreas.push(element);
+              }
+              return {
+                ...swabArea,
+                subSwabAreas: [...subSwabAreas],
+                swabPeriodMapping,
+                shiftMapping,
+              };
+            }
+          }),
+        );
+
+        swabAreas.push(fetchSwabAreas);
+      }
+
+      const generateSwabAreaHistory = async (
+        swabAreaDate,
+        swabArea,
+        swabPeriod,
+        shift = null,
+        createSwabTest = true,
+      ) => {
+        const whereSwabAreaHistory = this.swabAreaHistoryService.toFilter({
+          swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
+          swabPeriodId: swabPeriod.id,
+          swabAreaId: swabArea.id,
+          shift,
+        });
+
+        let swabAreaHistory = await this.swabAreaHistoryService.findOne({
+          where: whereSwabAreaHistory,
+        });
+
+        if (!swabAreaHistory) {
+          swabAreaHistory = await this.swabAreaHistoryService.save(
+            this.swabAreaHistoryService.make({
+              swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
+              swabPeriod,
+              swabArea,
+              shift,
+              swabRound,
+              swabAreaSwabedAt: null,
+              swabAreaTemperature: null,
+              swabAreaHumidity: null,
+              swabAreaAtp: null,
+              swabTest: null,
+              productLot: '',
+              cleaningHistory: null,
+            }),
+          );
+        }
+
+        if (createSwabTest) {
+          let swabTest;
+
+          if (swabAreaHistory.swabTestId) {
+            swabTest = await this.swabTestService.findOneBy({
+              id: swabAreaHistory.swabTestId,
+            });
+          }
+
+          if (!swabTest) {
+            swabTest = await this.swabTestService.save(
+              this.swabTestService.make({
+                swabTestCode: `${
+                  roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+                }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+                swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+                swabRound,
+              }),
+            );
+
+            SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+          }
+        }
+
+        const swabCleaningValidations =
+          await this.swabCleaningValidationService.findBy({
+            swabPeriodId: swabPeriod.id,
+            swabAreaId: swabArea.id,
+          });
+
+        if (swabCleaningValidations.length) {
+          let cleaningHistory = await this.cleaningHistoryService.findOneBy({
+            swabAreaHistoryId: swabAreaHistory.id,
+          });
+
+          if (!cleaningHistory) {
+            cleaningHistory = await this.cleaningHistoryService.save(
+              this.cleaningHistoryService.make({
+                swabAreaHistory,
+                swabRound,
+              }),
+            );
+          }
+        }
+
+        return swabAreaHistory;
+      };
+
+      const generateHistory = async (
+        swabAreasAll,
+        currentDate = new Date(),
+        dateIndex,
+      ) => {
+        currentDate.setDate(currentDate.getDate() + dateIndex);
+        let shiftKeys = Object.keys(Shift);
+
+        if (dateIndex === 0) {
+          if (includeGeneralBeforeBigCleaning) {
+            for (
+              let index = 0;
+              index < generalSwabPeriodsTemplate.length;
+              index++
+            ) {
+              const swabPeriod =
+                generalSwabPeriods[
+                  generalSwabPeriodsTemplate[index].swabPeriodName
+                ];
 
               if (
-                swabPeriodMapping.length &&
-                !swabPeriodMapping.includes(
-                  bigCleaningSwabPeriod.swabPeriodName,
-                )
+                swabPeriod.swabPeriodName === 'ก่อนล้างท้ายกะ' ||
+                swabPeriod.swabPeriodName === 'หลังล้างท้ายกะ'
               ) {
                 continue;
               }
 
-              if (shiftMapping.length) {
+              for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
+                const swabAreasGroupByFacility = swabAreasAll[index3];
+
                 for (
-                  let indexShift = 0;
-                  indexShift < shiftMapping.length;
-                  indexShift++
+                  let index = 0;
+                  index < swabAreasGroupByFacility.length;
+                  index++
                 ) {
-                  const shift = shiftMapping[indexShift];
+                  const swabAreas = swabAreasGroupByFacility[index];
+
+                  const { subSwabAreas = [], swabPeriodMapping = [] } =
+                    swabAreas;
+
+                  if (
+                    swabPeriodMapping.length &&
+                    !swabPeriodMapping.includes(swabPeriod.swabPeriodName)
+                  ) {
+                    continue;
+                  }
+                  // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+
                   const mainSwabAreaHistory = await generateSwabAreaHistory(
                     currentDate,
                     swabAreas,
-                    bigCleaningSwabPeriod,
-                    shift,
+                    swabPeriod,
+                    'day',
                     true,
                   );
 
@@ -702,17 +816,17 @@ export class SwabPlanManagerService {
                     const subSwabAreaHistories = [];
 
                     for (
-                      let indexSubSwabArea = 0;
-                      indexSubSwabArea < subSwabAreas.length;
-                      indexSubSwabArea++
+                      let index4 = 0;
+                      index4 < subSwabAreas.length;
+                      index4++
                     ) {
-                      const swabArea = subSwabAreas[indexSubSwabArea];
+                      const swabArea = subSwabAreas[index4];
 
                       const subSwabAreaHistory = await generateSwabAreaHistory(
                         currentDate,
                         swabArea,
-                        bigCleaningSwabPeriod,
-                        shift,
+                        swabPeriod,
+                        'day',
                         false,
                       );
 
@@ -727,26 +841,198 @@ export class SwabPlanManagerService {
 
                   swabAreaHistories.push(mainSwabAreaHistory);
                 }
-              } else {
+              }
+            }
+          }
+
+          for (
+            let index = 0;
+            index < bigCleaningSwabPeriodsTemplate.length;
+            index++
+          ) {
+            const bigCleaningSwabPeriod =
+              bigCleaningSwabPeriods[
+                bigCleaningSwabPeriodsTemplate[index].swabPeriodName
+              ];
+            for (let index = 0; index < swabAreasAll.length; index++) {
+              const swabAreasGroupByFacility = swabAreasAll[index];
+
+              for (
+                let indexSwabArea = 0;
+                indexSwabArea < swabAreasGroupByFacility.length;
+                indexSwabArea++
+              ) {
+                const swabAreas = swabAreasGroupByFacility[indexSwabArea];
+                const {
+                  subSwabAreas = [],
+                  swabPeriodMapping = [],
+                  shiftMapping = [],
+                } = swabAreas;
+                // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+
+                if (
+                  swabPeriodMapping.length &&
+                  !swabPeriodMapping.includes(
+                    bigCleaningSwabPeriod.swabPeriodName,
+                  )
+                ) {
+                  continue;
+                }
+
+                if (shiftMapping.length) {
+                  for (
+                    let indexShift = 0;
+                    indexShift < shiftMapping.length;
+                    indexShift++
+                  ) {
+                    const shift = shiftMapping[indexShift];
+                    const mainSwabAreaHistory = await generateSwabAreaHistory(
+                      currentDate,
+                      swabAreas,
+                      bigCleaningSwabPeriod,
+                      shift,
+                      true,
+                    );
+
+                    if (subSwabAreas && subSwabAreas.length > 0) {
+                      const subSwabAreaHistories = [];
+
+                      for (
+                        let indexSubSwabArea = 0;
+                        indexSubSwabArea < subSwabAreas.length;
+                        indexSubSwabArea++
+                      ) {
+                        const swabArea = subSwabAreas[indexSubSwabArea];
+
+                        const subSwabAreaHistory =
+                          await generateSwabAreaHistory(
+                            currentDate,
+                            swabArea,
+                            bigCleaningSwabPeriod,
+                            shift,
+                            false,
+                          );
+
+                        subSwabAreaHistories.push(subSwabAreaHistory);
+                      }
+
+                      if (subSwabAreaHistories.length) {
+                        mainSwabAreaHistory.subSwabAreaHistories =
+                          subSwabAreaHistories;
+                      }
+                    }
+
+                    swabAreaHistories.push(mainSwabAreaHistory);
+                  }
+                } else {
+                  const mainSwabAreaHistory = await generateSwabAreaHistory(
+                    currentDate,
+                    swabAreas,
+                    bigCleaningSwabPeriod,
+                    'day',
+                    true,
+                  );
+
+                  if (subSwabAreas && subSwabAreas.length > 0) {
+                    const subSwabAreaHistories = [];
+
+                    for (
+                      let index3 = 0;
+                      index3 < subSwabAreas.length;
+                      index3++
+                    ) {
+                      const swabArea = subSwabAreas[index3];
+
+                      const subSwabAreaHistory = await generateSwabAreaHistory(
+                        currentDate,
+                        swabArea,
+                        bigCleaningSwabPeriod,
+                        'day',
+                        false,
+                      );
+
+                      subSwabAreaHistories.push(subSwabAreaHistory);
+                    }
+
+                    if (subSwabAreaHistories.length) {
+                      mainSwabAreaHistory.subSwabAreaHistories =
+                        subSwabAreaHistories;
+                    }
+                  }
+
+                  swabAreaHistories.push(mainSwabAreaHistory);
+                }
+              }
+            }
+          }
+
+          if (!includeDayShiftFirstDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'DAY');
+          }
+
+          if (!includeNightShiftFirstDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+          }
+        }
+
+        if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
+          if (!includeNightShiftLastDay) {
+            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+          }
+        }
+
+        for (let index2 = 0; index2 < shiftKeys.length; index2++) {
+          const shiftKey = shiftKeys[index2];
+
+          for (
+            let index = 0;
+            index < generalSwabPeriodsTemplate.length;
+            index++
+          ) {
+            const swabPeriod =
+              generalSwabPeriods[
+                generalSwabPeriodsTemplate[index].swabPeriodName
+              ];
+
+            for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
+              const swabAreasGroupByFacility = swabAreasAll[index3];
+
+              for (
+                let index = 0;
+                index < swabAreasGroupByFacility.length;
+                index++
+              ) {
+                const swabAreas = swabAreasGroupByFacility[index];
+
+                const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
+
+                if (
+                  swabPeriodMapping.length &&
+                  !swabPeriodMapping.includes(swabPeriod.swabPeriodName)
+                ) {
+                  continue;
+                }
+                // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
+
                 const mainSwabAreaHistory = await generateSwabAreaHistory(
                   currentDate,
                   swabAreas,
-                  bigCleaningSwabPeriod,
-                  'day',
+                  swabPeriod,
+                  Shift[shiftKey],
                   true,
                 );
 
                 if (subSwabAreas && subSwabAreas.length > 0) {
                   const subSwabAreaHistories = [];
 
-                  for (let index3 = 0; index3 < subSwabAreas.length; index3++) {
-                    const swabArea = subSwabAreas[index3];
+                  for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
+                    const swabArea = subSwabAreas[index4];
 
                     const subSwabAreaHistory = await generateSwabAreaHistory(
                       currentDate,
                       swabArea,
-                      bigCleaningSwabPeriod,
-                      'day',
+                      swabPeriod,
+                      Shift[shiftKey],
                       false,
                     );
 
@@ -764,91 +1050,25 @@ export class SwabPlanManagerService {
             }
           }
         }
-        shiftKeys = [Object.keys(Shift)[1]];
+      };
+
+      for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
+        const currentDate = new Date(fromDate);
+
+        await generateHistory(swabAreas, currentDate, dateIndex);
       }
 
-      if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
-        shiftKeys = [Object.keys(Shift)[0]];
+      // await this.swabAreaHistoryRepository.save(swabAreaHistories, {
+      //   transaction: false,
+      // });
+
+      if (SWAB_TEST_START_NUMBER_PREFIX > latestRunningNumber) {
+        await this.runningNumberService.update(
+          { key: runningNumberKey },
+          { latestRunningNumber: SWAB_TEST_START_NUMBER_PREFIX - 1 },
+        );
       }
-
-      for (let index2 = 0; index2 < shiftKeys.length; index2++) {
-        const shiftKey = shiftKeys[index2];
-
-        for (
-          let index = 0;
-          index < generalSwabPeriodsTemplate.length;
-          index++
-        ) {
-          const swabPeriod =
-            generalSwabPeriods[
-              generalSwabPeriodsTemplate[index].swabPeriodName
-            ];
-
-          for (let index3 = 0; index3 < swabAreasAll.length; index3++) {
-            const swabAreasGroupByFacility = swabAreasAll[index3];
-
-            for (
-              let index = 0;
-              index < swabAreasGroupByFacility.length;
-              index++
-            ) {
-              const swabAreas = swabAreasGroupByFacility[index];
-
-              const { subSwabAreas = [], swabPeriodMapping = [] } = swabAreas;
-
-              if (
-                swabPeriodMapping.length &&
-                !swabPeriodMapping.includes(swabPeriod.swabPeriodName)
-              ) {
-                continue;
-              }
-              // const createSwabTest = subSwabAreas && subSwabAreas.length === 0;
-
-              const mainSwabAreaHistory = await generateSwabAreaHistory(
-                currentDate,
-                swabAreas,
-                swabPeriod,
-                Shift[shiftKey],
-                true,
-              );
-
-              if (subSwabAreas && subSwabAreas.length > 0) {
-                const subSwabAreaHistories = [];
-
-                for (let index4 = 0; index4 < subSwabAreas.length; index4++) {
-                  const swabArea = subSwabAreas[index4];
-
-                  const subSwabAreaHistory = await generateSwabAreaHistory(
-                    currentDate,
-                    swabArea,
-                    swabPeriod,
-                    Shift[shiftKey],
-                    false,
-                  );
-
-                  subSwabAreaHistories.push(subSwabAreaHistory);
-                }
-
-                if (subSwabAreaHistories.length) {
-                  mainSwabAreaHistory.subSwabAreaHistories =
-                    subSwabAreaHistories;
-                }
-              }
-
-              swabAreaHistories.push(mainSwabAreaHistory);
-            }
-          }
-        }
-      }
-    }
-
-    for (let dateIndex = 0; dateIndex <= NUMBER_OF_HISTORY_DAY; dateIndex++) {
-      const currentDate = new Date(fromDate);
-
-      await generateHistory(swabAreas, currentDate, dateIndex);
-    }
-
-    await this.swabAreaHistoryRepository.save(swabAreaHistories);
+    });
 
     return;
   }

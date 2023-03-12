@@ -85,7 +85,7 @@ export class SwabAreaHistoryController {
   }
 
   @Post()
-  generateSwabPlan(@Query() generateSwabPlanDto: GenerateSwabPlanDto) {
+  generateSwabPlan(@Body() generateSwabPlanDto: GenerateSwabPlanDto) {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
   }
 

@@ -532,6 +532,7 @@ export class SwabPlanQueryService {
         'swab_area_history.subSwabAreaHistories',
         'sub_swab_area_histories',
       )
+      .leftJoinAndSelect('sub_swab_area_histories.swabArea', 'sub_swab_area')
       .leftJoinAndSelect(
         'sub_swab_area_histories.swabEnvironments',
         'sub_swab_environment',
@@ -742,15 +743,40 @@ export class SwabPlanQueryService {
     const query = this.swabAreaHistoryService.toQuery(dto);
 
     const swabAreaHistory = await query
-      .leftJoinAndSelect('swab_area.subSwabAreas', 'sub_swab_area')
+      // .leftJoinAndSelect('swab_area.subSwabAreas', 'sub_swab_area')
       .leftJoinAndSelect(
         'swab_area_history.swabAreaHistoryImages',
         'swab_area_history_image',
       )
+      .leftJoinAndSelect(
+        'swab_area_history.subSwabAreaHistories',
+        'sub_swab_area_histories',
+      )
+      .leftJoinAndSelect('sub_swab_area_histories.swabArea', 'sub_swab_area')
       .leftJoinAndSelect('swab_area_history_image.file', 'file')
       .leftJoinAndSelect(
         'swab_area_history.swabEnvironments',
         'swab_environment',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history.mainSwabAreaHistory',
+        'main_swab_area_history',
+      )
+      .leftJoinAndSelect(
+        'main_swab_area_history.swabTest',
+        'main_swab_area_history_swab_test',
+      )
+      .leftJoinAndSelect(
+        'main_swab_area_history.swabArea',
+        'main_swab_area_history_swab_area',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history.cleaningHistory',
+        'swab_area_history_cleaning_history',
+      )
+      .leftJoinAndSelect(
+        'swab_area_history_cleaning_history.cleaningHistoryValidations',
+        'swab_area_history_cleaning_history_validation',
       )
       .getOne();
 

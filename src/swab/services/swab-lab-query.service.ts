@@ -138,6 +138,14 @@ export class SwabLabQueryService {
     //   ...paginationParams,
     // });
 
+    // let total;
+
+    // if (paginationParams.skip || paginationParams.take) {
+    //   total = await this.swabAreaHistoryService.count(params);
+    // } else {
+    //   total = result.length;
+    // }
+
     let swabPeriods = [];
     let swabTests = [];
     let swabAreas = [];
@@ -248,6 +256,14 @@ export class SwabLabQueryService {
     const [swabProductHistories, total] = await query
       .orderBy('swab_test.id', 'ASC')
       .getManyAndCount();
+
+    // let total = 0;
+
+    // if (paginationParams.skip || paginationParams.take) {
+    //   total = await this.swabProductHistoryService.count(params);
+    // } else {
+    //   total = swabProductHistories.length;
+    // }
 
     let facilities = [];
     let facilityItems = [];
