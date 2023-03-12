@@ -23,7 +23,16 @@ export class ImportTransactionQueryService {
   toQuery(
     dto: FilterImportTransactionDto,
   ): SelectQueryBuilder<ImportTransaction> {
-    let { id, fromDate, toDate, importType, importSource, skip, take } = dto;
+    let {
+      id,
+      fromDate,
+      toDate,
+      importType,
+      importSource,
+      skip,
+      take,
+      importedFileName,
+    } = dto;
 
     const query = this.repository
       .createQueryBuilder('import_transaction')
@@ -62,6 +71,15 @@ export class ImportTransactionQueryService {
 
     if (take !== undefined) {
       query.take(take);
+    }
+
+    if (importedFileName) {
+      query.andWhere(
+        'import_transaction.importedFileName = :importedFileName',
+        {
+          importedFileName,
+        },
+      );
     }
 
     return query;

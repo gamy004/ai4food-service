@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CrudService } from '~/common/services/abstract.crud.service';
+import { UpdateImportTransactionDto } from '../dto/update-import-transaction.dto';
 import {
   ImportStatus,
   ImportTransaction,
@@ -22,8 +23,11 @@ export class ImportTransactionService extends CrudService<ImportTransaction> {
    * Complete the import transaction by changing import status to `success`
    * @param id id of the import transaction
    */
-  async complete(id: string): Promise<void> {
-    this.repository.update({ id }, { importStatus: ImportStatus.Success });
+  async complete(id: string, body: UpdateImportTransactionDto): Promise<void> {
+    this.repository.update(
+      { id },
+      { ...body, importStatus: ImportStatus.Success },
+    );
   }
 
   /**

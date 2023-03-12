@@ -44,4 +44,7 @@ export class FilterImportTransactionDto {
   @IsNumber()
   @Type(() => Number)
   take?: number;
+
+  @IsOptional()
+  importedFileName?: string;
 }

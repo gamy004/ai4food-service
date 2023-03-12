@@ -8,6 +8,7 @@ import { User } from '~/auth/entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { FilterImportTransactionDto } from './dto/filter-import-transaction.dto';
 import { ImportTransactionQueryService } from './services/import-transaction-query.service';
+import { UpdateImportTransactionDto } from './dto/update-import-transaction.dto';
 
 @Controller('import-transaction')
 @ApiTags('Importing')
@@ -36,8 +37,14 @@ export class ImportTransactionController {
 
   @Authenticated()
   @Put(':id/complete')
-  complete(@Param() params: ParamImportTransactionDto) {
-    return this.importTransactionService.complete(params.id);
+  complete(
+    @Param() params: ParamImportTransactionDto,
+    @Body() bodyUpdateImportTransactionDto: UpdateImportTransactionDto,
+  ) {
+    return this.importTransactionService.complete(
+      params.id,
+      bodyUpdateImportTransactionDto,
+    );
   }
 
   @Authenticated()
