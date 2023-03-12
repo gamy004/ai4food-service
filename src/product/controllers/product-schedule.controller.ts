@@ -11,7 +11,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
-import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
+import { ImportTransactionService } from '~/import-transaction/services/import-transaction.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ImportProductScheduleDto } from '../dto/import-product-schedule.dto';
 import { QueryProductScheduleDto } from '../dto/query-product-schedule.dto';

@@ -21,7 +21,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ImportSwabTestDto } from '../dto/import-swab-test.dto';
 import { SwabTest } from '../entities/swab-test.entity';
 import { DataCollectorImporterInterface } from '~/data-collector/interface/data-collector-importer-interface';
-import { ImportTransactionService } from '~/import-transaction/import-transaction.service';
+import { ImportTransactionService } from '~/import-transaction/services/import-transaction.service';
 import * as XLSX from 'xlsx';
 import { BacteriaService } from '~/lab/services/bacteria.service';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
