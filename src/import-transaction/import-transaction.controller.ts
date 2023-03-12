@@ -9,11 +9,14 @@ import { ApiTags } from '@nestjs/swagger';
 import { FilterImportTransactionDto } from './dto/filter-import-transaction.dto';
 import { ImportTransactionQueryService } from './services/import-transaction-query.service';
 import { UpdateImportTransactionDto } from './dto/update-import-transaction.dto';
+import { FileService } from '~/common/services/file.service';
+import { ImportTransaction } from './entities/import-transaction.entity';
 
 @Controller('import-transaction')
 @ApiTags('Importing')
 export class ImportTransactionController {
   constructor(
+    private readonly fileService: FileService,
     private readonly importTransactionService: ImportTransactionService,
     private readonly importTransactionQueryService: ImportTransactionQueryService,
   ) {}
@@ -36,15 +39,35 @@ export class ImportTransactionController {
   }
 
   @Authenticated()
-  @Put(':id/complete')
-  complete(
+  @Put(':id')
+  async update(
     @Param() params: ParamImportTransactionDto,
-    @Body() bodyUpdateImportTransactionDto: UpdateImportTransactionDto,
-  ) {
-    return this.importTransactionService.complete(
-      params.id,
-      bodyUpdateImportTransactionDto,
-    );
+    @Body() body: UpdateImportTransactionDto,
+  ): Promise<ImportTransaction> {
+    const importTransaction =
+      await this.importTransactionService.findOneByOrFail({ id: params.id });
+
+    console.log(importTransaction);
+
+    if (body.importedFileName) {
+      importTransaction.importedFileName = body.importedFileName;
+    }
+
+    if (body.importedFileUrl) {
+      importTransaction.importedFileUrl = body.importedFileUrl;
+    }
+
+    if (body.importedFile) {
+      importTransaction.importedFile = this.fileService.make(body.importedFile);
+    }
+
+    return this.importTransactionService.save(importTransaction);
+  }
+
+  @Authenticated()
+  @Put(':id/complete')
+  complete(@Param() params: ParamImportTransactionDto) {
+    return this.importTransactionService.complete(params.id);
   }
 
   @Authenticated()
