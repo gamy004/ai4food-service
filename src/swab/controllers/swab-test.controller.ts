@@ -28,6 +28,9 @@ import { BacteriaService } from '~/lab/services/bacteria.service';
 import { ImportType } from '~/import-transaction/entities/import-transaction.entity';
 import { FilterSwabTestDto } from '../dto/filter-swab-test.dto';
 import { SwabTestQueryService } from '../services/swab-test-query.service';
+import { SwabTestService } from '../services/swab-test.service';
+import { QuerySwabTestByCodeDto } from '../dto/query-swab-test-by-code.dto';
+import { FindOptionsWhere, In } from 'typeorm';
 
 @Controller('swab-test')
 @ApiTags('Swab')
@@ -36,7 +39,8 @@ export class SwabTestController {
     private readonly importTransactionService: ImportTransactionService,
     private readonly swabLabManagerService: SwabLabManagerService,
     private readonly bacteriaService: BacteriaService,
-    private readonly swabtestQueryService: SwabTestQueryService,
+    private readonly swabTestService: SwabTestService,
+    private readonly swabTestQueryService: SwabTestQueryService,
     @Inject('DataCollectorImporterInterface<SwabTest>')
     private readonly swabTestImporter: DataCollectorImporterInterface<SwabTest>,
   ) {}
@@ -44,7 +48,26 @@ export class SwabTestController {
   @Authenticated()
   @Get()
   async query(@Query() dto: FilterSwabTestDto): Promise<SwabTest[]> {
-    return this.swabtestQueryService.query(dto);
+    return this.swabTestQueryService.query(dto);
+  }
+
+  @Post('codes')
+  async queryByCodes(
+    @Body() bodyQueryByCodeDto: QuerySwabTestByCodeDto,
+  ): Promise<SwabTest[]> {
+    const where: FindOptionsWhere<SwabTest> = {};
+
+    if (bodyQueryByCodeDto.swabTestCodes) {
+      where.swabTestCode = In(bodyQueryByCodeDto.swabTestCodes);
+    }
+
+    return this.swabTestService.find({
+      where,
+      relations: ['bacteria'],
+      order: {
+        createdAt: 'asc',
+      },
+    });
   }
 
   @Authenticated()
