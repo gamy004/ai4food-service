@@ -47,4 +47,7 @@ export class FilterImportTransactionDto {
 
   @IsOptional()
   importedFileName?: string;
+
+  @IsOptional()
+  timezone?: string;
 }

@@ -2,6 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { Shift } from '../enums/shift';
 
+export interface DateRangeToSqlOptions {
+  timezone?: string | null;
+  dateOnly?: boolean;
+}
+
+export const DATE_ONLY_FORMAT = 'yyyy-MM-dd';
+
 @Injectable()
 export class DateTransformer {
   public toObject(dateString, timeObject = null) {
@@ -20,8 +27,8 @@ export class DateTransformer {
     return dateObject;
   }
 
-  public toString(dateObject) {
-    return format(dateObject, 'yyyy-MM-dd');
+  public toString(dateObject, dateFormat = 'yyyy-MM-dd') {
+    return format(dateObject, dateFormat);
   }
 
   public toTimeObject(timeString) {
@@ -81,30 +88,59 @@ export class DateTransformer {
     return dateObject;
   }
 
-  public dateRangeToSql(field, fromDateString, toDateString) {
+  public dateRangeToSql(
+    field,
+    fromDateString,
+    toDateString,
+    { timezone = null, dateOnly = true }: DateRangeToSqlOptions = {},
+  ) {
     let expression;
 
-    let rangeToDateString;
+    let rangeFromDateString, rangeToDateString;
+
+    if (fromDateString) {
+      let rangeFromDate = this.toObject(fromDateString);
+
+      if (timezone) {
+        rangeFromDate = zonedTimeToUtc(rangeFromDate, timezone);
+      }
+
+      rangeFromDateString = dateOnly
+        ? this.toString(rangeFromDate)
+        : rangeFromDate.toISOString();
+
+      console.log('range from date', rangeFromDate, rangeFromDateString);
+    }
 
     if (toDateString) {
-      const rangeToDate = this.toObject(toDateString);
+      let rangeToDate = this.toObject(toDateString);
 
       rangeToDate.setDate(rangeToDate.getDate() + 1);
 
-      rangeToDateString = this.toString(rangeToDate);
+      if (timezone) {
+        rangeToDate = zonedTimeToUtc(rangeToDate, timezone);
+      }
+
+      rangeToDateString = dateOnly
+        ? this.toString(rangeToDate)
+        : rangeToDate.toISOString();
+
+      console.log('range to date', rangeToDate, rangeToDateString);
     }
 
-    if (fromDateString && rangeToDateString) {
-      expression = `${field} >= '${fromDateString}' and ${field} < '${rangeToDateString}'`;
+    if (rangeFromDateString && rangeToDateString) {
+      expression = `${field} >= '${rangeFromDateString}' and ${field} < '${rangeToDateString}'`;
     } else {
-      if (fromDateString) {
-        expression = `${field} >= '${fromDateString}'`;
+      if (rangeFromDateString) {
+        expression = `${field} >= '${rangeFromDateString}'`;
       }
 
       if (rangeToDateString) {
         expression = `${field} < '${rangeToDateString}'`;
       }
     }
+
+    console.log(expression);
 
     return expression;
   }

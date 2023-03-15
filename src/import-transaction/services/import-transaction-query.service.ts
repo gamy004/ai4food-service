@@ -32,6 +32,7 @@ export class ImportTransactionQueryService {
       skip,
       take,
       importedFileName,
+      timezone = null,
     } = dto;
 
     const query = this.repository
@@ -46,9 +47,10 @@ export class ImportTransactionQueryService {
     if (fromDate || toDate) {
       query.andWhere(
         this.dateTransformer.dateRangeToSql(
-          'import_transaction.createdAt',
+          'import_transaction.updatedAt',
           fromDate,
           toDate,
+          { timezone, dateOnly: false },
         ),
       );
     }
@@ -91,7 +93,7 @@ export class ImportTransactionQueryService {
     const query = this.toQuery(dto);
 
     const [importTransactions, total] = await query
-      .orderBy('import_transaction.createdAt', 'DESC')
+      .orderBy('import_transaction.updatedAt', 'DESC')
       .getManyAndCount();
 
     return {
