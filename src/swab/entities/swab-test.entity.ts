@@ -5,11 +5,15 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
+import { ImportTransaction } from '~/import-transaction/entities/import-transaction.entity';
 import { User } from '../../auth/entities/user.entity';
 import { BaseSoftDeletableIncrementEntity } from '../../common/entities/base-softdeletable-increment.entity';
 import { BacteriaSpecie } from '../../lab/entities/bacteria-specie.entity';
 import { Bacteria } from '../../lab/entities/bacteria.entity';
+import { SwabAreaHistory } from './swab-area-history.entity';
+import { SwabProductHistory } from './swab-product-history.entity';
 import { SwabRound } from './swab-round.entity';
 
 export const SWAB_TEST_CODE_PREFIX = 'AI';
@@ -80,10 +84,16 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
 
   @Column({ nullable: true })
   swabTestOrder: number;
-  // @AfterInsert()
-  // generateSwabTestNo() {
-  //     SwabTest.update(this.id, {
-  //         swabTestCode: `${SWAB_TEST_CODE_PREFIX} ${this.id}`
-  //     });
-  // }
+
+  @OneToOne(() => SwabAreaHistory, (entity) => entity.swabTest)
+  swabAreaHistory: SwabAreaHistory;
+
+  @OneToOne(() => SwabProductHistory, (entity) => entity.swabTest)
+  swabProductHistory: SwabProductHistory;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  importTransactionId?: string;
+
+  @ManyToOne(() => ImportTransaction, (entity) => entity.swabTests)
+  importTransaction?: ImportTransaction;
 }

@@ -42,11 +42,10 @@ import { SwabLabManagerService } from './services/swab-lab-manager.service';
 import { SwabProductHistoryExistsRule } from './validators/swab-product-history-exists-validator';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { SwabAreaHistoryRelationManagerService } from './services/swab-area-history-relation-manager.service';
+import { ImportTransactionModule } from '~/import-transaction/import-transaction.module';
+import { SwabTestImporter } from './services/swab-test.importer';
 import { CleaningModule } from '~/cleaning/cleaning.module';
 import { CleaningHistory } from '~/cleaning/entities/cleaning-history.entity';
-import { CleaningHistoryController } from '~/cleaning/controllers/cleaning-history.controller';
-import { CleaningHistoryExistsRule } from '~/cleaning/validators/cleaning-history-exists-validator';
-import { CleaningHistoryService } from '~/cleaning/services/cleaning-history.service';
 import { CleaningProgram } from '~/cleaning/entities/cleaning-program.entity';
 import { CleaningHistoryCleaningValidation } from '~/cleaning/entities/cleaning-history-cleaning-validation.entity';
 import { SwabCleaningValidation } from './entities/swab-cleaning-validation.entity';
@@ -54,9 +53,11 @@ import { SwabCleaningValidationController } from './controllers/swab-cleaning-va
 import { SwabCleaningValidationService } from './services/swab-cleaning-validation.service';
 import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
 import { SwabCleaningValidationSeedService } from './services/swab-cleaning-validation-seed.service';
+import { SwabTestQueryService } from './services/swab-test-query.service';
 
 @Module({
   imports: [
+    ImportTransactionModule,
     TypeOrmModule.forFeature([
       SwabAreaHistory,
       SwabAreaHistoryImage,
@@ -100,6 +101,7 @@ import { SwabCleaningValidationSeedService } from './services/swab-cleaning-vali
     SwabPeriodService,
     SwabEnvironmentService,
     SwabTestService,
+    SwabTestQueryService,
     SwabRoundService,
     SwabAreaExistsRule,
     SwabPeriodExistsRule,
@@ -111,6 +113,10 @@ import { SwabCleaningValidationSeedService } from './services/swab-cleaning-vali
     SwabProductQueryService,
     SwabProductHistoryService,
     SwabProductManagerService,
+    {
+      provide: 'DataCollectorImporterInterface<SwabTest>',
+      useClass: SwabTestImporter,
+    },
     SwabCleaningValidationService,
     SwabCleaningValidationQueryService,
     SwabCleaningValidationSeedService,
