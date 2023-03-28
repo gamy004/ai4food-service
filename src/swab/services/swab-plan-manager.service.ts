@@ -952,17 +952,17 @@ export class SwabPlanManagerService {
           }
 
           if (!includeDayShiftFirstDay) {
-            shiftKeys = shiftKeys.filter((key) => key === 'DAY');
+            shiftKeys = shiftKeys.filter((key) => key !== 'DAY');
           }
 
           if (!includeNightShiftFirstDay) {
-            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+            shiftKeys = shiftKeys.filter((key) => key !== 'NIGHT');
           }
         }
 
         if (dateIndex !== 0 && dateIndex === NUMBER_OF_HISTORY_DAY) {
           if (!includeNightShiftLastDay) {
-            shiftKeys = shiftKeys.filter((key) => key === 'NIGHT');
+            shiftKeys = shiftKeys.filter((key) => key !== 'NIGHT');
           }
         }
 
