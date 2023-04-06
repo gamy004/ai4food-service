@@ -363,7 +363,7 @@ export class SwabProductManagerService {
           const swabTestData = SwabTest.create({
             swabTestCode: `${
               roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
-            }${SWAB_TEST_CODE_PREFIX} ${SWAB_TEST_START_NUMBER_PREFIX}`,
+            }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
             swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
           });
 
