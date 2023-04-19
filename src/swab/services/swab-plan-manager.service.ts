@@ -31,6 +31,10 @@ import { SwabCleaningValidationService } from './swab-cleaning-validation.servic
 import { CleaningHistoryService } from '~/cleaning/services/cleaning-history.service';
 import { SwabTestService } from './swab-test.service';
 import { SwabAreaHistoryService } from './swab-area-history.service';
+import {
+  CreateSwabPlanDto,
+  TemplateCreateSwabPlanDto,
+} from '../dto/create-swab-plan.dto';
 
 @Injectable()
 export class SwabPlanManagerService {
@@ -2665,6 +2669,167 @@ export class SwabPlanManagerService {
         const swabAreaHistory = SwabAreaHistory.create(historyData);
 
         await queryRunnerManger.save(swabAreaHistory);
+      }
+    });
+  }
+
+  async createSwabPlan(createSwabPlanDto: CreateSwabPlanDto) {
+    const {
+      id = null,
+      swabRoundName,
+      templateCreateSwabPlans = [],
+    } = createSwabPlanDto;
+
+    if (templateCreateSwabPlans.length == 0) return;
+
+    this.transaction.execute(async () => {
+      const createSwabAreaHistory = async (
+        swabAreaDate,
+        swabArea,
+        swabPeriod,
+        swabRound,
+        shift,
+        // createSwabTest = true,
+      ) => {
+        const whereSwabAreaHistory = this.swabAreaHistoryService.toFilter({
+          swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
+          swabPeriodId: swabPeriod.id,
+          swabAreaId: swabArea.id,
+          shift,
+        });
+
+        let swabAreaHistory = await this.swabAreaHistoryService.findOne({
+          where: whereSwabAreaHistory,
+        });
+
+        if (!swabAreaHistory) {
+          swabAreaHistory = await this.swabAreaHistoryService.save(
+            this.swabAreaHistoryService.make({
+              swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
+              swabPeriod,
+              swabArea,
+              shift,
+              swabRound,
+            }),
+          );
+        }
+
+        // if (createSwabTest) {
+        //   let swabTest;
+
+        //   if (swabAreaHistory.swabTestId) {
+        //     swabTest = await this.swabTestService.findOneBy({
+        //       id: swabAreaHistory.swabTestId,
+        //     });
+        //   }
+
+        //   if (!swabTest) {
+        //     swabTest = await this.swabTestService.save(
+        //       this.swabTestService.make({
+        //         swabTestCode: `${
+        //           roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+        //         }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+        //         swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+        //         swabRound,
+        //         swabAreaHistory,
+        //       }),
+        //     );
+
+        //     SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+        //   }
+        // }
+
+        const swabCleaningValidations =
+          await this.swabCleaningValidationService.findBy({
+            swabPeriodId: swabPeriod.id,
+            swabAreaId: swabArea.id,
+          });
+
+        if (swabCleaningValidations.length) {
+          let cleaningHistory = await this.cleaningHistoryService.findOneBy({
+            swabAreaHistoryId: swabAreaHistory.id,
+          });
+
+          if (!cleaningHistory) {
+            cleaningHistory = await this.cleaningHistoryService.save(
+              this.cleaningHistoryService.make({
+                swabAreaHistory,
+                swabRound,
+              }),
+            );
+          }
+        }
+
+        return swabAreaHistory;
+      };
+
+      for (let index = 0; index < templateCreateSwabPlans.length; index++) {
+        const { fromDate, toDate, template } = templateCreateSwabPlans[index];
+
+        const { DAY, NIGHT, order } = template;
+
+        const NUMBER_OF_HISTORY_DAY: number = differenceInDays(
+          new Date(toDate),
+          new Date(fromDate),
+        );
+
+        for (let index = 0; index <= NUMBER_OF_HISTORY_DAY; index++) {
+          const currentDate = new Date(fromDate);
+          const swabAreaDate = currentDate.setDate(
+            currentDate.getDate() + index,
+          );
+          const swabRound = await this.swabRoundService.save(
+            this.swabRoundService.make({
+              swabRoundNumber: swabRoundName,
+            }),
+          );
+
+          // Shift DAY
+          for (const [swabPeriodId, swabPeriodValue] of Object.entries(DAY)) {
+            const swabPeriod = await this.swabPeriodService.findOneBy({
+              id: swabPeriodId,
+            });
+            for (const [swabAreaId, swabAreaValue] of Object.entries(
+              swabPeriodValue,
+            )) {
+              const swabArea = await this.swabAreaService.findOneBy({
+                id: swabAreaId,
+              });
+              if (swabAreaValue) {
+                await createSwabAreaHistory(
+                  swabAreaDate,
+                  swabArea,
+                  swabPeriod,
+                  swabRound,
+                  Shift.DAY,
+                );
+              }
+            }
+          }
+
+          // Shift NIGHT
+          for (const [swabPeriodId, swabPeriodValue] of Object.entries(NIGHT)) {
+            const swabPeriod = await this.swabPeriodService.findOneBy({
+              id: swabPeriodId,
+            });
+            for (const [swabAreaId, swabAreaValue] of Object.entries(
+              swabPeriodValue,
+            )) {
+              const swabArea = await this.swabAreaService.findOneBy({
+                id: swabAreaId,
+              });
+              if (swabAreaValue) {
+                await createSwabAreaHistory(
+                  swabAreaDate,
+                  swabArea,
+                  swabPeriod,
+                  swabRound,
+                  Shift.NIGHT,
+                );
+              }
+            }
+          }
+        }
       }
     });
   }

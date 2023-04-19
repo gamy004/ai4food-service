@@ -30,6 +30,7 @@ import { SwabAreaHistoryRelationManagerService } from '../services/swab-area-his
 import { SwabLabQueryService } from '../services/swab-lab-query.service';
 import { SwabPlanManagerService } from '../services/swab-plan-manager.service';
 import { SwabPlanQueryService } from '../services/swab-plan-query.service';
+import { CreateSwabPlanDto } from '../dto/create-swab-plan.dto';
 
 @Controller('swab/area-history')
 @ApiTags('Swab')
@@ -87,6 +88,11 @@ export class SwabAreaHistoryController {
   @Post()
   generateSwabPlan(@Body() generateSwabPlanDto: GenerateSwabPlanDto) {
     return this.swabPlanManagerService.generateSwabPlan(generateSwabPlanDto);
+  }
+
+  @Post('create-plan')
+  createSwabPlan(@Body() createSwabPlanDto: CreateSwabPlanDto) {
+    return this.swabPlanManagerService.createSwabPlan(createSwabPlanDto);
   }
 
   @Post('import-old-data')
