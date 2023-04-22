@@ -15,6 +15,9 @@ import { RoomExistsRule } from './validators/room-exists-validator';
 import { ZoneExistsRule } from './validators/zone-exists-validator';
 import { RiskZoneExistsRule } from './validators/risk-zone-exists-validator';
 import { RiskZone } from './entities/risk-zone.entity';
+import { ContactZone } from './entities/contact-zone.entity';
+import { ContactZoneController } from './controllers/contact-zone.controller';
+import { ContactZoneService } from './services/contact-zone.service';
 
 @Module({
   imports: [
@@ -23,22 +26,21 @@ import { RiskZone } from './entities/risk-zone.entity';
       RiskZone,
       Room,
       Facility,
-      FacilityItem
-    ])
+      FacilityItem,
+      ContactZone,
+    ]),
   ],
-  controllers: [
-    FacilityController,
-    RoomController
-  ],
+  controllers: [FacilityController, RoomController, ContactZoneController],
   providers: [
     FacilityService,
     FacilityItemService,
     RoomService,
+    ContactZoneService,
     FacilityExistsRule,
     FacilityItemExistsRule,
     RoomExistsRule,
     ZoneExistsRule,
-    RiskZoneExistsRule
+    RiskZoneExistsRule,
   ],
   exports: [
     FacilityService,
@@ -48,7 +50,7 @@ import { RiskZone } from './entities/risk-zone.entity';
     FacilityItemExistsRule,
     RoomExistsRule,
     ZoneExistsRule,
-    RiskZoneExistsRule
-  ]
+    RiskZoneExistsRule,
+  ],
 })
-export class FacilityModule { }
+export class FacilityModule {}

@@ -3,14 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SwabArea } from '../entities/swab-area.entity';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { CrudService } from '~/common/services/abstract.crud.service';
-import { FindOptionsRelations, FindOptionsWhere, In, IsNull, Not } from 'typeorm';
+import {
+  FindOptionsRelations,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+} from 'typeorm';
 import { FindAllSwabAreaQuery } from '../dto/find-all-swab-area-query.dto';
 import { CreateSwabAreaDto } from '../dto/create-swab-area.dto';
 import {
   BodyUpdateSwabAreaDto,
   ParamUpdateSwabAreaDto,
 } from '../dto/update-swab-area.dto';
-import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
+import {
+  ParamGetSwabAreaDeletePermissionDto,
+  ResponseGetSwabAreaDeletePermissionDto,
+} from '../dto/get-swab-area-delete-permission.dto';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {
@@ -22,11 +31,12 @@ export class SwabAreaService extends CrudService<SwabArea> {
   }
 
   findAllMainArea(dto: FindAllSwabAreaQuery): Promise<SwabArea[]> {
-    const { subSwabAreas = false, facility = false } = dto;
+    const { subSwabAreas = false, facility = false, contactZone = false } = dto;
 
     const relations: FindOptionsRelations<SwabArea> = {
       subSwabAreas,
       facility,
+      contactZone,
     };
 
     return this.repository.find({
@@ -47,6 +57,11 @@ export class SwabAreaService extends CrudService<SwabArea> {
           id: true,
           facilityName: true,
           facilityType: true,
+        },
+        contactZone: {
+          id: true,
+          contactZoneName: true,
+          contactZoneDescription: true,
         },
       },
       order: {
@@ -130,7 +145,7 @@ export class SwabAreaService extends CrudService<SwabArea> {
 
       if (insertedSubSwabArea.id) {
         currentSubSwabAreaIds.push(insertedSubSwabArea.id);
-        
+
         subSwabArea = this.repository.create({
           id: insertedSubSwabArea.id,
           swabAreaName: insertedSubSwabArea.swabAreaName,
@@ -146,10 +161,9 @@ export class SwabAreaService extends CrudService<SwabArea> {
     });
 
     // Need to validate with swab area history that can delete only!
-    const removeSubSwabAreaCondition: FindOptionsWhere<SwabArea> =
-      {
-        mainSwabAreaId: swabArea.id,
-      };
+    const removeSubSwabAreaCondition: FindOptionsWhere<SwabArea> = {
+      mainSwabAreaId: swabArea.id,
+    };
 
     if (currentSubSwabAreaIds.length) {
       removeSubSwabAreaCondition.id = Not(
@@ -157,17 +171,14 @@ export class SwabAreaService extends CrudService<SwabArea> {
       );
     }
 
-    const deletedSubSwabAreas =
-      await this.repository.find({
-        where: removeSubSwabAreaCondition,
-        // relations: { // Need to think first!
-        // },
-      });
+    const deletedSubSwabAreas = await this.repository.find({
+      where: removeSubSwabAreaCondition,
+      // relations: { // Need to think first!
+      // },
+    });
 
     if (deletedSubSwabAreas.length) {
-      await this.repository.softRemove(
-        deletedSubSwabAreas
-      );
+      await this.repository.softRemove(deletedSubSwabAreas);
     }
 
     if (subSwabAreas.length) {
@@ -210,19 +221,17 @@ export class SwabAreaService extends CrudService<SwabArea> {
     const swabAreaWithRelations = await this.repository.findOneOrFail({
       where: { id: param.id },
       relations: {
-        swabAreaHistories: true
+        swabAreaHistories: true,
       },
       select: {
         id: true,
         swabAreaHistories: {
           id: true,
-        }
+        },
       },
     });
 
-    const {
-      swabAreaHistories = [],
-    } = swabAreaWithRelations;
+    const { swabAreaHistories = [] } = swabAreaWithRelations;
 
     const countSwabAreaHistories = swabAreaHistories.length;
 
@@ -236,7 +245,7 @@ export class SwabAreaService extends CrudService<SwabArea> {
     return {
       canDelete,
       message,
-      countSwabAreaHistories
+      countSwabAreaHistories,
     };
   }
 }
