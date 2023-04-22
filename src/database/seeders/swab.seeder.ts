@@ -136,10 +136,10 @@ export default class SwabSeeder implements Seeder {
             ],
           },
           {
-            swabAreaName: 'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+            swabAreaName: 'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
             contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'เลื่อนสายพาน', contactZoneName: 'Zone 3' },
+              { swabAreaName: 'รางสายไฟ', contactZoneName: 'Zone 3' },
               {
                 swabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                 contactZoneName: 'Zone 3',
@@ -268,9 +268,9 @@ export default class SwabSeeder implements Seeder {
             swabAreaName: 'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
             contactZoneName: null,
             subSwabAreas: [
-              { swabAreaName: 'แกน roller', contactZoneName: null },
-              { swabAreaName: 'สายพาน PVC.', contactZoneName: null },
-              { swabAreaName: 'ปีกสายพานสแตนเลส', contactZoneName: null },
+              { swabAreaName: 'แกน roller', contactZoneName: 'Zone 2' },
+              { swabAreaName: 'สายพาน PVC.', contactZoneName: 'Zone 1' },
+              { swabAreaName: 'ปีกสายพานสแตนเลส', contactZoneName: 'Zone 2' },
             ],
           },
         ],
