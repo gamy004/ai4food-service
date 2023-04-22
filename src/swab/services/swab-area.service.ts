@@ -20,10 +20,12 @@ import {
   ParamGetSwabAreaDeletePermissionDto,
   ResponseGetSwabAreaDeletePermissionDto,
 } from '../dto/get-swab-area-delete-permission.dto';
+import { ContactZoneService } from '~/facility/services/contact-zone.service';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {
   constructor(
+    private readonly contactZoneService: ContactZoneService,
     @InjectRepository(SwabArea)
     repository: CommonRepositoryInterface<SwabArea>,
   ) {
@@ -34,7 +36,8 @@ export class SwabAreaService extends CrudService<SwabArea> {
     const { subSwabAreas = false, facility = false, contactZone = false } = dto;
 
     const relations: FindOptionsRelations<SwabArea> = {
-      subSwabAreas,
+      subSwabAreas:
+        subSwabAreas && contactZone ? { contactZone } : subSwabAreas,
       facility,
       contactZone,
     };
@@ -77,14 +80,20 @@ export class SwabAreaService extends CrudService<SwabArea> {
       swabAreaName = '',
       subSwabAreas: insertedSubSwabAreas = [],
       facility,
+      contactZone = null,
     } = createSwabAreaDto;
 
-    const mainSwabArea = this.repository.create({ swabAreaName, facility });
+    const mainSwabArea = this.repository.create({
+      swabAreaName,
+      facility,
+      contactZone,
+    });
 
     const subSwabAreas = insertedSubSwabAreas.map((insertedSubSwabArea) =>
       this.repository.create({
         swabAreaName: insertedSubSwabArea.swabAreaName,
         facility,
+        contactZone: insertedSubSwabArea.contactZone || null,
       }),
     );
 
@@ -99,22 +108,11 @@ export class SwabAreaService extends CrudService<SwabArea> {
         id: insertedMainSwabArea.id,
       },
       relations: {
-        subSwabAreas: true,
-        facility: true,
-      },
-      select: {
-        id: true,
-        swabAreaName: true,
         subSwabAreas: {
-          id: true,
-          swabAreaName: true,
-          mainSwabAreaId: true,
+          contactZone: true,
         },
-        facility: {
-          id: true,
-          facilityName: true,
-          facilityType: true,
-        },
+        facility: true,
+        contactZone: true,
       },
     });
   }
@@ -127,12 +125,19 @@ export class SwabAreaService extends CrudService<SwabArea> {
       swabAreaName = '',
       subSwabAreas: insertedSubSwabAreas = [],
       facility,
+      contactZone = null,
     } = body;
 
     const swabArea = await this.repository.findOneByOrFail(param);
 
     if (swabAreaName) {
       swabArea.swabAreaName = swabAreaName;
+    }
+
+    if (contactZone) {
+      swabArea.contactZone = this.contactZoneService.make(contactZone);
+    } else {
+      swabArea.contactZone = null;
     }
 
     if (facility) {
@@ -150,11 +155,13 @@ export class SwabAreaService extends CrudService<SwabArea> {
           id: insertedSubSwabArea.id,
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
+          contactZone: insertedSubSwabArea.contactZone || null,
         });
       } else {
         subSwabArea = this.repository.create({
           swabAreaName: insertedSubSwabArea.swabAreaName,
           facility,
+          contactZone: insertedSubSwabArea.contactZone || null,
         });
       }
       return subSwabArea;
@@ -192,22 +199,11 @@ export class SwabAreaService extends CrudService<SwabArea> {
         id: insertedMainSwabArea.id,
       },
       relations: {
-        subSwabAreas: true,
-        facility: true,
-      },
-      select: {
-        id: true,
-        swabAreaName: true,
         subSwabAreas: {
-          id: true,
-          swabAreaName: true,
-          mainSwabAreaId: true,
+          contactZone: true,
         },
-        facility: {
-          id: true,
-          facilityName: true,
-          facilityType: true,
-        },
+        facility: true,
+        contactZone: true,
       },
     });
   }
