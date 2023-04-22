@@ -54,7 +54,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -145,7 +145,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -233,7 +233,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -343,7 +343,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -432,7 +432,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -550,7 +550,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -639,7 +639,7 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
