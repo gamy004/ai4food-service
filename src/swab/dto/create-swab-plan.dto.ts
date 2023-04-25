@@ -1,6 +1,14 @@
 import { IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
 
+class orderDto {
+  @IsNotEmpty()
+  value: string;
+
+  @IsNotEmpty()
+  order: number;
+}
+
 export class TemplateSwabPlanDto {
   @IsOptional()
   DAY: object;
@@ -9,7 +17,7 @@ export class TemplateSwabPlanDto {
   NIGHT: object;
 
   @IsOptional()
-  order: object;
+  order: Array<orderDto>;
 }
 
 export class TemplateCreateSwabPlanDto {

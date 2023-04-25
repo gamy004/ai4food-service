@@ -2680,7 +2680,50 @@ export class SwabPlanManagerService {
       templateCreateSwabPlans = [],
     } = createSwabPlanDto;
 
+    let swabPeriodResponses = await this.swabPeriodService.find();
+    const swabPeriods = swabPeriodResponses.reduce((prev, curr) => {
+      return { [curr.id]: { ...curr }, ...prev };
+    }, {});
+
+    let swabAreaResponses = await this.swabAreaService.find();
+    const swabAreas = swabAreaResponses.reduce((prev, curr) => {
+      return { [curr.id]: { ...curr }, ...prev };
+    }, {});
+
     if (templateCreateSwabPlans.length == 0) return;
+
+    let swabRound;
+
+    if (id) {
+      swabRound = await this.swabRoundService.findOneBy({ id });
+    } else {
+      swabRound = await this.swabRoundService.save(
+        this.swabRoundService.make({
+          swabRoundNumber: swabRoundName,
+        }),
+      );
+    }
+
+    const runningNumberKey = `swab-area-history-round-${swabRound.swabRoundNumber}`;
+
+    let latestRunningNumber = 1;
+
+    const latestRunningNumberEntity = await this.runningNumberService.findOneBy(
+      {
+        key: runningNumberKey,
+      },
+    );
+
+    if (!latestRunningNumberEntity) {
+      latestRunningNumber = await this.runningNumberService.generate({
+        key: runningNumberKey,
+      });
+    } else {
+      latestRunningNumber = latestRunningNumberEntity.latestRunningNumber + 1;
+    }
+
+    const SWAB_TEST_CODE_PREFIX = 'AI';
+    let SWAB_TEST_START_NUMBER_PREFIX = latestRunningNumber;
 
     this.transaction.execute(async () => {
       const createSwabAreaHistory = async (
@@ -2689,7 +2732,6 @@ export class SwabPlanManagerService {
         swabPeriod,
         swabRound,
         shift,
-        // createSwabTest = true,
       ) => {
         const whereSwabAreaHistory = this.swabAreaHistoryService.toFilter({
           swabAreaDate: format(swabAreaDate, 'yyyy-MM-dd'),
@@ -2714,30 +2756,28 @@ export class SwabPlanManagerService {
           );
         }
 
-        // if (createSwabTest) {
-        //   let swabTest;
+        let swabTest;
 
-        //   if (swabAreaHistory.swabTestId) {
-        //     swabTest = await this.swabTestService.findOneBy({
-        //       id: swabAreaHistory.swabTestId,
-        //     });
-        //   }
+        if (swabAreaHistory.swabTestId) {
+          swabTest = await this.swabTestService.findOneBy({
+            id: swabAreaHistory.swabTestId,
+          });
+        }
 
-        //   if (!swabTest) {
-        //     swabTest = await this.swabTestService.save(
-        //       this.swabTestService.make({
-        //         swabTestCode: `${
-        //           roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
-        //         }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
-        //         swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-        //         swabRound,
-        //         swabAreaHistory,
-        //       }),
-        //     );
+        if (!swabTest) {
+          swabTest = await this.swabTestService.save(
+            this.swabTestService.make({
+              swabTestCode: `${
+                swabRound ? swabRound.swabRoundNumber + '/' : ''
+              }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+              swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+              swabRound,
+              swabAreaHistory,
+            }),
+          );
 
-        //     SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
-        //   }
-        // }
+          SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+        }
 
         const swabCleaningValidations =
           await this.swabCleaningValidationService.findBy({
@@ -2768,6 +2808,12 @@ export class SwabPlanManagerService {
 
         const { DAY, NIGHT, order } = template;
 
+        const orderSorted = order.sort((a, b) => {
+          return a.order - b.order;
+        });
+
+        const orderOfSwabAreas = orderSorted.map((x) => x.value);
+
         const NUMBER_OF_HISTORY_DAY: number = differenceInDays(
           new Date(toDate),
           new Date(fromDate),
@@ -2778,24 +2824,21 @@ export class SwabPlanManagerService {
           const swabAreaDate = currentDate.setDate(
             currentDate.getDate() + index,
           );
-          const swabRound = await this.swabRoundService.save(
-            this.swabRoundService.make({
-              swabRoundNumber: swabRoundName,
-            }),
-          );
 
-          // Shift DAY
-          for (const [swabPeriodId, swabPeriodValue] of Object.entries(DAY)) {
-            const swabPeriod = await this.swabPeriodService.findOneBy({
-              id: swabPeriodId,
-            });
-            for (const [swabAreaId, swabAreaValue] of Object.entries(
-              swabPeriodValue,
+          for (let index = 0; index < orderOfSwabAreas.length; index++) {
+            const swabAreaId = orderOfSwabAreas[index];
+            const swabArea = swabAreas[swabAreaId];
+
+            // Shift DAY
+            const swabAreaValueByTemplateDay = DAY[swabAreaId];
+
+            for (const [swabPeriodId, swabPeriodValue] of Object.entries(
+              swabAreaValueByTemplateDay,
             )) {
-              const swabArea = await this.swabAreaService.findOneBy({
-                id: swabAreaId,
-              });
-              if (swabAreaValue) {
+              if (swabPeriodValue) {
+                const swabPeriod = swabPeriods[swabPeriodId];
+                console.log(swabPeriodId, swabPeriod);
+
                 await createSwabAreaHistory(
                   swabAreaDate,
                   swabArea,
@@ -2805,20 +2848,14 @@ export class SwabPlanManagerService {
                 );
               }
             }
-          }
 
-          // Shift NIGHT
-          for (const [swabPeriodId, swabPeriodValue] of Object.entries(NIGHT)) {
-            const swabPeriod = await this.swabPeriodService.findOneBy({
-              id: swabPeriodId,
-            });
-            for (const [swabAreaId, swabAreaValue] of Object.entries(
-              swabPeriodValue,
+            // Shift NIGHT
+            const swabAreaValueByTemplateNight = NIGHT[swabAreaId];
+            for (const [swabPeriodId, swabPeriodValue] of Object.entries(
+              swabAreaValueByTemplateNight,
             )) {
-              const swabArea = await this.swabAreaService.findOneBy({
-                id: swabAreaId,
-              });
-              if (swabAreaValue) {
+              if (swabPeriodValue) {
+                const swabPeriod = swabPeriods[swabPeriodId];
                 await createSwabAreaHistory(
                   swabAreaDate,
                   swabArea,
@@ -2830,6 +2867,13 @@ export class SwabPlanManagerService {
             }
           }
         }
+      }
+
+      if (SWAB_TEST_START_NUMBER_PREFIX > latestRunningNumber) {
+        await this.runningNumberService.update(
+          { key: runningNumberKey },
+          { latestRunningNumber: SWAB_TEST_START_NUMBER_PREFIX - 1 },
+        );
       }
     });
   }
