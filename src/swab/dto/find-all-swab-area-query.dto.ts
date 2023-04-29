@@ -11,4 +11,9 @@ export class FindAllSwabAreaQuery {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   facility?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  contactZone?: boolean;
 }
