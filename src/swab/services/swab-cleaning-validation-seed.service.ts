@@ -54,7 +54,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -76,6 +82,15 @@ export class SwabCleaningValidationSeedService {
                   {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
+                  },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
                   },
                 ],
               },
@@ -145,7 +160,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -174,11 +195,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -233,7 +267,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -262,11 +302,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -343,7 +396,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -373,11 +432,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -432,7 +504,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -462,11 +540,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -504,7 +595,11 @@ export class SwabCleaningValidationSeedService {
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -550,7 +645,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -580,11 +681,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',
@@ -639,7 +753,13 @@ export class SwabCleaningValidationSeedService {
                   { mainSwabAreaName: 'สายพานลำเลียงถาด' },
                   {
                     mainSwabAreaName:
-                      'เลื่อนสายพาน และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                      'รางสายไฟ และ รอยต่อโครงสร้างด้านใต้สายพาน',
+                  },
+                  {
+                    mainSwabAreaName: 'รางสายไฟ',
+                  },
+                  {
+                    mainSwabAreaName: 'รอยต่อโครงสร้างด้านใต้สายพาน',
                   },
                   { mainSwabAreaName: 'ช่องใต้เฟรมสายพาน' },
                   { mainSwabAreaName: 'ขาตั้งเครื่อง' },
@@ -669,11 +789,24 @@ export class SwabCleaningValidationSeedService {
                     mainSwabAreaName:
                       'แกน roller, สายพาน PVC., ปีกสายพานสแตนเลส',
                   },
+                  {
+                    mainSwabAreaName: 'แกน roller',
+                  },
+                  {
+                    mainSwabAreaName: 'สายพาน PVC.',
+                  },
+                  {
+                    mainSwabAreaName: 'ปีกสายพานสแตนเลส',
+                  },
                 ],
               },
               {
                 facilityName: 'ตู้ Vac.',
-                swabAreas: [{ mainSwabAreaName: 'พื้นและ Slope' }],
+                swabAreas: [
+                  { mainSwabAreaName: 'พื้นและ Slope' },
+                  { mainSwabAreaName: 'พื้น' },
+                  { mainSwabAreaName: 'Slope' },
+                ],
               },
               {
                 facilityName: 'ตู้ Steam',

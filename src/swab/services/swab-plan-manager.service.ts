@@ -328,7 +328,7 @@ export class SwabPlanManagerService {
           { swabAreaName: 'ใต้ฐานขาตั้งเครื่อง', subSwabAreas: [] }, // no.7
           { swabAreaName: 'ช่องข้างขาตั้งชุด Control', subSwabAreas: [] }, //no.8
           // {
-          //   swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ',
+          //   swabAreaName: 'ด้านบนตู้ Control Infeed และ สายไฟ', // แยกจุดย่อยมาเป็นจุดหลักตั้งแต่ 3 มี.ค.
           //   subSwabAreas: [
           //     { swabAreaName: 'ด้านบนตู้ Control Infeed' },
           //     { swabAreaName: 'สายไฟ' },
