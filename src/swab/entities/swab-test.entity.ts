@@ -43,6 +43,12 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
   @Column({ type: 'text', nullable: true })
   swabTestNote?: string;
 
+  @Column({ default: false })
+  isLost!: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  lostReason!: string;
+
   @Column({ type: 'varchar', length: 36, nullable: true })
   recordedUserId?: string;
 
