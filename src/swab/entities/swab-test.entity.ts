@@ -53,6 +53,14 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
   reportDetail!: string;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
+  reportedUserId?: string;
+
+  @ManyToOne(() => User, (entity) => entity.reportedSwabTests, {
+    onDelete: 'SET NULL',
+  })
+  reportedUser: User;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
   recordedUserId?: string;
 
   @ManyToOne(() => User, (entity) => entity.recordedSwabTests, {
