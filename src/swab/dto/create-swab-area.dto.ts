@@ -13,6 +13,7 @@ import { UniqueFieldRecordRule } from '~/common/validators/unique-field-record-v
 import { Unique } from '~/common/validators/unique-validator';
 import { ConnectFacilityDto } from '~/facility/dto/connect-facility.dto';
 import { SwabArea } from '../entities/swab-area.entity';
+import { ConnectContactZoneDto } from '~/facility/dto/connect-contact-zone.dto';
 // import { SwabAreaExistsRule } from '../validators/swab-area-exists-validator';
 
 export class CreateSwabAreaDto {
@@ -47,9 +48,19 @@ export class CreateSwabAreaDto {
   @ValidateNested()
   @Type(() => ConnectFacilityDto)
   facility!: ConnectFacilityDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectContactZoneDto)
+  contactZone?: ConnectContactZoneDto;
 }
 
 export class InsertSubSwabAreaDto {
   @IsNotEmpty()
   swabAreaName!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectContactZoneDto)
+  contactZone?: ConnectContactZoneDto;
 }
