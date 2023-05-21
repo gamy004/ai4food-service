@@ -10,6 +10,7 @@ import { BodyUpdateSwabTestDto } from '../dto/command-update-swab-test.dto';
 import { CommandUpdateSwabTestBacteriaSpecieDto } from '../dto/command-update-swab-test-bacteria-specie.dto';
 import { SwabTest } from '../entities/swab-test.entity';
 import { DeepPartial } from 'typeorm';
+import { CommandReportSwabTestDto } from '../dto/command-report-swab-test.dto';
 
 @Injectable()
 export class SwabLabManagerService {
@@ -186,6 +187,42 @@ export class SwabLabManagerService {
     swabTest.bacteriaSpecies = bacteriaSpecies.map((id) =>
       this.bacteriaSpecieService.make({ id }),
     );
+
+    return await this.swabTestService.save(swabTest);
+  }
+
+  async commandReport(
+    id: number,
+    dto: CommandReportSwabTestDto,
+    recordedUser: User,
+  ): Promise<DeepPartial<SwabTest> & SwabTest> {
+    const { reportReason, reportDetail } = dto;
+
+    const swabTest = await this.swabTestService.findOneBy({ id });
+
+    swabTest.isReported = true;
+
+    swabTest.reportReason = reportReason;
+
+    if (reportDetail) {
+      swabTest.reportDetail = reportDetail;
+    }
+
+    swabTest.reportedUser = recordedUser;
+
+    return await this.swabTestService.save(swabTest);
+  }
+
+  async commandRemoveReport(
+    id: number,
+    recordedUser: User,
+  ): Promise<DeepPartial<SwabTest> & SwabTest> {
+    const swabTest = await this.swabTestService.findOneBy({ id });
+
+    swabTest.isReported = false;
+    swabTest.reportReason = null;
+    swabTest.reportDetail = null;
+    swabTest.reportedUser = recordedUser;
 
     return await this.swabTestService.save(swabTest);
   }
