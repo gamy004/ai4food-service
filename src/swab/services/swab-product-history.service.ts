@@ -154,6 +154,7 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
       swabStatus,
       skip,
       take,
+      isReported,
     } = dto;
 
     const query = this.repository
@@ -244,6 +245,10 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
         .andWhere(`swab_product_history.swabProductSwabedAt IS NOT NULL`)
         .andWhere(`swab_test.swabTestRecordedAt IS NOT NULL`)
         .andWhere(`bacteria.id IS NULL`);
+    }
+
+    if (isReported) {
+      query.andWhere(`swab_test.isReported = 1`);
     }
 
     if (skip !== undefined) {

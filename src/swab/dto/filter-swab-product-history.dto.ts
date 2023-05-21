@@ -17,78 +17,20 @@ import { ProductExistsRule } from '~/product/validators/product-exists-validator
 import { Shift } from '~/common/enums/shift';
 import { Transform, Type } from 'class-transformer';
 import { SwabStatus } from '../entities/swab-test.entity';
+import { FilterHistoryDto } from './filter-history.dto';
 
-export class FilterSwabProductHistoryDto {
+export class FilterSwabProductHistoryDto extends FilterHistoryDto {
   @IsOptional()
   @IsUUID()
   @Validate(SwabProductHistoryExistsRule)
   id?: string;
 
   @IsOptional()
-  @IsEnum(Shift)
-  shift?: Shift;
-
-  @IsOptional()
-  @IsEnum(SwabStatus)
-  swabStatus?: SwabStatus;
-
-  @IsOptional()
   @Validate(DateOnlyRule)
   swabProductDate?: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  swabTestCode?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Validate(SwabTestExistsRule)
-  swabTestId?: number;
-
-  @IsOptional()
-  @IsUUID()
-  @Validate(SwabPeriodExistsRule)
-  swabPeriodId?: string;
-
-  @IsOptional()
-  @IsUUID()
-  @Validate(FacilityExistsRule)
-  facilityId?: string;
-
-  @IsOptional()
-  @IsUUID()
-  @Validate(FacilityItemExistsRule)
-  facilityItemId?: string;
 
   @IsOptional()
   @IsUUID()
   @Validate(ProductExistsRule)
   productId?: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  bacteriaName?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === 'true')
-  hasBacteria?: boolean;
-
-  @IsOptional()
-  @Validate(DateOnlyRule)
-  fromDate?: string;
-
-  @IsOptional()
-  @Validate(DateOnlyRule)
-  toDate?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  skip?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  take?: number;
 }
