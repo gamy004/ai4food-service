@@ -15,6 +15,7 @@ import { Bacteria } from '../../lab/entities/bacteria.entity';
 import { SwabAreaHistory } from './swab-area-history.entity';
 import { SwabProductHistory } from './swab-product-history.entity';
 import { SwabRound } from './swab-round.entity';
+import { SwabSampleType } from './swab-sample-type.entity';
 
 export const SWAB_TEST_CODE_PREFIX = 'AI';
 
@@ -113,4 +114,11 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
 
   @ManyToOne(() => ImportTransaction, (entity) => entity.swabTests)
   importTransaction?: ImportTransaction;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  swabSampleTypeId?: number;
+
+  @ManyToOne(() => SwabSampleType, (entity) => entity.swabTests)
+  @JoinColumn()
+  swabSampleType?: SwabSampleType;
 }

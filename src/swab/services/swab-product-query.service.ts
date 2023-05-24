@@ -1,7 +1,6 @@
-import { format } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
-import { FindOptionsWhere, Repository, In, Equal, Like } from 'typeorm';
-import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
+import { Repository } from 'typeorm';
+// import { QuerySwabProductDto } from '../dto/query-swab-product.dto';
 import { ResponseSwabProductDto } from '../dto/response-swab-product.dto';
 import { SwabProductHistory } from '../entities/swab-product-history.entity';
 import { FacilityService } from '~/facility/services/facility.service';
@@ -10,18 +9,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FacilityItemService } from '~/facility/services/facility-item.service';
 import { Product } from '~/product/entities/product.entity';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
-import { DateTransformer } from '~/common/transformers/date-transformer';
+// import { DateTransformer } from '~/common/transformers/date-transformer';
 import { FilterSwabProductHistoryDto } from '../dto/filter-swab-product-history.dto';
-import { SwabTest } from '../entities/swab-test.entity';
+// import { SwabTest } from '../entities/swab-test.entity';
 import { Facility } from '~/facility/entities/facility.entity';
-import { Bacteria } from '~/lab/entities/bacteria.entity';
+// import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { ProductService } from '~/product/services/product.service';
 import { SwabProductHistoryService } from './swab-product-history.service';
 
 @Injectable()
 export class SwabProductQueryService {
   constructor(
-    private readonly dateTransformer: DateTransformer,
+    // private readonly dateTransformer: DateTransformer,
     protected readonly facilityService: FacilityService,
     protected readonly facilityItemService: FacilityItemService,
     protected readonly swabPeriodService: SwabPeriodService,
@@ -31,68 +30,68 @@ export class SwabProductQueryService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
   ) {}
 
-  private transformQuerySwabProductDto(
-    transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
-  ): FindOptionsWhere<SwabProductHistory> {
-    const {
-      swabProductDate,
-      shift,
-      facilityItemId,
-      facilityId,
-      swabPeriodId,
-      productId,
-      swabTestCode,
-      bacteriaName,
-    } = transformFilterSwabProductHistoryDto;
+  // private transformQuerySwabProductDto(
+  //   transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
+  // ): FindOptionsWhere<SwabProductHistory> {
+  //   const {
+  //     swabProductDate,
+  //     shift,
+  //     facilityItemId,
+  //     facilityId,
+  //     swabPeriodId,
+  //     productId,
+  //     swabTestCode,
+  //     bacteriaName,
+  //   } = transformFilterSwabProductHistoryDto;
 
-    const where: FindOptionsWhere<SwabProductHistory> = {};
-    const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
-    const whereSwabTest: FindOptionsWhere<SwabTest> = {};
-    const whereBacteria: FindOptionsWhere<Bacteria> = {};
+  //   const where: FindOptionsWhere<SwabProductHistory> = {};
+  //   const whereFacilityItem: FindOptionsWhere<FacilityItem> = {};
+  //   const whereSwabTest: FindOptionsWhere<SwabTest> = {};
+  //   const whereBacteria: FindOptionsWhere<Bacteria> = {};
 
-    if (shift) {
-      where.shift = shift;
-    }
+  //   if (shift) {
+  //     where.shift = shift;
+  //   }
 
-    if (swabProductDate) {
-      where.swabProductDate = this.dateTransformer.toObject(swabProductDate);
-    }
+  //   if (swabProductDate) {
+  //     where.swabProductDate = this.dateTransformer.toObject(swabProductDate);
+  //   }
 
-    if (facilityItemId) {
-      where.facilityItemId = facilityItemId;
-    }
+  //   if (facilityItemId) {
+  //     where.facilityItemId = facilityItemId;
+  //   }
 
-    if (productId) {
-      where.productId = productId;
-    }
+  //   if (productId) {
+  //     where.productId = productId;
+  //   }
 
-    if (facilityId) {
-      whereFacilityItem.facilityId = facilityId;
-    }
+  //   if (facilityId) {
+  //     whereFacilityItem.facilityId = facilityId;
+  //   }
 
-    if (swabPeriodId) {
-      where.swabPeriodId = swabPeriodId;
-    }
+  //   if (swabPeriodId) {
+  //     where.swabPeriodId = swabPeriodId;
+  //   }
 
-    if (swabTestCode && swabTestCode.length) {
-      whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
-    }
+  //   if (swabTestCode && swabTestCode.length) {
+  //     whereSwabTest.swabTestCode = Like(`%${swabTestCode}%`);
+  //   }
 
-    if (bacteriaName) {
-      whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
-      whereSwabTest.bacteria = whereBacteria;
-    }
+  //   if (bacteriaName) {
+  //     whereBacteria.bacteriaName = Like(`%${bacteriaName}%`);
+  //     whereSwabTest.bacteria = whereBacteria;
+  //   }
 
-    if (Object.keys(whereFacilityItem).length) {
-      where.facilityItem = whereFacilityItem;
-    }
+  //   if (Object.keys(whereFacilityItem).length) {
+  //     where.facilityItem = whereFacilityItem;
+  //   }
 
-    if (Object.keys(whereSwabTest).length) {
-      where.swabTest = whereSwabTest;
-    }
+  //   if (Object.keys(whereSwabTest).length) {
+  //     where.swabTest = whereSwabTest;
+  //   }
 
-    return where;
-  }
+  //   return where;
+  // }
 
   // private transformQuerySwabProductDto(
   //   querySwabProductDto: QuerySwabProductDto,

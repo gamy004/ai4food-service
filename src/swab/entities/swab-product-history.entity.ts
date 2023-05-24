@@ -70,11 +70,4 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
   @ManyToOne(() => SwabRound, (entity) => entity.swabProductHistories)
   @JoinColumn()
   swabRound?: SwabRound;
-
-  @Column({ nullable: true })
-  swabSampleTypeId?: number;
-
-  @ManyToOne(() => SwabSampleType, (entity) => entity.swabProductHistories)
-  @JoinColumn()
-  swabSampleType?: SwabSampleType;
 }

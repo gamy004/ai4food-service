@@ -137,9 +137,10 @@ export class SwabProductManagerService {
     }
 
     if (connectSwabSampleTypeDto) {
-      swabProductHistory.swabSampleType = this.swabSampleTypeService.make(
-        connectSwabSampleTypeDto,
-      );
+      // change to update with swabTestManagerService !!
+      // swabProductHistory.swabSampleType = this.swabSampleTypeService.make(
+      //   connectSwabSampleTypeDto,
+      // );
     }
 
     await this.swabProductHistoryService.save(swabProductHistory);
