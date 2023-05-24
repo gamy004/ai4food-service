@@ -58,6 +58,7 @@ import { SwabSampleType } from './entities/swab-sample-type.entity';
 import { SwabSampleTypeService } from './services/swab-sample-type.service';
 import { SwabSampleTypeSeedService } from './services/swab-sample-type-seed.service';
 import { SwabSampleTypeController } from './controllers/swab-sample-type.controller';
+import { SwabSampleTypeExistsRule } from './validators/swab-sample-type-exists-validator';
 
 @Module({
   imports: [
@@ -128,6 +129,7 @@ import { SwabSampleTypeController } from './controllers/swab-sample-type.control
     SwabCleaningValidationSeedService,
     SwabSampleTypeService,
     SwabSampleTypeSeedService,
+    SwabSampleTypeExistsRule,
   ],
 })
 export class SwabModule {}
