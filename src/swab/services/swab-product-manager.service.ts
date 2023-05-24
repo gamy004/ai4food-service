@@ -20,6 +20,7 @@ import { Shift } from '~/common/enums/shift';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ProductService } from '~/product/services/product.service';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
+import { SwabSampleTypeService } from './swab-sample-type.service';
 
 @Injectable()
 export class SwabProductManagerService {
@@ -32,6 +33,7 @@ export class SwabProductManagerService {
     protected readonly swabProductHistoryService: SwabProductHistoryService,
     private readonly runningNumberService: RunningNumberService,
     protected readonly swabRoundService: SwabRoundService,
+    protected readonly swabSampleTypeService: SwabSampleTypeService,
     @InjectRepository(SwabArea)
     protected readonly swabAreaRepository: Repository<SwabArea>,
     @InjectRepository(SwabProductHistory)
@@ -82,6 +84,7 @@ export class SwabProductManagerService {
       productDate,
       productLot,
       facilityItem: connectFacilityItemDto,
+      swabSampleType: connectSwabSampleTypeDto,
     } = body;
 
     const swabProductHistory = await this.swabProductHistoryService.findOneBy({
@@ -130,6 +133,12 @@ export class SwabProductManagerService {
     if (connectFacilityItemDto) {
       swabProductHistory.facilityItem = this.facilityItemService.make(
         connectFacilityItemDto,
+      );
+    }
+
+    if (connectSwabSampleTypeDto) {
+      swabProductHistory.swabSampleType = this.swabSampleTypeService.make(
+        connectSwabSampleTypeDto,
       );
     }
 
