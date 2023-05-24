@@ -7,6 +7,7 @@ import { Product } from '~/product/entities/product.entity';
 import { SwabPeriod } from './swab-period.entity';
 import { SwabRound } from './swab-round.entity';
 import { SwabTest } from './swab-test.entity';
+import { SwabSampleType } from './swab-sample-type.entity';
 
 @Entity()
 export class SwabProductHistory extends BaseSoftDeletableEntity {
@@ -66,7 +67,14 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
   @Column({ nullable: true })
   swabRoundId?: number;
 
-  @ManyToOne(() => SwabRound, entity => entity.swabProductHistories)
+  @ManyToOne(() => SwabRound, (entity) => entity.swabProductHistories)
   @JoinColumn()
   swabRound?: SwabRound;
+
+  @Column({ nullable: true })
+  swabSampleTypeId?: number;
+
+  @ManyToOne(() => SwabSampleType, (entity) => entity.swabProductHistories)
+  @JoinColumn()
+  swabSampleType?: SwabSampleType;
 }
