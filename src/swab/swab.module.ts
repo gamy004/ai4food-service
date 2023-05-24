@@ -54,6 +54,10 @@ import { SwabCleaningValidationService } from './services/swab-cleaning-validati
 import { SwabCleaningValidationQueryService } from './services/swab-cleaning-validation-query.service';
 import { SwabCleaningValidationSeedService } from './services/swab-cleaning-validation-seed.service';
 import { SwabTestQueryService } from './services/swab-test-query.service';
+import { SwabSampleType } from './entities/swab-sample-type.entity';
+import { SwabSampleTypeService } from './services/swab-sample-type.service';
+import { SwabSampleTypeSeedService } from './services/swab-sample-type-seed.service';
+import { SwabSampleTypeController } from './controllers/swab-sample-type.controller';
 
 @Module({
   imports: [
@@ -72,6 +76,7 @@ import { SwabTestQueryService } from './services/swab-test-query.service';
       CleaningProgram,
       CleaningHistoryCleaningValidation,
       SwabCleaningValidation,
+      SwabSampleType,
     ]),
     FacilityModule,
     ProductModule,
@@ -88,6 +93,7 @@ import { SwabTestQueryService } from './services/swab-test-query.service';
     SwabTestController,
     SwabProductHistoryController,
     SwabCleaningValidationController,
+    SwabSampleTypeController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -120,6 +126,8 @@ import { SwabTestQueryService } from './services/swab-test-query.service';
     SwabCleaningValidationService,
     SwabCleaningValidationQueryService,
     SwabCleaningValidationSeedService,
+    SwabSampleTypeService,
+    SwabSampleTypeSeedService,
   ],
 })
 export class SwabModule {}
