@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SwabSampleTypeService } from '../services/swab-sample-type.service';
 import { SwabSampleTypeSeedService } from '../services/swab-sample-type-seed.service';
