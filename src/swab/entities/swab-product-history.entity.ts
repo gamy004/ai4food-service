@@ -38,7 +38,7 @@ export class SwabProductHistory extends BaseSoftDeletableEntity {
   @Column({ nullable: true })
   swabTestId?: number;
 
-  @OneToOne(() => SwabTest, { cascade: ['insert', 'soft-remove'] })
+  @OneToOne(() => SwabTest, { cascade: ['insert', 'update', 'soft-remove'] })
   @JoinColumn()
   swabTest: SwabTest;
 

@@ -21,6 +21,7 @@ import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ProductService } from '~/product/services/product.service';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import { SwabSampleTypeService } from './swab-sample-type.service';
+import { SwabTestService } from './swab-test.service';
 
 @Injectable()
 export class SwabProductManagerService {
@@ -40,7 +41,7 @@ export class SwabProductManagerService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(FacilityItem)
     protected readonly facilityItemRepository: Repository<FacilityItem>,
-  ) {}
+  ) { }
 
   async commandCreateSwabProductHistory(
     body: BodyCommandCreateSwabProductByIdDto,
@@ -87,8 +88,13 @@ export class SwabProductManagerService {
       swabSampleType: connectSwabSampleTypeDto,
     } = body;
 
-    const swabProductHistory = await this.swabProductHistoryService.findOneBy({
-      id,
+    const swabProductHistory = await this.swabProductHistoryService.findOne({
+      where: {
+        id
+      },
+      relations: {
+        swabTest: true
+      }
     });
 
     if (recordedUser) {
@@ -136,11 +142,10 @@ export class SwabProductManagerService {
       );
     }
 
-    if (connectSwabSampleTypeDto) {
-      // change to update with swabTestManagerService !!
-      // swabProductHistory.swabSampleType = this.swabSampleTypeService.make(
-      //   connectSwabSampleTypeDto,
-      // );
+    if (swabProductHistory.swabTest && connectSwabSampleTypeDto) {
+      swabProductHistory.swabTest.swabSampleType = this.swabSampleTypeService.make(
+        connectSwabSampleTypeDto,
+      );
     }
 
     await this.swabProductHistoryService.save(swabProductHistory);
@@ -371,9 +376,8 @@ export class SwabProductManagerService {
 
         if (createSwabTest) {
           const swabTestData = SwabTest.create({
-            swabTestCode: `${
-              roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
-            }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+            swabTestCode: `${roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+              }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
             swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
           });
 
@@ -406,7 +410,7 @@ export class SwabProductManagerService {
           ) {
             const bigCleaningSwabPeriod =
               bigCleaningSwabPeriods[
-                bigCleaningSwabPeriodsTemplate[index].swabPeriodName
+              bigCleaningSwabPeriodsTemplate[index].swabPeriodName
               ];
 
             generateSwabProductHistory(
@@ -442,7 +446,7 @@ export class SwabProductManagerService {
           ) {
             const swabPeriod =
               generalSwabPeriods[
-                generalSwabPeriodsTemplate[index].swabPeriodName
+              generalSwabPeriodsTemplate[index].swabPeriodName
               ];
 
             for (let index3 = 0; index3 < facilitysTemplate.length; index3++) {
