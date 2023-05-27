@@ -296,6 +296,19 @@ export default class SwabSeeder implements Seeder {
             swabAreaName: 'ปีกสายพานสแตนเลส',
             subSwabAreas: [],
           },
+          {
+            swabAreaName: 'เครื่อง Portion (Hopper, Shutter)', // เพิ่มตั้งแต่ 29 พค 2023
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'Hopper', contactZoneName: null },
+              { swabAreaName: 'Shutter', contactZoneName: null },
+            ],
+          },
+          {
+            swabAreaName: 'เครื่อง Portion (สายพานซุยข้าวสีน้ำเงิน)', // เพิ่มตั้งแต่ 29 พค 2023
+            contactZoneName: null,
+            subSwabAreas: [],
+          },
         ],
       },
       {
@@ -380,6 +393,28 @@ export default class SwabSeeder implements Seeder {
               { swabAreaName: 'สายพาน - ขอบขวา', contactZoneName: 'Zone 1' },
               { swabAreaName: 'แผ่นเพลท', contactZoneName: 'Zone 1' },
             ],
+          },
+          {
+            swabAreaName: 'รูน็อต, พื้นผิว และ ขอบแผ่นเพลท', // เพิ่มตั้งแต่ 29 พค 2023
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'รูน็อต', contactZoneName: null },
+              { swabAreaName: 'พื้นผิว', contactZoneName: null },
+              { swabAreaName: 'ขอบแผ่นเพลท', contactZoneName: null },
+            ],
+          },
+          {
+            swabAreaName: 'ชั้นวางกะบะข้าว และ ถาดรองเศษท้ายเครื่อง', // เพิ่มตั้งแต่ 29 พค 2023
+            contactZoneName: null,
+            subSwabAreas: [
+              { swabAreaName: 'ชั้นวางกะบะข้าว', contactZoneName: null },
+              { swabAreaName: 'ถาดรองเศษท้ายเครื่อง', contactZoneName: null },
+            ],
+          },
+          {
+            swabAreaName: 'ตัวล็อคแกนซุยข้าว', // เพิ่มตั้งแต่ 29 พค 2023
+            contactZoneName: null,
+            subSwabAreas: [],
           },
         ],
       },

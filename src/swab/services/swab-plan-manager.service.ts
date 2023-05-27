@@ -433,16 +433,16 @@ export class SwabPlanManagerService {
           //   ],
           // },
           {
-            swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์', // no.21
+            swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight และ แขนชัตเตอร์', // no.21 **เพิ่มตรวจแบบปกติ ตั้งแต่่ 29 พค 63
             subSwabAreas: [
               { swabAreaName: 'ชุดเติมข้าว ส่วน Sup Weight' },
               { swabAreaName: 'แขนชัตเตอร์' },
             ],
-            swabPeriodMapping: [
-              'ก่อน Super Big Cleaning',
-              'หลัง Super Big Cleaning',
-            ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
-            shiftMapping: ['day'],
+            // swabPeriodMapping: [
+            //   'ก่อน Super Big Cleaning',
+            //   'หลัง Super Big Cleaning',
+            // ], // จุดนี้ ตรวจแค่เฉพาะช่วง Big Cleaning (อาจมีการ custom จุดอื่นเพิ่ม)
+            // shiftMapping: ['day'],
           },
           {
             swabAreaName:
@@ -614,27 +614,62 @@ export class SwabPlanManagerService {
           },
         ],
       },
-      // {
-      //     facilityName: "เครื่องซุยข้าว Aiho No.2",
-      //     mainSwabAreas: [
-      //         {
-      //             swabAreaName: "แกนสายพานซุยข้าว",
-      //             subSwabAreas: [
-      //                 { swabAreaName: "แกนกลาง" },
-      //                 { swabAreaName: "ก้านซุย" },
-      //             ]
-      //         },
-      //         {
-      //             swabAreaName: "สายพาน และ แผ่นเพลท",
-      //             subSwabAreas: [
-      //                 { swabAreaName: "สายพาน - กลาง" },
-      //                 { swabAreaName: "สายพาน - ขอบซ้าย" },
-      //                 { swabAreaName: "สายพาน - ขอบขวา" },
-      //                 { swabAreaName: "แผ่นเพลท" },
-      //             ]
-      //         },
-      //     ]
-      // },
+      {
+        facilityName: 'เครื่องซุยข้าว Aiho',
+        mainSwabAreas: [
+          // {
+          //     swabAreaName: "แกนสายพานซุยข้าว",
+          //     subSwabAreas: [
+          //         { swabAreaName: "แกนกลาง" },
+          //         { swabAreaName: "ก้านซุย" },
+          //     ]
+          // },
+          // {
+          //     swabAreaName: "สายพาน และ แผ่นเพลท",
+          //     subSwabAreas: [
+          //         { swabAreaName: "สายพาน - กลาง" },
+          //         { swabAreaName: "สายพาน - ขอบซ้าย" },
+          //         { swabAreaName: "สายพาน - ขอบขวา" },
+          //         { swabAreaName: "แผ่นเพลท" },
+          //     ]
+          // },
+          {
+            swabAreaName: 'รูน็อต, พื้นผิว และ ขอบแผ่นเพลท', // no.36
+            subSwabAreas: [
+              { swabAreaName: 'รูน็อต' },
+              { swabAreaName: 'พื้นผิว' },
+              { swabAreaName: 'ขอบแผ่นเพลท' },
+            ],
+          },
+          {
+            swabAreaName: 'ชั้นวางกะบะข้าว และ ถาดรองเศษท้ายเครื่อง', // no.37
+            subSwabAreas: [
+              { swabAreaName: 'ชั้นวางกะบะข้าว' },
+              { swabAreaName: 'ถาดรองเศษท้ายเครื่อง' },
+            ],
+          },
+          {
+            swabAreaName: 'ตัวล็อคแกนซุยข้าว', // no.38
+            subSwabAreas: [],
+          },
+        ],
+      },
+      {
+        facilityName: 'ขึ้นรูป',
+        mainSwabAreas: [
+          {
+            swabAreaName: 'เครื่อง Portion (Hopper, Shutter)', // no.39
+            subSwabAreas: [
+              { swabAreaName: 'Hopper' },
+              { swabAreaName: 'Shutter' },
+            ],
+          },
+          {
+            swabAreaName: 'เครื่อง Portion (สายพานซุยข้าวสีน้ำเงิน)', // no.40
+            subSwabAreas: [],
+          },
+        ],
+      },
     ];
 
     const swabAreaHistories = [];
