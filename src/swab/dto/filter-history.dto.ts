@@ -15,6 +15,7 @@ import { FacilityItemExistsRule } from '~/facility/validators/facility-item-exis
 import { SwabStatus } from '../entities/swab-test.entity';
 import { SwabPeriodExistsRule } from '../validators/swab-period-exists-validator';
 import { SwabTestExistsRule } from '../validators/swab-test-exists-validator';
+import { SwabSampleTypeExistsRule } from '../validators/swab-sample-type-exists-validator';
 
 export class FilterHistoryDto {
   @IsOptional()
@@ -80,4 +81,9 @@ export class FilterHistoryDto {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   isReported?: boolean;
+
+  @IsOptional()
+  @IsUUID()
+  @Validate(SwabSampleTypeExistsRule)
+  swabSampleTypeId?: string;
 }

@@ -155,6 +155,7 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
       skip,
       take,
       isReported,
+      swabSampleTypeId,
     } = dto;
 
     const query = this.repository
@@ -166,6 +167,7 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
       .leftJoin('facility_item.facility', 'facility')
       .leftJoinAndSelect('swab_test.bacteria', 'bacteria')
       .leftJoinAndSelect('swab_test.bacteriaSpecies', 'bacteria_specie')
+      .leftJoinAndSelect('swab_test.swabSampleType', 'swab_sample_type')
       .where('swab_product_history.id IS NOT NULL');
 
     if (shift) {
@@ -249,6 +251,12 @@ export class SwabProductHistoryService extends CrudService<SwabProductHistory> {
 
     if (isReported) {
       query.andWhere(`swab_test.isReported = 1`);
+    }
+
+    if (swabSampleTypeId) {
+      query.andWhere(`swab_sample_type.id = :swabSampleTypeId`, {
+        swabSampleTypeId,
+      });
     }
 
     if (skip !== undefined) {

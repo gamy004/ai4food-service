@@ -28,7 +28,7 @@ export class SwabProductQueryService {
     protected readonly swabProductHistoryService: SwabProductHistoryService,
     @InjectRepository(SwabProductHistory)
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
-  ) { }
+  ) {}
 
   // private transformQuerySwabProductDto(
   //   transformFilterSwabProductHistoryDto: FilterSwabProductHistoryDto,
@@ -128,7 +128,6 @@ export class SwabProductQueryService {
     const query = this.swabProductHistoryService.toQuery(dto);
 
     const [swabProductHistories, total] = await query
-      .leftJoinAndSelect('swab_test.swabSampleType', 'swab_sample_type')
       .andWhere('swab_test.id IS NOT NULL')
       .orderBy('swab_test.swabProductDate', 'DESC')
       .orderBy('swab_test.id', 'ASC')
@@ -261,7 +260,7 @@ export class SwabProductQueryService {
       where: { id },
       relations: {
         swabTest: {
-          swabSampleType: true
+          swabSampleType: true,
         },
         // swabPeriod: true,
         // product: true,
@@ -296,8 +295,8 @@ export class SwabProductQueryService {
           swabSampleTypeId: true,
           swabSampleType: {
             id: true,
-            swabSampleTypeName: true
-          }
+            swabSampleTypeName: true,
+          },
         },
         facilityItemId: true,
         facilityItem: {
