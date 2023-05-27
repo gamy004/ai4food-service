@@ -1,3 +1,4 @@
+import { keyBy } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -41,7 +42,7 @@ export class SwabProductManagerService {
     protected readonly swabProductHistoryRepository: Repository<SwabProductHistory>,
     @InjectRepository(FacilityItem)
     protected readonly facilityItemRepository: Repository<FacilityItem>,
-  ) { }
+  ) {}
 
   async commandCreateSwabProductHistory(
     body: BodyCommandCreateSwabProductByIdDto,
@@ -90,11 +91,11 @@ export class SwabProductManagerService {
 
     const swabProductHistory = await this.swabProductHistoryService.findOne({
       where: {
-        id
+        id,
       },
       relations: {
-        swabTest: true
-      }
+        swabTest: true,
+      },
     });
 
     if (recordedUser) {
@@ -143,9 +144,8 @@ export class SwabProductManagerService {
     }
 
     if (swabProductHistory.swabTest && connectSwabSampleTypeDto) {
-      swabProductHistory.swabTest.swabSampleType = this.swabSampleTypeService.make(
-        connectSwabSampleTypeDto,
-      );
+      swabProductHistory.swabTest.swabSampleType =
+        this.swabSampleTypeService.make(connectSwabSampleTypeDto);
     }
 
     await this.swabProductHistoryService.save(swabProductHistory);
@@ -252,6 +252,17 @@ export class SwabProductManagerService {
       acc[key] = obj;
       return acc;
     }, {});
+
+    const swabSampleTypesTemplate = [
+      { swabSampleTypeName: 'ข้าว' },
+      { swabSampleTypeName: 'กับ' },
+    ];
+
+    const swabSampleTypes = await this.swabSampleTypeService.findBy(
+      swabSampleTypesTemplate,
+    );
+
+    const swabSampleTypesMap = keyBy(swabSampleTypes, 'swabSampleTypeName');
 
     // const generalProductTemplate = [
     //   { productName: 'ข้าวไข่เจียวกุ้ง' },
@@ -360,43 +371,53 @@ export class SwabProductManagerService {
         shift = null,
         createSwabTest = true,
       ) {
-        const historyData = {
-          swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
-          swabProductSwabedAt: null,
-          swabProductNote: null,
-          product: null,
-          swabPeriod,
-          swabTest: null,
-          facilityItem: null,
-          shift,
-          productLot: null,
-          recordedUser: null,
-          swabRound: null,
-        };
+        for (const swabSampleTypeTemplate of swabSampleTypesTemplate) {
+          const swabSampleType =
+            swabSampleTypesMap[swabSampleTypeTemplate.swabSampleTypeName];
 
-        if (createSwabTest) {
-          const swabTestData = SwabTest.create({
-            swabTestCode: `${roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+          const historyData = {
+            swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
+            swabProductSwabedAt: null,
+            swabProductNote: null,
+            product: null,
+            swabPeriod,
+            swabTest: null,
+            facilityItem: null,
+            shift,
+            productLot: null,
+            recordedUser: null,
+            swabRound: null,
+          };
+
+          if (createSwabTest) {
+            const swabTestData = SwabTest.create({
+              swabTestCode: `${
+                roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
               }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
-            swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-          });
+              swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+            });
 
-          if (swabRound) {
-            swabTestData.swabRound = swabRound;
+            if (swabRound) {
+              swabTestData.swabRound = swabRound;
+            }
+
+            if (swabSampleType) {
+              swabTestData.swabSampleType = swabSampleType;
+            }
+
+            historyData.swabTest = swabTestData;
+
+            SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
           }
 
-          historyData.swabTest = swabTestData;
+          if (swabRound) {
+            historyData.swabRound = swabRound;
+          }
 
-          SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+          const swabProductHistory = SwabProductHistory.create(historyData);
+
+          swabProductHistories.push(swabProductHistory);
         }
-
-        if (swabRound) {
-          historyData.swabRound = swabRound;
-        }
-
-        const swabProductHistory = SwabProductHistory.create(historyData);
-
-        swabProductHistories.push(swabProductHistory);
       }
 
       function generateHistory(currentDate, dateIndex) {
@@ -410,7 +431,7 @@ export class SwabProductManagerService {
           ) {
             const bigCleaningSwabPeriod =
               bigCleaningSwabPeriods[
-              bigCleaningSwabPeriodsTemplate[index].swabPeriodName
+                bigCleaningSwabPeriodsTemplate[index].swabPeriodName
               ];
 
             generateSwabProductHistory(
@@ -446,7 +467,7 @@ export class SwabProductManagerService {
           ) {
             const swabPeriod =
               generalSwabPeriods[
-              generalSwabPeriodsTemplate[index].swabPeriodName
+                generalSwabPeriodsTemplate[index].swabPeriodName
               ];
 
             for (let index3 = 0; index3 < facilitysTemplate.length; index3++) {
