@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ValidatorConstraint } from 'class-validator';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { EntityExistsRule } from '~/common/validators/entity-exists-validator';
-import { SwabPeriod } from '../entities/swab-period.entity';
+import { SwabSampleType } from '../entities/swab-sample-type.entity';
 
-@ValidatorConstraint({ name: 'SwabPeriodExists', async: true })
+@ValidatorConstraint({ name: 'SwabSampleTypeExists', async: true })
 @Injectable()
-export class SwabPeriodExistsRule extends EntityExistsRule<SwabPeriod> {
+export class SwabSampleTypeExistsRule extends EntityExistsRule<SwabSampleType> {
   constructor(
-    @InjectRepository(SwabPeriod)
-    repository: CommonRepositoryInterface<SwabPeriod>,
+    @InjectRepository(SwabSampleType)
+    repository: CommonRepositoryInterface<SwabSampleType>,
   ) {
     super(repository);
   }

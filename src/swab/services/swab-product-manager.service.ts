@@ -1,3 +1,4 @@
+import { keyBy } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,6 +21,8 @@ import { Shift } from '~/common/enums/shift';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
 import { ProductService } from '~/product/services/product.service';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
+import { SwabSampleTypeService } from './swab-sample-type.service';
+import { SwabTestService } from './swab-test.service';
 
 @Injectable()
 export class SwabProductManagerService {
@@ -32,6 +35,7 @@ export class SwabProductManagerService {
     protected readonly swabProductHistoryService: SwabProductHistoryService,
     private readonly runningNumberService: RunningNumberService,
     protected readonly swabRoundService: SwabRoundService,
+    protected readonly swabSampleTypeService: SwabSampleTypeService,
     @InjectRepository(SwabArea)
     protected readonly swabAreaRepository: Repository<SwabArea>,
     @InjectRepository(SwabProductHistory)
@@ -82,10 +86,16 @@ export class SwabProductManagerService {
       productDate,
       productLot,
       facilityItem: connectFacilityItemDto,
+      swabSampleType: connectSwabSampleTypeDto,
     } = body;
 
-    const swabProductHistory = await this.swabProductHistoryService.findOneBy({
-      id,
+    const swabProductHistory = await this.swabProductHistoryService.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        swabTest: true,
+      },
     });
 
     if (recordedUser) {
@@ -131,6 +141,11 @@ export class SwabProductManagerService {
       swabProductHistory.facilityItem = this.facilityItemService.make(
         connectFacilityItemDto,
       );
+    }
+
+    if (swabProductHistory.swabTest && connectSwabSampleTypeDto) {
+      swabProductHistory.swabTest.swabSampleType =
+        this.swabSampleTypeService.make(connectSwabSampleTypeDto);
     }
 
     await this.swabProductHistoryService.save(swabProductHistory);
@@ -237,6 +252,17 @@ export class SwabProductManagerService {
       acc[key] = obj;
       return acc;
     }, {});
+
+    const swabSampleTypesTemplate = [
+      { swabSampleTypeName: 'ข้าว' },
+      { swabSampleTypeName: 'กับ' },
+    ];
+
+    const swabSampleTypes = await this.swabSampleTypeService.findBy(
+      swabSampleTypesTemplate,
+    );
+
+    const swabSampleTypesMap = keyBy(swabSampleTypes, 'swabSampleTypeName');
 
     // const generalProductTemplate = [
     //   { productName: 'ข้าวไข่เจียวกุ้ง' },
@@ -345,44 +371,53 @@ export class SwabProductManagerService {
         shift = null,
         createSwabTest = true,
       ) {
-        const historyData = {
-          swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
-          swabProductSwabedAt: null,
-          swabProductNote: null,
-          product: null,
-          swabPeriod,
-          swabTest: null,
-          facilityItem: null,
-          shift,
-          productLot: null,
-          recordedUser: null,
-          swabRound: null,
-        };
+        for (const swabSampleTypeTemplate of swabSampleTypesTemplate) {
+          const swabSampleType =
+            swabSampleTypesMap[swabSampleTypeTemplate.swabSampleTypeName];
 
-        if (createSwabTest) {
-          const swabTestData = SwabTest.create({
-            swabTestCode: `${
-              roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
-            }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
-            swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
-          });
+          const historyData = {
+            swabProductDate: format(swabProductDate, 'yyyy-MM-dd'),
+            swabProductSwabedAt: null,
+            swabProductNote: null,
+            product: null,
+            swabPeriod,
+            swabTest: null,
+            facilityItem: null,
+            shift,
+            productLot: null,
+            recordedUser: null,
+            swabRound: null,
+          };
 
-          if (swabRound) {
-            swabTestData.swabRound = swabRound;
+          if (createSwabTest) {
+            const swabTestData = SwabTest.create({
+              swabTestCode: `${
+                roundNumberSwabTest ? roundNumberSwabTest + '/' : ''
+              }${SWAB_TEST_CODE_PREFIX}${SWAB_TEST_START_NUMBER_PREFIX}`,
+              swabTestOrder: SWAB_TEST_START_NUMBER_PREFIX,
+            });
+
+            if (swabRound) {
+              swabTestData.swabRound = swabRound;
+            }
+
+            if (swabSampleType) {
+              swabTestData.swabSampleType = swabSampleType;
+            }
+
+            historyData.swabTest = swabTestData;
+
+            SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
           }
 
-          historyData.swabTest = swabTestData;
+          if (swabRound) {
+            historyData.swabRound = swabRound;
+          }
 
-          SWAB_TEST_START_NUMBER_PREFIX = SWAB_TEST_START_NUMBER_PREFIX + 1;
+          const swabProductHistory = SwabProductHistory.create(historyData);
+
+          swabProductHistories.push(swabProductHistory);
         }
-
-        if (swabRound) {
-          historyData.swabRound = swabRound;
-        }
-
-        const swabProductHistory = SwabProductHistory.create(historyData);
-
-        swabProductHistories.push(swabProductHistory);
       }
 
       function generateHistory(currentDate, dateIndex) {

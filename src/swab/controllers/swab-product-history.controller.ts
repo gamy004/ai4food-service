@@ -9,7 +9,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '~/auth/decorators/auth-user.decorator';
 import { Authenticated } from '~/auth/decorators/authenticated.decortator';
 import { User } from '~/auth/entities/user.entity';
@@ -90,6 +90,7 @@ export class SwabProductHistoryController {
     );
   }
 
+  @ApiBearerAuth()
   @Authenticated()
   @Put(':id')
   async commandUpdateSwabProductHistoryById(
