@@ -15,6 +15,7 @@ import { Bacteria } from '../../lab/entities/bacteria.entity';
 import { SwabAreaHistory } from './swab-area-history.entity';
 import { SwabProductHistory } from './swab-product-history.entity';
 import { SwabRound } from './swab-round.entity';
+import { SwabSampleType } from './swab-sample-type.entity';
 
 export const SWAB_TEST_CODE_PREFIX = 'AI';
 
@@ -42,6 +43,23 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
 
   @Column({ type: 'text', nullable: true })
   swabTestNote?: string;
+
+  @Column({ default: false })
+  isReported!: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  reportReason!: string;
+
+  @Column({ type: 'text', nullable: true })
+  reportDetail!: string;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  reportedUserId?: string;
+
+  @ManyToOne(() => User, (entity) => entity.reportedSwabTests, {
+    onDelete: 'SET NULL',
+  })
+  reportedUser: User;
 
   @Column({ type: 'varchar', length: 36, nullable: true })
   recordedUserId?: string;
@@ -96,4 +114,11 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
 
   @ManyToOne(() => ImportTransaction, (entity) => entity.swabTests)
   importTransaction?: ImportTransaction;
+
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  swabSampleTypeId?: number;
+
+  @ManyToOne(() => SwabSampleType, (entity) => entity.swabTests, { cascade: ["insert", "update"] })
+  @JoinColumn()
+  swabSampleType?: SwabSampleType;
 }

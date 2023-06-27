@@ -31,6 +31,8 @@ import { SwabTestQueryService } from '../services/swab-test-query.service';
 import { SwabTestService } from '../services/swab-test.service';
 import { QuerySwabTestByCodeDto } from '../dto/query-swab-test-by-code.dto';
 import { FindOptionsWhere, In } from 'typeorm';
+import { ParamReportSwabTestDto } from '../dto/param-report-swab-test.dto';
+import { CommandReportSwabTestDto } from '../dto/command-report-swab-test.dto';
 
 @Controller('swab-test')
 @ApiTags('Swab')
@@ -229,6 +231,56 @@ export class SwabTestController {
     return {
       ok: true,
       message: 'update bacteria specie success',
+      result,
+    };
+  }
+
+  @Authenticated()
+  @Put(':id/report')
+  async commandReportSwabTest(
+    @AuthUser() user: User,
+    @Param() params: ParamReportSwabTestDto,
+    @Body() body: CommandReportSwabTestDto,
+  ) {
+    let result;
+
+    try {
+      result = await this.swabLabManagerService.commandReport(
+        params.id,
+        { ...body },
+        user,
+      );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return {
+      ok: true,
+      message: 'report swab test success',
+      result,
+    };
+  }
+
+  @Authenticated()
+  @Put(':id/remove-report')
+  async commandRemoveReportSwabTest(
+    @AuthUser() user: User,
+    @Param() params: ParamReportSwabTestDto,
+  ) {
+    let result;
+
+    try {
+      result = await this.swabLabManagerService.commandRemoveReport(
+        params.id,
+        user,
+      );
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+
+    return {
+      ok: true,
+      message: 'remove report swab test success',
       result,
     };
   }

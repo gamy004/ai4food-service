@@ -56,6 +56,9 @@ export class User extends BaseSoftDeletableEntity {
   @OneToMany(() => SwabTest, (entity) => entity.recordedUser)
   recordedSwabTests: SwabTest[];
 
+  @OneToMany(() => SwabTest, (entity) => entity.reportedUser)
+  reportedSwabTests: SwabTest[];
+
   @OneToMany(() => SwabAreaHistory, (entity) => entity.recordedUser)
   recordedSwabAreaHistories: SwabAreaHistory[];
 
