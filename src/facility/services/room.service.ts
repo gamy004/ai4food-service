@@ -10,7 +10,7 @@ import { Room } from '../entities/room.entity';
 export class RoomService extends CrudService<Room> {
   constructor(
     @InjectRepository(Room)
-    repository: CommonRepositoryInterface<Room>
+    repository: CommonRepositoryInterface<Room>,
   ) {
     super(repository);
   }

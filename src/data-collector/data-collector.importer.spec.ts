@@ -1,9 +1,12 @@
-import { v4 } from "uuid";
+import { v4 } from 'uuid';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, InjectRepository } from '@nestjs/typeorm';
-import { ImportTransaction, ImportType } from '~/import-transaction/entities/import-transaction.entity';
+import {
+  ImportTransaction,
+  ImportType,
+} from '~/import-transaction/entities/import-transaction.entity';
 import { DataCollectorImporter } from './data-collector.importer';
-import { CommonRepositoryInterface } from "~/common/interface/common.repository.interface";
+import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 
 export class MockEntity {
   mockProperty!: string;
@@ -18,16 +21,17 @@ class MockEntityImporter extends DataCollectorImporter<MockEntity> {
 
   constructor(
     @InjectRepository(MockEntity)
-    mockRepository: CommonRepositoryInterface<MockEntity>
+    mockRepository: CommonRepositoryInterface<MockEntity>,
   ) {
     super(mockRepository);
   }
 }
 
-const repositoryMockFactory: () => MockType<CommonRepositoryInterface<any>> = jest.fn(() => ({
-  create: jest.fn(entity => entity),
-  save: jest.fn(entity => Promise.resolve(entity)),
-}));
+const repositoryMockFactory: () => MockType<CommonRepositoryInterface<any>> =
+  jest.fn(() => ({
+    create: jest.fn((entity) => entity),
+    save: jest.fn((entity) => Promise.resolve(entity)),
+  }));
 
 describe('DataCollectorImporter', () => {
   let importer: MockEntityImporter;
@@ -37,7 +41,10 @@ describe('DataCollectorImporter', () => {
       providers: [
         MockEntityImporter,
 
-        { provide: getRepositoryToken(MockEntity), useFactory: repositoryMockFactory },
+        {
+          provide: getRepositoryToken(MockEntity),
+          useFactory: repositoryMockFactory,
+        },
       ],
     }).compile();
 
@@ -57,12 +64,14 @@ describe('DataCollectorImporter', () => {
 
     const mockEntity = new MockEntity();
 
-    mockEntity.mockProperty = "This is mock property";
+    mockEntity.mockProperty = 'This is mock property';
 
-    await expect(
-      async () => {
-        await importer.import(incorectImportTransaction, [mockEntity]);
-      }
-    ).rejects.toThrowError(new Error(`Importer accept only import transaction type ${ImportType.CLEANING_PLAN}`));
-  })
+    await expect(async () => {
+      await importer.import(incorectImportTransaction, [mockEntity]);
+    }).rejects.toThrowError(
+      new Error(
+        `Importer accept only import transaction type ${ImportType.CLEANING_PLAN}`,
+      ),
+    );
+  });
 });

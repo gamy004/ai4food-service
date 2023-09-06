@@ -11,7 +11,9 @@ describe('SwabEnvironmentController', () => {
       providers: [SwabEnvironmentService],
     }).compile();
 
-    controller = module.get<SwabEnvironmentController>(SwabEnvironmentController);
+    controller = module.get<SwabEnvironmentController>(
+      SwabEnvironmentController,
+    );
   });
 
   it('should be defined', () => {

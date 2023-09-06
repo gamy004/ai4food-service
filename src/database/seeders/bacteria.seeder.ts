@@ -4,68 +4,67 @@ import { Bacteria } from '~/lab/entities/bacteria.entity';
 import { BacteriaSpecie } from '~/lab/entities/bacteria-specie.entity';
 
 export default class BacteriaSeeder implements Seeder {
-    public async run(
-        dataSource: DataSource
-    ): Promise<any> {
-        const bacteriaRepository = dataSource.getRepository(Bacteria);
-        const bacteriaSpecieRepository = dataSource.getRepository(BacteriaSpecie);
+  public async run(dataSource: DataSource): Promise<any> {
+    const bacteriaRepository = dataSource.getRepository(Bacteria);
+    const bacteriaSpecieRepository = dataSource.getRepository(BacteriaSpecie);
 
-        let bacterias = [
-            {
-                bacteriaName: 'Listeria',
-                bacteriaSpecies: [
-                    { bacteriaSpecieName: 'L.grayi' },
-                    { bacteriaSpecieName: 'L.innocua' },
-                    { bacteriaSpecieName: 'L.ivanovii' },
-                    { bacteriaSpecieName: 'L.monocytogenes' },
-                    { bacteriaSpecieName: 'L.seeligeri' },
-                    { bacteriaSpecieName: 'L.welshimeri' },
-                ]
-            }
-        ];
+    let bacterias = [
+      {
+        bacteriaName: 'Listeria',
+        bacteriaSpecies: [
+          { bacteriaSpecieName: 'L.grayi' },
+          { bacteriaSpecieName: 'L.innocua' },
+          { bacteriaSpecieName: 'L.ivanovii' },
+          { bacteriaSpecieName: 'L.monocytogenes' },
+          { bacteriaSpecieName: 'L.seeligeri' },
+          { bacteriaSpecieName: 'L.welshimeri' },
+        ],
+      },
+    ];
 
-        for (let index = 0; index < bacterias.length; index++) {
-            const { bacteriaName, bacteriaSpecies } = bacterias[index];
-            
-            const savedBacteriaData: DeepPartial<Bacteria> = {
-                bacteriaName
-            };
+    for (let index = 0; index < bacterias.length; index++) {
+      const { bacteriaName, bacteriaSpecies } = bacterias[index];
 
-            const bacteria = await bacteriaRepository.findOneBy(
-                { bacteriaName }
-            );
+      const savedBacteriaData: DeepPartial<Bacteria> = {
+        bacteriaName,
+      };
 
-            if (bacteria) {
-                savedBacteriaData.id = bacteria.id;
-            }
+      const bacteria = await bacteriaRepository.findOneBy({ bacteriaName });
 
-            await bacteriaRepository.save(savedBacteriaData);
+      if (bacteria) {
+        savedBacteriaData.id = bacteria.id;
+      }
 
-            if (bacteria && bacteriaSpecies.length) {
-                const savedBacteriaSpecieData: DeepPartial<BacteriaSpecie>[] = [];
+      await bacteriaRepository.save(savedBacteriaData);
 
-                for (let bacteriaSpecieIndex = 0; bacteriaSpecieIndex < bacteriaSpecies.length; bacteriaSpecieIndex++) {
-                    const { bacteriaSpecieName } = bacteriaSpecies[bacteriaSpecieIndex];
-                    
-                    const savedBacteriaSpecie: DeepPartial<BacteriaSpecie> = {
-                        bacteriaSpecieName,
-                        bacteria
-                    };
+      if (bacteria && bacteriaSpecies.length) {
+        const savedBacteriaSpecieData: DeepPartial<BacteriaSpecie>[] = [];
 
-                    const bacteriaSpecie = await bacteriaSpecieRepository.findOneBy(
-                        { bacteriaSpecieName }
-                    );
+        for (
+          let bacteriaSpecieIndex = 0;
+          bacteriaSpecieIndex < bacteriaSpecies.length;
+          bacteriaSpecieIndex++
+        ) {
+          const { bacteriaSpecieName } = bacteriaSpecies[bacteriaSpecieIndex];
 
-                    if (bacteriaSpecie) {
-                        savedBacteriaSpecie.id = bacteriaSpecie.id;
-                    }
+          const savedBacteriaSpecie: DeepPartial<BacteriaSpecie> = {
+            bacteriaSpecieName,
+            bacteria,
+          };
 
-                    savedBacteriaSpecieData.push(savedBacteriaSpecie);
-                }
+          const bacteriaSpecie = await bacteriaSpecieRepository.findOneBy({
+            bacteriaSpecieName,
+          });
 
-                await bacteriaSpecieRepository.save(savedBacteriaSpecieData);
-            }
+          if (bacteriaSpecie) {
+            savedBacteriaSpecie.id = bacteriaSpecie.id;
+          }
+
+          savedBacteriaSpecieData.push(savedBacteriaSpecie);
         }
 
+        await bacteriaSpecieRepository.save(savedBacteriaSpecieData);
+      }
     }
+  }
 }

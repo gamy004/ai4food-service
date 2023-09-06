@@ -118,7 +118,9 @@ export class SwabTest extends BaseSoftDeletableIncrementEntity {
   @Column({ type: 'varchar', length: 36, nullable: true })
   swabSampleTypeId?: number;
 
-  @ManyToOne(() => SwabSampleType, (entity) => entity.swabTests, { cascade: ["insert", "update"] })
+  @ManyToOne(() => SwabSampleType, (entity) => entity.swabTests, {
+    cascade: ['insert', 'update'],
+  })
   @JoinColumn()
   swabSampleType?: SwabSampleType;
 }

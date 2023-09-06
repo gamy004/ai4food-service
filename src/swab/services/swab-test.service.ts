@@ -8,7 +8,7 @@ import { CommonRepositoryInterface } from '~/common/interface/common.repository.
 export class SwabTestService extends CrudService<SwabTest> {
   constructor(
     @InjectRepository(SwabTest)
-    repository: CommonRepositoryInterface<SwabTest>
+    repository: CommonRepositoryInterface<SwabTest>,
   ) {
     super(repository);
   }

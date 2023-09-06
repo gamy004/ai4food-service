@@ -28,7 +28,7 @@ export class CleaningRoomHistoryImporter extends DataCollectorImporter<CleaningR
     return {
       roomId,
       cleaningRoomDate,
-      shift
+      shift,
     };
   }
 

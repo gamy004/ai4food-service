@@ -9,7 +9,9 @@ describe('CleaningRoomHistoryController', () => {
       controllers: [CleaningRoomHistoryController],
     }).compile();
 
-    controller = module.get<CleaningRoomHistoryController>(CleaningRoomHistoryController);
+    controller = module.get<CleaningRoomHistoryController>(
+      CleaningRoomHistoryController,
+    );
   });
 
   it('should be defined', () => {

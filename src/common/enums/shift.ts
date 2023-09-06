@@ -1,4 +1,4 @@
 export enum Shift {
-    DAY = 'day',
-    NIGHT = 'night',
+  DAY = 'day',
+  NIGHT = 'night',
 }

@@ -8,7 +8,7 @@ import { BacteriaSpecie } from '../entities/bacteria-specie.entity';
 export class BacteriaSpecieService extends CrudService<BacteriaSpecie> {
   constructor(
     @InjectRepository(BacteriaSpecie)
-    repository: CommonRepositoryInterface<BacteriaSpecie>
+    repository: CommonRepositoryInterface<BacteriaSpecie>,
   ) {
     super(repository);
   }

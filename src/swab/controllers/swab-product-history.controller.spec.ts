@@ -11,7 +11,9 @@ describe('SwabProductHistoryController', () => {
       providers: [SwabProductHistoryService],
     }).compile();
 
-    controller = module.get<SwabProductHistoryController>(SwabProductHistoryController);
+    controller = module.get<SwabProductHistoryController>(
+      SwabProductHistoryController,
+    );
   });
 
   it('should be defined', () => {

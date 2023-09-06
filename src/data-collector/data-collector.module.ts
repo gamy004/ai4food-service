@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { DataCollectorService } from './data-collector.service';
 
 @Module({
-    providers: [DataCollectorService]
+  providers: [DataCollectorService],
 })
-export class DataCollectorModule {
-}
+export class DataCollectorModule {}

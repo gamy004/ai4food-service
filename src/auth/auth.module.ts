@@ -14,17 +14,22 @@ import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      User
-    ]),
+    TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '14d' },
     }),
   ],
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy, UserExistsRule, RolesGuard],
+  providers: [
+    AuthService,
+    UserService,
+    LocalStrategy,
+    JwtStrategy,
+    UserExistsRule,
+    RolesGuard,
+  ],
   exports: [AuthService],
-  controllers: [AuthController]
+  controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}

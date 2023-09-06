@@ -8,19 +8,19 @@ export default class RiskZoneSeeder implements Seeder {
 
     let riskZones = [
       {
-        riskZoneName: 'Low Risk Floor 1'
+        riskZoneName: 'Low Risk Floor 1',
       },
       {
-        riskZoneName: 'Low Risk Floor 2'
+        riskZoneName: 'Low Risk Floor 2',
       },
       {
-        riskZoneName: 'Low Risk Floor 3'
+        riskZoneName: 'Low Risk Floor 3',
       },
       {
-        riskZoneName: 'Medium Risk'
+        riskZoneName: 'Medium Risk',
       },
       {
-        riskZoneName: 'High Risk'
+        riskZoneName: 'High Risk',
       },
     ];
 

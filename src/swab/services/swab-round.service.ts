@@ -7,13 +7,11 @@ import { UpdateSwabPeriodDto } from '../dto/update-swab-period.dto';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 import { SwabRound } from '../entities/swab-round.entity';
 
-
 @Injectable()
-export class SwabRoundService extends CrudService<SwabRound>{
+export class SwabRoundService extends CrudService<SwabRound> {
   constructor(
     @InjectRepository(SwabRound)
-    repository: CommonRepositoryInterface<SwabRound>
-
+    repository: CommonRepositoryInterface<SwabRound>,
   ) {
     super(repository);
   }

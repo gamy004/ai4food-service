@@ -1,6 +1,10 @@
-import { ValidatorConstraintInterface, ValidationArguments, ValidatorConstraint } from "class-validator";
+import {
+  ValidatorConstraintInterface,
+  ValidationArguments,
+  ValidatorConstraint,
+} from 'class-validator';
 
-@ValidatorConstraint({ name: "DateLessThan", async: false })
+@ValidatorConstraint({ name: 'DateLessThan', async: false })
 export class DateLessThanRule implements ValidatorConstraintInterface {
   validate(propValue: Date, args: ValidationArguments) {
     return propValue < args.object[args.constraints[0]];

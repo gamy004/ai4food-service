@@ -11,7 +11,9 @@ describe('ImportTransactionController', () => {
       providers: [ImportTransactionService],
     }).compile();
 
-    controller = module.get<ImportTransactionController>(ImportTransactionController);
+    controller = module.get<ImportTransactionController>(
+      ImportTransactionController,
+    );
   });
 
   it('should be defined', () => {

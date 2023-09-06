@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RoomService } from '../services/room.service';
 import { CreateRoomDto } from '../dto/create-room.dto';
 import { UpdateRoomDto } from '../dto/update-room.dto';
@@ -19,8 +27,8 @@ export class RoomController {
     return this.roomService.find({
       relations: {
         zone: true,
-        riskZone: true
-      }
+        riskZone: true,
+      },
     });
   }
 

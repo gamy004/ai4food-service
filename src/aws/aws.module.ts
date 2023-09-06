@@ -5,17 +5,15 @@ import { S3ManagerService } from './s3-manager.service';
 import { S3Controller } from './s3.controller';
 
 @Module({
-    providers: [
-        {
-            provide: 's3Client',
-            useValue: s3Client
-        },
-        S3ManagerService,
-        S3Controller
-    ],
-    controllers: [
-        S3Controller
-    ],
-    exports: [S3ManagerService],
+  providers: [
+    {
+      provide: 's3Client',
+      useValue: s3Client,
+    },
+    S3ManagerService,
+    S3Controller,
+  ],
+  controllers: [S3Controller],
+  exports: [S3ManagerService],
 })
-export class AwsModule { }
+export class AwsModule {}

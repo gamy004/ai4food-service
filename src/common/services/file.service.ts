@@ -8,7 +8,7 @@ import { CrudService } from './abstract.crud.service';
 export class FileService extends CrudService<File> {
   constructor(
     @InjectRepository(File)
-    repository: CommonRepositoryInterface<File>
+    repository: CommonRepositoryInterface<File>,
   ) {
     super(repository);
   }

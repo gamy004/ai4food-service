@@ -7,13 +7,11 @@ import { UpdateSwabEnvironmentDto } from '../dto/update-swab-environment.dto';
 import { SwabEnvironment } from '../entities/swab-environment.entity';
 import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
 
-
 @Injectable()
-export class SwabEnvironmentService extends CrudService<SwabEnvironment>{
+export class SwabEnvironmentService extends CrudService<SwabEnvironment> {
   constructor(
     @InjectRepository(SwabEnvironment)
-    repository: CommonRepositoryInterface<SwabEnvironment>
-
+    repository: CommonRepositoryInterface<SwabEnvironment>,
   ) {
     super(repository);
   }

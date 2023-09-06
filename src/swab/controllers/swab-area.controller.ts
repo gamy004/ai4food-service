@@ -17,7 +17,10 @@ import {
   ParamUpdateSwabAreaDto,
 } from '../dto/update-swab-area.dto';
 import { SwabAreaService } from '../services/swab-area.service';
-import { ParamGetSwabAreaDeletePermissionDto, ResponseGetSwabAreaDeletePermissionDto } from '../dto/get-swab-area-delete-permission.dto';
+import {
+  ParamGetSwabAreaDeletePermissionDto,
+  ResponseGetSwabAreaDeletePermissionDto,
+} from '../dto/get-swab-area-delete-permission.dto';
 
 @Controller('swab/area')
 @ApiTags('Swab')
@@ -60,16 +63,16 @@ export class SwabAreaController {
       where: { id },
       relations: {
         subSwabAreas: true,
-        swabAreaHistories: true
+        swabAreaHistories: true,
       },
       select: {
         subSwabAreas: {
-          id: true
+          id: true,
         },
         swabAreaHistories: {
-          id: true
-        }
-      }
+          id: true,
+        },
+      },
     });
 
     return this.swabAreaService.removeOne(deletedSwabArea);

@@ -8,7 +8,7 @@ import { User } from '../entities/user.entity';
 export class UserService extends CrudService<User> {
   constructor(
     @InjectRepository(User)
-    repository: CommonRepositoryInterface<User>
+    repository: CommonRepositoryInterface<User>,
   ) {
     super(repository);
   }

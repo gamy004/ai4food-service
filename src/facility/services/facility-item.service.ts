@@ -8,7 +8,7 @@ import { FacilityItem } from '../entities/facility-item.entity';
 export class FacilityItemService extends CrudService<FacilityItem> {
   constructor(
     @InjectRepository(FacilityItem)
-    repository: CommonRepositoryInterface<FacilityItem>
+    repository: CommonRepositoryInterface<FacilityItem>,
   ) {
     super(repository);
   }

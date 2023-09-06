@@ -9,9 +9,8 @@ import { IsNull } from 'typeorm';
 export class SwabAreaHistoryImageService extends CrudService<SwabAreaHistoryImage> {
   constructor(
     @InjectRepository(SwabAreaHistoryImage)
-    repository: CommonRepositoryInterface<SwabAreaHistoryImage>
+    repository: CommonRepositoryInterface<SwabAreaHistoryImage>,
   ) {
-    super(repository)
+    super(repository);
   }
 }
-

@@ -26,7 +26,7 @@ export abstract class UniqueValidator implements ValidatorConstraintInterface {
     const [EntityClass, findCondition = args.property] = args.constraints;
 
     const repository = this.dataSource.getRepository(EntityClass);
-    
+
     return (
       (await repository.count({
         where:

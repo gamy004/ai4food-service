@@ -1,10 +1,13 @@
-import { ValidatorConstraintInterface, ValidationArguments } from "class-validator";
-import { CommonRepositoryInterface } from "../interface/common.repository.interface";
+import {
+  ValidatorConstraintInterface,
+  ValidationArguments,
+} from 'class-validator';
+import { CommonRepositoryInterface } from '../interface/common.repository.interface';
 
-export abstract class EntityExistsRule<E> implements ValidatorConstraintInterface {
-  constructor(
-    protected readonly repository: CommonRepositoryInterface<E>
-  ) { }
+export abstract class EntityExistsRule<E>
+  implements ValidatorConstraintInterface
+{
+  constructor(protected readonly repository: CommonRepositoryInterface<E>) {}
 
   async validate(value: string) {
     let countEntity = 0;

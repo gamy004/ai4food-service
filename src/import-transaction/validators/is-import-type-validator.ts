@@ -1,49 +1,55 @@
-import { InjectRepository } from "@nestjs/typeorm";
-import { ValidatorConstraintInterface, ValidationArguments, ValidatorConstraint } from "class-validator";
-import { CommonRepositoryInterface } from "~/common/interface/common.repository.interface";
-import { ConnectImportTransactionDto } from "../dto/connect-import-transaction.dto";
-import { ImportTransaction } from "../entities/import-transaction.entity";
-
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+  ValidatorConstraintInterface,
+  ValidationArguments,
+  ValidatorConstraint,
+} from 'class-validator';
+import { CommonRepositoryInterface } from '~/common/interface/common.repository.interface';
+import { ConnectImportTransactionDto } from '../dto/connect-import-transaction.dto';
+import { ImportTransaction } from '../entities/import-transaction.entity';
 
 @ValidatorConstraint({ name: 'IsImportType', async: true })
 export class IsImportTypeRule implements ValidatorConstraintInterface {
-    protected message: string = '';
+  protected message: string = '';
 
-    constructor(
-        @InjectRepository(ImportTransaction)
-        protected readonly repository: CommonRepositoryInterface<ImportTransaction>
-    ) { }
+  constructor(
+    @InjectRepository(ImportTransaction)
+    protected readonly repository: CommonRepositoryInterface<ImportTransaction>,
+  ) {}
 
-    async validate(connectImportTransactionDto: ConnectImportTransactionDto, args: ValidationArguments) {
-        const importType = args.constraints[0];
-        const { id } = connectImportTransactionDto;
+  async validate(
+    connectImportTransactionDto: ConnectImportTransactionDto,
+    args: ValidationArguments,
+  ) {
+    const importType = args.constraints[0];
+    const { id } = connectImportTransactionDto;
 
-        let result = true;
+    let result = true;
 
-        try {
-            const entity = await this.repository.findOneBy({ id });
+    try {
+      const entity = await this.repository.findOneBy({ id });
 
-            if (!entity) {
-                this.message = `${args.property} doesn't exists`;
+      if (!entity) {
+        this.message = `${args.property} doesn't exists`;
 
-                result = false;
-            }
+        result = false;
+      }
 
-            if (entity && entity.importType !== importType) {
-                this.message = `${args.property} doesn't match with '${importType}'`;
+      if (entity && entity.importType !== importType) {
+        this.message = `${args.property} doesn't match with '${importType}'`;
 
-                result = false;
-            }
-        } catch (e) {
-            console.log(e);
+        result = false;
+      }
+    } catch (e) {
+      console.log(e);
 
-            return false;
-        }
-
-        return result;
+      return false;
     }
 
-    defaultMessage() {
-        return this.message;
-    }
+    return result;
+  }
+
+  defaultMessage() {
+    return this.message;
+  }
 }

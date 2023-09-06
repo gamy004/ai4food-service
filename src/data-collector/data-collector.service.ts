@@ -28,15 +28,11 @@ export class DataCollectorService {
    * Confirm the import transaction as success transaction
    * @param id id of the import transaction
    */
-  confirm(id: string) {
-
-  }
+  confirm(id: string) {}
 
   /**
    * Abort the import transaction, all related data will be hard deleted
    * @param id id of the import transaction
    */
-  abort(id: string) {
-
-  }
+  abort(id: string) {}
 }

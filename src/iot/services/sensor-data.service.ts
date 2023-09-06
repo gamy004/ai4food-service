@@ -8,7 +8,7 @@ import { SensorData } from '../entities/sensor-data.entity';
 export class SensorDataService extends CrudService<SensorData> {
   constructor(
     @InjectRepository(SensorData)
-    repository: CommonRepositoryInterface<SensorData>
+    repository: CommonRepositoryInterface<SensorData>,
   ) {
     super(repository);
   }

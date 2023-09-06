@@ -11,7 +11,9 @@ describe('SwabAreaHistoryController', () => {
       providers: [SwabAreaHistoryService],
     }).compile();
 
-    controller = module.get<SwabAreaHistoryController>(SwabAreaHistoryController);
+    controller = module.get<SwabAreaHistoryController>(
+      SwabAreaHistoryController,
+    );
   });
 
   it('should be defined', () => {

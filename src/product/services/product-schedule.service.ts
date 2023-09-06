@@ -81,20 +81,25 @@ export class ProductScheduleService extends CrudService<ProductSchedule> {
     return where;
   }
 
-  computeTimestamp(entity: ProductSchedule, timezone: string | null = null): ProductSchedule {
-    entity.productScheduleStartedAtTimestamp = this.dateTransformer.toShiftTimestamp(
-      entity.productScheduleDate,
-      entity.productScheduleStartedAt,
-      entity.shift,
-      timezone
-    );
+  computeTimestamp(
+    entity: ProductSchedule,
+    timezone: string | null = null,
+  ): ProductSchedule {
+    entity.productScheduleStartedAtTimestamp =
+      this.dateTransformer.toShiftTimestamp(
+        entity.productScheduleDate,
+        entity.productScheduleStartedAt,
+        entity.shift,
+        timezone,
+      );
 
-    entity.productScheduleEndedAtTimestamp = this.dateTransformer.toShiftTimestamp(
-      entity.productScheduleDate,
-      entity.productScheduleEndedAt,
-      entity.shift,
-      timezone
-    );
+    entity.productScheduleEndedAtTimestamp =
+      this.dateTransformer.toShiftTimestamp(
+        entity.productScheduleDate,
+        entity.productScheduleEndedAt,
+        entity.shift,
+        timezone,
+      );
 
     return entity;
   }
