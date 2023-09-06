@@ -17,9 +17,15 @@ export class SwabPlan extends BaseSoftDeletableEntity {
   @Column({ type: 'varchar', length: 10, nullable: true })
   swabPlanCode?: string;
 
+  @Column({ type: 'integer', default: 0 })
+  totalItems!: number;
+
+  @Column({ default: false })
+  publish!: boolean;
+
   @Column({ type: 'varchar', length: 36 })
   swabPeriodId!: string;
 
-  @ManyToOne(() => SwabPeriod, (entity) => entity.swabAreaHistories)
+  @ManyToOne(() => SwabPeriod, (entity) => entity.swabPlans)
   swabPeriod: SwabPeriod;
 }
