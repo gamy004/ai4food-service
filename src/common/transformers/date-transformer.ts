@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { Shift } from '../enums/shift';
+import { parseISO } from 'date-fns';
 
 export interface DateRangeToSqlOptions {
   timezone?: string | null;
@@ -12,7 +13,7 @@ export const DATE_ONLY_FORMAT = 'yyyy-MM-dd';
 @Injectable()
 export class DateTransformer {
   public toObject(dateString, timeObject = null) {
-    let dateObject = new Date(dateString);
+    const dateObject = new Date(parseISO(dateString));
 
     dateObject.setMinutes(0, 0, 0);
 
