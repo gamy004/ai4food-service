@@ -9,11 +9,41 @@ import {
 import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
 import { ConnectSwabPeriodDto } from './connect-swab-period.dto';
+import { Unique, IsNull } from 'typeorm';
+import { SwabPlan } from '../entities/swab-plan.entity';
 
 export class BodyCommandCreateDraftSwabPlanDto {
   @IsNotEmpty()
   @Validate(DateOnlyRule)
-  swabPlanDate?: string;
+  @Validate(Unique, [
+    SwabPlan,
+    ({
+      object: { swabPlanDate, swabPeriod, shift },
+    }: {
+      object: Partial<SwabPlan>;
+    }) => {
+      console.log('check unique swab plan:', {
+        swabPlanDate,
+        shift,
+        swabPeriodId: swabPeriod.id,
+        deletedAt: IsNull(),
+      });
+
+      return {
+        swabPlanDate,
+        swabPeriodId: swabPeriod.id,
+        deletedAt: IsNull(),
+      };
+    },
+  ])
+  swabPlanDate!: string;
+
+  @IsNotEmpty()
+  shift!: Shift;
+
+  @ValidateNested()
+  @Type(() => ConnectSwabPeriodDto)
+  swabPeriod!: ConnectSwabPeriodDto;
 
   @IsOptional()
   swabPlanNote?: string;
@@ -21,12 +51,4 @@ export class BodyCommandCreateDraftSwabPlanDto {
   @IsOptional()
   @Length(1, 10)
   swabPlanCode?: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  shift?: Shift;
-
-  @ValidateNested()
-  @Type(() => ConnectSwabPeriodDto)
-  swabPeriod?: ConnectSwabPeriodDto;
 }
