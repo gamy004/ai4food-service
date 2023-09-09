@@ -34,13 +34,6 @@ export class SwabPlannerService {
   ): Promise<SwabPlan> {
     const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
 
-    console.log(
-      dto,
-      entity,
-      // this.dateTransformer.toString(entity.swabPlanDate),
-      // this.dateTransformer.toObject(dto.swabPlanDate),
-    );
-
     if (dto.swabPlanDate) {
       entity.swabPlanDate = this.dateTransformer.toObject(dto.swabPlanDate);
     }
