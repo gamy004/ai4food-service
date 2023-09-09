@@ -75,7 +75,7 @@ export class SwabTestController {
   @Authenticated()
   @Post('extact-xlsx')
   async extactXlsx(@AuthUser() user: User): Promise<void> {
-    var workbook = XLSX.readFile('RunReport_211165-1.xls', {});
+    const workbook = XLSX.readFile('RunReport_211165-1.xls', {});
     const { Sheets = {} } = workbook;
     const bacteriaData = await this.bacteriaService.find({
       select: {
@@ -111,7 +111,7 @@ export class SwabTestController {
     }
 
     function findKey(keys = [], data = {}) {
-      let result = [];
+      const result = [];
       for (let index = 0; index < keys.length; index++) {
         const element = keys[index];
         for (const key in data) {
@@ -122,7 +122,7 @@ export class SwabTestController {
     }
 
     /* loop foreach sheets */
-    let records = [];
+    const records = [];
     for (const sheetName in Sheets) {
       const sheetDatas = XLSX.utils.sheet_to_json(Sheets[sheetName]);
       if (sheetDatas && sheetDatas.length) {

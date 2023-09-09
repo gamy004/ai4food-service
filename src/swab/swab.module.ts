@@ -59,6 +59,10 @@ import { SwabSampleTypeService } from './services/swab-sample-type.service';
 import { SwabSampleTypeSeedService } from './services/swab-sample-type-seed.service';
 import { SwabSampleTypeController } from './controllers/swab-sample-type.controller';
 import { SwabSampleTypeExistsRule } from './validators/swab-sample-type-exists-validator';
+import { SwabPlanController } from './controllers/swab-plan.controller';
+import { SwabPlannerService } from './services/swab-planner.service';
+import { SwabPlanCrudService } from './services/swab-plan-crud.service';
+import { SwabPlan } from './entities/swab-plan.entity';
 
 @Module({
   imports: [
@@ -78,6 +82,7 @@ import { SwabSampleTypeExistsRule } from './validators/swab-sample-type-exists-v
       CleaningHistoryCleaningValidation,
       SwabCleaningValidation,
       SwabSampleType,
+      SwabPlan,
     ]),
     FacilityModule,
     ProductModule,
@@ -95,6 +100,7 @@ import { SwabSampleTypeExistsRule } from './validators/swab-sample-type-exists-v
     SwabProductHistoryController,
     SwabCleaningValidationController,
     SwabSampleTypeController,
+    SwabPlanController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -130,6 +136,8 @@ import { SwabSampleTypeExistsRule } from './validators/swab-sample-type-exists-v
     SwabSampleTypeService,
     SwabSampleTypeSeedService,
     SwabSampleTypeExistsRule,
+    SwabPlanCrudService,
+    SwabPlannerService,
   ],
 })
 export class SwabModule {}

@@ -9,11 +9,21 @@ import {
 import { Shift } from '~/common/enums/shift';
 import { DateOnlyRule } from '~/common/validators/date-only-validator';
 import { ConnectSwabPeriodDto } from './connect-swab-period.dto';
+import { IsNull } from 'typeorm';
+import { SwabPlan } from '../entities/swab-plan.entity';
+import { Unique } from '~/common/validators/unique-validator';
 
-export class BodyCommandCreateDraftSwabPlanDto {
+export class PayloadCreateDraftSwabPlanDto {
   @IsNotEmpty()
   @Validate(DateOnlyRule)
-  swabPlanDate?: string;
+  swabPlanDate!: string;
+
+  @IsNotEmpty()
+  shift!: Shift;
+
+  @ValidateNested()
+  @Type(() => ConnectSwabPeriodDto)
+  swabPeriod!: ConnectSwabPeriodDto;
 
   @IsOptional()
   swabPlanNote?: string;
@@ -21,12 +31,18 @@ export class BodyCommandCreateDraftSwabPlanDto {
   @IsOptional()
   @Length(1, 10)
   swabPlanCode?: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  shift?: Shift;
-
+}
+export class BodyCommandCreateDraftSwabPlanDto {
   @ValidateNested()
-  @Type(() => ConnectSwabPeriodDto)
-  swabPeriod?: ConnectSwabPeriodDto;
+  @Type(() => PayloadCreateDraftSwabPlanDto)
+  @Validate(Unique, [
+    SwabPlan,
+    ({ object: { payload } }: { object: any }) => ({
+      swabPlanDate: payload.swabPlanDate,
+      shift: payload.shift,
+      swabPeriodId: payload.swabPeriod.id,
+      deletedAt: IsNull(),
+    }),
+  ])
+  payload!: PayloadCreateDraftSwabPlanDto;
 }
