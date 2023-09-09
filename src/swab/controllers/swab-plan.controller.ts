@@ -13,6 +13,8 @@ export class SwabPlanController {
   createDraft(
     @Body() body: BodyCommandCreateDraftSwabPlanDto,
   ): Promise<SwabPlan> {
-    return this.swabPlannerService.commandCreateDraftSwabPlan(body);
+    const { payload } = body;
+
+    return this.swabPlannerService.commandCreateDraftSwabPlan(payload);
   }
 }

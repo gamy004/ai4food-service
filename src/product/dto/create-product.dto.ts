@@ -1,6 +1,5 @@
 import { IsNotEmpty, Validate } from 'class-validator';
-import { Not } from 'typeorm';
-import { ContextAwareDto } from '~/common/dto/context-aware.dto';
+import { IsNull } from 'typeorm';
 import { Unique } from '~/common/validators/unique-validator';
 import { Product } from '../entities/product.entity';
 
@@ -10,7 +9,7 @@ export class CreateProductDto {
     Product,
     ({ object: { productCode } }: { object: Partial<Product> }) => ({
       productCode,
-      deletedAt: null,
+      deletedAt: IsNull(),
     }),
   ])
   productCode!: string;
