@@ -32,6 +32,7 @@ export class PayloadCreateDraftSwabPlanDto {
   @Length(1, 10)
   swabPlanCode?: string;
 }
+
 export class BodyCommandCreateDraftSwabPlanDto {
   @ValidateNested()
   @Type(() => PayloadCreateDraftSwabPlanDto)

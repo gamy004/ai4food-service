@@ -63,6 +63,7 @@ import { SwabPlanController } from './controllers/swab-plan.controller';
 import { SwabPlannerService } from './services/swab-planner.service';
 import { SwabPlanCrudService } from './services/swab-plan-crud.service';
 import { SwabPlan } from './entities/swab-plan.entity';
+import { SwabPlanExistsRule } from './validators/swab-plan-exists-validator';
 
 @Module({
   imports: [
@@ -138,6 +139,7 @@ import { SwabPlan } from './entities/swab-plan.entity';
     SwabSampleTypeExistsRule,
     SwabPlanCrudService,
     SwabPlannerService,
+    SwabPlanExistsRule,
   ],
 })
 export class SwabModule {}
