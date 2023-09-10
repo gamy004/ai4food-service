@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { SwabPlanCrudService } from './swab-plan-crud.service';
 import { PayloadCreateDraftSwabPlanDto } from '../dto/command-create-draft-swab-plan.dto';
 import { SwabPlan } from '../entities/swab-plan.entity';
 import { DeepPartial } from 'typeorm';
 import { PayloadUpdateSwabPlanDto } from '../dto/command-update-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
+import { PublishedSwabPlanException } from '../exceptions/published-swab-plan.exception';
 
 @Injectable()
 export class SwabPlannerService {
@@ -55,5 +56,18 @@ export class SwabPlannerService {
     }
 
     return await this.swabPlanCrudService.save(entity);
+  }
+
+  async commandDelete(id: string): Promise<void> {
+    const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
+
+    if (entity.publish) {
+      throw new PublishedSwabPlanException(
+        'cannot delete published swab plan, revert it to draft to delete.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    await this.swabPlanCrudService.removeOne(entity);
   }
 }
