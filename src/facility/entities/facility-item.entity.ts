@@ -8,6 +8,7 @@ import { Facility } from './facility.entity';
 import { RiskZone } from './risk-zone.entity';
 import { Room } from './room.entity';
 import { Zone } from './zone.entity';
+import { SwabPlanItem } from '~/swab/entities/swab-plan-item.entity';
 
 @Entity()
 export class FacilityItem extends BaseSoftDeletableEntity {
@@ -60,4 +61,7 @@ export class FacilityItem extends BaseSoftDeletableEntity {
 
   @OneToMany(() => CleaningPlan, (entity) => entity.facilityItem)
   cleaningPlans: CleaningPlan[];
+
+  @OneToMany(() => SwabPlanItem, (entity) => entity.facilityItem)
+  swabPlanItems: SwabPlanItem[];
 }

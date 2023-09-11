@@ -1,7 +1,8 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { BaseSoftDeletableEntity } from '~/common/entities/base-softdeletable.entity';
 import { Shift } from '~/common/enums/shift';
 import { SwabPeriod } from './swab-period.entity';
+import { SwabPlanItem } from './swab-plan-item.entity';
 
 @Entity()
 export class SwabPlan extends BaseSoftDeletableEntity {
@@ -28,4 +29,7 @@ export class SwabPlan extends BaseSoftDeletableEntity {
 
   @ManyToOne(() => SwabPeriod, (entity) => entity.swabPlans)
   swabPeriod: SwabPeriod;
+
+  @OneToMany(() => SwabPlanItem, (entity) => entity.swabPlan)
+  swabPlanItems: SwabPlanItem[];
 }

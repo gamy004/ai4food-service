@@ -64,6 +64,7 @@ import { SwabPlannerService } from './services/swab-planner.service';
 import { SwabPlanCrudService } from './services/swab-plan-crud.service';
 import { SwabPlan } from './entities/swab-plan.entity';
 import { SwabPlanExistsRule } from './validators/swab-plan-exists-validator';
+import { SwabPlanItem } from './entities/swab-plan-item.entity';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { SwabPlanExistsRule } from './validators/swab-plan-exists-validator';
       SwabCleaningValidation,
       SwabSampleType,
       SwabPlan,
+      SwabPlanItem,
     ]),
     FacilityModule,
     ProductModule,

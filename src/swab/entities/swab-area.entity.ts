@@ -5,6 +5,7 @@ import { BaseSoftDeletableEntity } from '../../common/entities/base-softdeletabl
 import { Facility } from '../../facility/entities/facility.entity';
 import { SwabAreaHistory } from './swab-area-history.entity';
 import { SwabCleaningValidation } from './swab-cleaning-validation.entity';
+import { SwabPlanItem } from './swab-plan-item.entity';
 
 @Entity()
 export class SwabArea extends BaseSoftDeletableEntity {
@@ -49,4 +50,7 @@ export class SwabArea extends BaseSoftDeletableEntity {
 
   @OneToMany(() => SwabCleaningValidation, (entity) => entity.swabArea)
   swabCleaningValidations: SwabCleaningValidation[];
+
+  @OneToMany(() => SwabPlanItem, (entity) => entity.swabArea)
+  swabPlanItems: SwabPlanItem[];
 }
