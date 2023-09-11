@@ -20,6 +20,7 @@ import { SwabEnvironment } from './swab-environment.entity';
 import { SwabPeriod } from './swab-period.entity';
 import { SwabRound } from './swab-round.entity';
 import { SwabTest } from './swab-test.entity';
+import { SwabPlanItem } from './swab-plan-item.entity';
 
 @Entity()
 export class SwabAreaHistory extends BaseSoftDeletableEntity {
@@ -122,4 +123,7 @@ export class SwabAreaHistory extends BaseSoftDeletableEntity {
     cascade: ['insert', 'soft-remove'],
   })
   cleaningHistory: CleaningHistory;
+
+  @OneToMany(() => SwabPlanItem, (entity) => entity.swabAreaHistory)
+  swabPlanItems: SwabPlanItem[];
 }
