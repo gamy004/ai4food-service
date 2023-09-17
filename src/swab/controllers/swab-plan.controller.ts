@@ -29,7 +29,7 @@ export class SwabPlanController {
   ): Promise<SwabPlan> {
     const { payload } = body;
 
-    return await this.swabPlannerService.commandCreateDraft(payload);
+    return await this.swabPlannerService.commandCreateDraftSwabPlan(payload);
   }
 
   @Put(':id')
@@ -41,7 +41,10 @@ export class SwabPlanController {
   ): Promise<SwabPlan> {
     const { payload } = body;
 
-    return await this.swabPlannerService.commandUpdate(param.id, payload);
+    return await this.swabPlannerService.commandUpdateSwabPlan(
+      param.id,
+      payload,
+    );
   }
 
   @Delete(':id')
@@ -50,6 +53,6 @@ export class SwabPlanController {
     @Param()
     param: ParamCommandDeleteSwabPlanDto,
   ): Promise<void> {
-    await this.swabPlannerService.commandDelete(param.id);
+    await this.swabPlannerService.commandDeleteSwabPlan(param.id);
   }
 }

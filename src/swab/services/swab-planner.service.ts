@@ -14,7 +14,7 @@ export class SwabPlannerService {
     private readonly dateTransformer: DateTransformer,
   ) {}
 
-  async commandCreateDraft(
+  async commandCreateDraftSwabPlan(
     dto: PayloadCreateDraftSwabPlanDto,
   ): Promise<SwabPlan> {
     const entity = this.swabPlanCrudService.make({
@@ -29,7 +29,7 @@ export class SwabPlannerService {
     return await this.swabPlanCrudService.save(entity);
   }
 
-  async commandUpdate(
+  async commandUpdateSwabPlan(
     id: string,
     dto: PayloadUpdateSwabPlanDto,
   ): Promise<SwabPlan> {
@@ -65,7 +65,7 @@ export class SwabPlannerService {
     return await this.swabPlanCrudService.save(entity);
   }
 
-  async commandDelete(id: string): Promise<void> {
+  async commandDeleteSwabPlan(id: string): Promise<void> {
     const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
 
     if (entity.publish) {
