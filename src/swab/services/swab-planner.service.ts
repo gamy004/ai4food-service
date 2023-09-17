@@ -35,6 +35,13 @@ export class SwabPlannerService {
   ): Promise<SwabPlan> {
     const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
 
+    if (entity.publish) {
+      throw new PublishedSwabPlanException(
+        'cannot update published swab plan, revert it to draft to update.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
     if (dto.swabPlanDate) {
       entity.swabPlanDate = this.dateTransformer.toObject(dto.swabPlanDate);
     }

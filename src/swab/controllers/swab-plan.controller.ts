@@ -33,6 +33,7 @@ export class SwabPlanController {
   }
 
   @Put(':id')
+  @UseFilters(PublishedSwabPlanExceptionFilter)
   async update(
     @Param()
     param: ParamCommandUpdateSwabPlanDto,
