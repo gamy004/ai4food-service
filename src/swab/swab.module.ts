@@ -65,6 +65,8 @@ import { SwabPlanCrudService } from './services/swab-plan-crud.service';
 import { SwabPlan } from './entities/swab-plan.entity';
 import { SwabPlanExistsRule } from './validators/swab-plan-exists-validator';
 import { SwabPlanItem } from './entities/swab-plan-item.entity';
+import { SwabPlanItemCrudService } from './services/swab-plan-item-crud.service';
+import { SwabPlanItemController } from './controllers/swab-plan-item.controller';
 
 @Module({
   imports: [
@@ -104,6 +106,7 @@ import { SwabPlanItem } from './entities/swab-plan-item.entity';
     SwabCleaningValidationController,
     SwabSampleTypeController,
     SwabPlanController,
+    SwabPlanItemController,
   ],
   providers: [
     SwabPlanQueryService,
@@ -142,6 +145,7 @@ import { SwabPlanItem } from './entities/swab-plan-item.entity';
     SwabPlanCrudService,
     SwabPlannerService,
     SwabPlanExistsRule,
+    SwabPlanItemCrudService,
   ],
 })
 export class SwabModule {}

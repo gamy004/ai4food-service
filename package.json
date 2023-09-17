@@ -33,6 +33,7 @@
     "@aws-sdk/s3-presigned-post": "^3.192.0",
     "@aws-sdk/s3-request-presigner": "^3.321.1",
     "@aws-sdk/util-endpoints": "^3.192.0",
+    "@casl/ability": "^6.5.0",
     "@nestjs/common": "^9.1.4",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.1.4",

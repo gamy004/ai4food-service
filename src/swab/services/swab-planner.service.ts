@@ -2,22 +2,27 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { SwabPlanCrudService } from './swab-plan-crud.service';
 import { PayloadCreateDraftSwabPlanDto } from '../dto/command-create-draft-swab-plan.dto';
 import { SwabPlan } from '../entities/swab-plan.entity';
-import { DeepPartial } from 'typeorm';
 import { PayloadUpdateSwabPlanDto } from '../dto/command-update-swab-plan.dto';
 import { DateTransformer } from '~/common/transformers/date-transformer';
 import { PublishedSwabPlanException } from '../exceptions/published-swab-plan.exception';
+import { SwabPlanItemCrudService } from './swab-plan-item-crud.service';
+import { RunningNumberService } from '~/common/services/running-number.service';
+import { SwabPlanItem } from '../entities/swab-plan-item.entity';
+import { PayloadAddSwabPlanItemDto } from '../dto/command-add-swab-plan-item.dto';
 
 @Injectable()
 export class SwabPlannerService {
   constructor(
     private readonly swabPlanCrudService: SwabPlanCrudService,
+    private readonly swabPlanItemCrudService: SwabPlanItemCrudService,
+    private readonly runningNumberService: RunningNumberService,
     private readonly dateTransformer: DateTransformer,
   ) {}
 
-  async commandCreateDraft(
+  async commandCreateDraftSwabPlan(
     dto: PayloadCreateDraftSwabPlanDto,
   ): Promise<SwabPlan> {
-    const entity = this.swabPlanCrudService.make({
+    const swabPlan = this.swabPlanCrudService.make({
       swabPlanDate: this.dateTransformer.toObject(dto.swabPlanDate),
       swabPeriodId: dto.swabPeriod.id,
       swabPlanCode: dto.swabPlanCode?.trim() ?? null,
@@ -26,16 +31,16 @@ export class SwabPlannerService {
       publish: false,
     });
 
-    return await this.swabPlanCrudService.save(entity);
+    return await this.swabPlanCrudService.save(swabPlan);
   }
 
-  async commandUpdate(
+  async commandUpdateSwabPlan(
     id: string,
     dto: PayloadUpdateSwabPlanDto,
   ): Promise<SwabPlan> {
-    const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({ id });
 
-    if (entity.publish) {
+    if (swabPlan.publish) {
       throw new PublishedSwabPlanException(
         'cannot update published swab plan, revert it to draft to update.',
         HttpStatus.CONFLICT,
@@ -43,29 +48,29 @@ export class SwabPlannerService {
     }
 
     if (dto.swabPlanDate) {
-      entity.swabPlanDate = this.dateTransformer.toObject(dto.swabPlanDate);
+      swabPlan.swabPlanDate = this.dateTransformer.toObject(dto.swabPlanDate);
     }
 
-    if (dto.swabPeriod?.id && entity.swabPeriodId !== dto.swabPeriod.id) {
-      entity.swabPeriodId = dto.swabPeriod.id;
+    if (dto.swabPeriod?.id && swabPlan.swabPeriodId !== dto.swabPeriod.id) {
+      swabPlan.swabPeriodId = dto.swabPeriod.id;
     }
 
-    if (dto.shift && entity.shift !== dto.shift) {
-      entity.shift = dto.shift;
+    if (dto.shift && swabPlan.shift !== dto.shift) {
+      swabPlan.shift = dto.shift;
     }
 
-    if (dto.swabPlanNote && entity.swabPlanNote !== dto.swabPlanNote) {
-      entity.swabPlanNote = dto.swabPlanNote;
+    if (dto.swabPlanNote && swabPlan.swabPlanNote !== dto.swabPlanNote) {
+      swabPlan.swabPlanNote = dto.swabPlanNote;
     }
 
-    if (dto.swabPlanCode && entity.swabPlanCode !== dto.swabPlanCode) {
-      entity.swabPlanCode = dto.swabPlanCode.trim();
+    if (dto.swabPlanCode && swabPlan.swabPlanCode !== dto.swabPlanCode) {
+      swabPlan.swabPlanCode = dto.swabPlanCode.trim();
     }
 
-    return await this.swabPlanCrudService.save(entity);
+    return await this.swabPlanCrudService.save(swabPlan);
   }
 
-  async commandDelete(id: string): Promise<void> {
+  async commandDeleteSwabPlan(id: string): Promise<void> {
     const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
 
     if (entity.publish) {
@@ -76,5 +81,33 @@ export class SwabPlannerService {
     }
 
     await this.swabPlanCrudService.removeOne(entity);
+  }
+
+  async commandAddSwabPlanItem(
+    dto: PayloadAddSwabPlanItemDto,
+  ): Promise<SwabPlanItem> {
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
+      id: dto.swabPlan.id,
+    });
+
+    if (swabPlan.publish) {
+      throw new PublishedSwabPlanException(
+        'cannot add item to this swab plan, revert it to draft to add new item.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const order = await this.runningNumberService.generate({
+      key: `swab-plan-${swabPlan.swabPlanDate}`,
+    });
+
+    const swabPlanItem = this.swabPlanItemCrudService.make({
+      swabPlanId: swabPlan.id,
+      swabAreaId: dto.swabArea.id,
+      facilityItemId: dto.facilityItem?.id ?? null,
+      order,
+    });
+
+    return await this.swabPlanItemCrudService.save(swabPlanItem);
   }
 }

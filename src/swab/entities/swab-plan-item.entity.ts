@@ -26,8 +26,8 @@ export class SwabPlanItem extends BaseSoftDeletableEntity {
   })
   swabPlan: SwabPlan;
 
-  @Column({ type: 'varchar', length: 36 })
-  facilityItemId!: string;
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  facilityItemId?: string;
 
   @ManyToOne(() => FacilityItem, (entity) => entity.swabPlanItems, {
     onDelete: 'CASCADE',
