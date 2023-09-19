@@ -21,6 +21,7 @@ import {
   ResponseGetSwabAreaDeletePermissionDto,
 } from '../dto/get-swab-area-delete-permission.dto';
 import { ContactZoneService } from '~/facility/services/contact-zone.service';
+import { FacilityItemService } from '~/facility/services/facility-item.service';
 
 @Injectable()
 export class SwabAreaService extends CrudService<SwabArea> {

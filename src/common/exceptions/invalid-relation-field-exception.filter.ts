@@ -5,11 +5,11 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { PublishedSwabPlanException } from '../exceptions/published-swab-plan.exception';
+import { InvalidRelationFieldException } from './invalid-relation-field.exception';
 
-@Catch(PublishedSwabPlanException)
-export class PublishedSwabPlanExceptionFilter implements ExceptionFilter {
-  catch(exception: PublishedSwabPlanException, host: ArgumentsHost) {
+@Catch(InvalidRelationFieldException)
+export class InvalidRelationFieldExceptionFilter implements ExceptionFilter {
+  catch(exception: InvalidRelationFieldException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus() ?? HttpStatus.CONFLICT;
@@ -17,7 +17,7 @@ export class PublishedSwabPlanExceptionFilter implements ExceptionFilter {
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
-      message: exception.message,
+      message: exception.message ?? 'Invalid relation field',
     });
   }
 }

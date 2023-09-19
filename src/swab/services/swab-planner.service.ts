@@ -9,6 +9,12 @@ import { SwabPlanItemCrudService } from './swab-plan-item-crud.service';
 import { RunningNumberService } from '~/common/services/running-number.service';
 import { SwabPlanItem } from '../entities/swab-plan-item.entity';
 import { PayloadAddSwabPlanItemDto } from '../dto/command-add-swab-plan-item.dto';
+import { PayloadUpdateSwabPlanItemDto } from '../dto/command-update-swab-plan-item.dto';
+import { EntityManager } from 'typeorm';
+import {
+  DEFAULT_SERVICE_OPTIONS,
+  ServiceOptions,
+} from '~/common/interface/service-options.interface';
 
 @Injectable()
 export class SwabPlannerService {
@@ -42,7 +48,7 @@ export class SwabPlannerService {
 
     if (swabPlan.publish) {
       throw new PublishedSwabPlanException(
-        'cannot update published swab plan, revert it to draft to update.',
+        'cannot update swab plan, revert it to draft to update swab plan.',
         HttpStatus.CONFLICT,
       );
     }
@@ -60,7 +66,7 @@ export class SwabPlannerService {
     }
 
     if (dto.swabPlanNote && swabPlan.swabPlanNote !== dto.swabPlanNote) {
-      swabPlan.swabPlanNote = dto.swabPlanNote;
+      swabPlan.swabPlanNote = dto.swabPlanNote.trim();
     }
 
     if (dto.swabPlanCode && swabPlan.swabPlanCode !== dto.swabPlanCode) {
@@ -75,7 +81,7 @@ export class SwabPlannerService {
 
     if (entity.publish) {
       throw new PublishedSwabPlanException(
-        'cannot delete published swab plan, revert it to draft to delete.',
+        'cannot delete swab plan, revert it to draft to delete swab plan.',
         HttpStatus.CONFLICT,
       );
     }
@@ -85,6 +91,7 @@ export class SwabPlannerService {
 
   async commandAddSwabPlanItem(
     dto: PayloadAddSwabPlanItemDto,
+    queryManager: EntityManager,
   ): Promise<SwabPlanItem> {
     const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
       id: dto.swabPlan.id,
@@ -92,14 +99,17 @@ export class SwabPlannerService {
 
     if (swabPlan.publish) {
       throw new PublishedSwabPlanException(
-        'cannot add item to this swab plan, revert it to draft to add new item.',
+        'cannot add item, revert swab plan to draft to add item.',
         HttpStatus.CONFLICT,
       );
     }
 
-    const order = await this.runningNumberService.generate({
-      key: `swab-plan-${swabPlan.swabPlanDate}`,
-    });
+    const order = await this.runningNumberService.generateV2(
+      {
+        key: `swab-plan-${swabPlan.swabPlanDate}`,
+      },
+      queryManager,
+    );
 
     const swabPlanItem = this.swabPlanItemCrudService.make({
       swabPlanId: swabPlan.id,
@@ -108,6 +118,50 @@ export class SwabPlannerService {
       order,
     });
 
-    return await this.swabPlanItemCrudService.save(swabPlanItem);
+    swabPlan.totalItems += 1;
+
+    await this.swabPlanCrudService.save(swabPlan, { transaction: false });
+
+    return await this.swabPlanItemCrudService.save(swabPlanItem, {
+      transaction: false,
+    });
+  }
+
+  async commandUpdateSwabPlanItem(
+    id: string,
+    dto: PayloadUpdateSwabPlanItemDto,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<SwabPlanItem> {
+    const { transaction } = options;
+
+    const swabPlanItem = await this.swabPlanItemCrudService.findOneByOrFail({
+      id,
+    });
+
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
+      id: swabPlanItem.swabPlanId,
+    });
+
+    if (swabPlan.publish) {
+      throw new PublishedSwabPlanException(
+        'cannot update item, revert swab plan to draft to update item.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    if (dto.swabArea.id && dto.swabArea.id !== swabPlanItem.swabAreaId) {
+      swabPlanItem.swabAreaId = dto.swabArea.id;
+    }
+
+    if (
+      dto.facilityItem &&
+      dto.facilityItem.id !== swabPlanItem.facilityItemId
+    ) {
+      swabPlanItem.facilityItemId = dto.facilityItem.id;
+    }
+
+    return await this.swabPlanItemCrudService.save(swabPlanItem, {
+      transaction,
+    });
   }
 }
