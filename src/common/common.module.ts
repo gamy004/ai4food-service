@@ -11,6 +11,7 @@ import { RunningNumberController } from './controllers/running-number.controller
 import { RunningNumber } from './entities/running-number.entity';
 import { Unique } from './validators/unique-validator';
 import { CollectionTransformer } from './transformers/collection-transformer';
+import { RelationField } from './validators/relation-field-validator';
 @Module({
   imports: [TypeOrmModule.forFeature([File, RunningNumber])],
 
@@ -24,6 +25,7 @@ import { CollectionTransformer } from './transformers/collection-transformer';
     Unique,
     DateTransformer,
     CollectionTransformer,
+    RelationField,
   ],
 
   exports: [
@@ -34,6 +36,7 @@ import { CollectionTransformer } from './transformers/collection-transformer';
     TransactionDatasource,
     DateTransformer,
     CollectionTransformer,
+    RelationField,
   ],
 })
 export class CommonModule {}

@@ -10,6 +10,7 @@ import { useContainer, ValidationError } from 'class-validator';
 import { EntityNotFoundExceptionFilter } from './common/exceptions/entity-notfound-exception.filter';
 import * as basicAuth from 'express-basic-auth';
 import { ContextInterceptor } from './common/interceptors/context.interceptor';
+import { InvalidRelationFieldExceptionFilter } from './common/exceptions/invalid-relation-field-exception.filter';
 // import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -97,7 +98,10 @@ async function bootstrap() {
 
   SwaggerModule.setup('/docs', app, document);
 
-  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+  app.useGlobalFilters(
+    new EntityNotFoundExceptionFilter(),
+    new InvalidRelationFieldExceptionFilter(),
+  );
 
   app.useGlobalInterceptors(new ContextInterceptor());
 
