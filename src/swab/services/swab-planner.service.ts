@@ -10,11 +10,12 @@ import { RunningNumberService } from '~/common/services/running-number.service';
 import { SwabPlanItem } from '../entities/swab-plan-item.entity';
 import { PayloadAddSwabPlanItemDto } from '../dto/command-add-swab-plan-item.dto';
 import { PayloadUpdateSwabPlanItemDto } from '../dto/command-update-swab-plan-item.dto';
-import { EntityManager } from 'typeorm';
+import { EntityManager, FindOptionsWhere, MoreThan } from 'typeorm';
 import {
   DEFAULT_SERVICE_OPTIONS,
   ServiceOptions,
 } from '~/common/interface/service-options.interface';
+import { PayloadCommandSyncOrderSwabPlanDto } from '../dto/command-sync-order-swab-plan.dto';
 
 @Injectable()
 export class SwabPlannerService {
@@ -27,7 +28,10 @@ export class SwabPlannerService {
 
   async commandCreateDraftSwabPlan(
     dto: PayloadCreateDraftSwabPlanDto,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
   ): Promise<SwabPlan> {
+    const { transaction } = options;
+
     const swabPlan = this.swabPlanCrudService.make({
       swabPlanDate: this.dateTransformer.toObject(dto.swabPlanDate),
       swabPeriodId: dto.swabPeriod.id,
@@ -37,13 +41,16 @@ export class SwabPlannerService {
       publish: false,
     });
 
-    return await this.swabPlanCrudService.save(swabPlan);
+    return await this.swabPlanCrudService.save(swabPlan, { transaction });
   }
 
   async commandUpdateSwabPlan(
     id: string,
     dto: PayloadUpdateSwabPlanDto,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
   ): Promise<SwabPlan> {
+    const { transaction } = options;
+
     const swabPlan = await this.swabPlanCrudService.findOneByOrFail({ id });
 
     if (swabPlan.publish) {
@@ -73,20 +80,25 @@ export class SwabPlannerService {
       swabPlan.swabPlanCode = dto.swabPlanCode.trim();
     }
 
-    return await this.swabPlanCrudService.save(swabPlan);
+    return await this.swabPlanCrudService.save(swabPlan, { transaction });
   }
 
-  async commandDeleteSwabPlan(id: string): Promise<void> {
-    const entity = await this.swabPlanCrudService.findOneByOrFail({ id });
+  async commandDeleteSwabPlan(
+    id: string,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<void> {
+    const { transaction } = options;
 
-    if (entity.publish) {
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({ id });
+
+    if (swabPlan.publish) {
       throw new PublishedSwabPlanException(
         'cannot delete swab plan, revert it to draft to delete swab plan.',
         HttpStatus.CONFLICT,
       );
     }
 
-    await this.swabPlanCrudService.removeOne(entity);
+    await this.swabPlanCrudService.removeOne(swabPlan, { transaction });
   }
 
   async commandAddSwabPlanItem(
@@ -111,20 +123,22 @@ export class SwabPlannerService {
       queryManager,
     );
 
-    const swabPlanItem = this.swabPlanItemCrudService.make({
+    let swabPlanItem = this.swabPlanItemCrudService.make({
       swabPlanId: swabPlan.id,
       swabAreaId: dto.swabArea.id,
       facilityItemId: dto.facilityItem?.id ?? null,
       order,
     });
 
-    swabPlan.totalItems += 1;
-
-    await this.swabPlanCrudService.save(swabPlan, { transaction: false });
-
-    return await this.swabPlanItemCrudService.save(swabPlanItem, {
+    swabPlanItem = await this.swabPlanItemCrudService.save(swabPlanItem, {
       transaction: false,
     });
+
+    await this.commandUpdateSwabPlanTotalItem(swabPlan, {
+      transaction: false,
+    });
+
+    return swabPlanItem;
   }
 
   async commandUpdateSwabPlanItem(
@@ -161,6 +175,98 @@ export class SwabPlannerService {
     }
 
     return await this.swabPlanItemCrudService.save(swabPlanItem, {
+      transaction,
+    });
+  }
+
+  async commandDeleteSwabPlanItem(
+    id: string,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<void> {
+    const { transaction } = options;
+
+    const swabPlanItem = await this.swabPlanItemCrudService.findOneByOrFail({
+      id,
+    });
+
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
+      id: swabPlanItem.swabPlanId,
+    });
+
+    if (swabPlan.publish) {
+      throw new PublishedSwabPlanException(
+        'cannot delete item, revert swab plan to draft to delete item.',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    await this.swabPlanItemCrudService.removeOne(swabPlanItem, { transaction });
+
+    await this.commandUpdateSwabPlanTotalItem(swabPlan, options);
+
+    await this.commandSyncOrderSwabPlan(
+      swabPlan,
+      {
+        after: swabPlanItem.order,
+      },
+      options,
+    );
+  }
+
+  async commandUpdateSwabPlanTotalItem(
+    swabPlan: SwabPlan,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<SwabPlan> {
+    const { transaction } = options;
+
+    const totalItems = await this.swabPlanItemCrudService.count({
+      where: { swabPlanId: swabPlan.id },
+      transaction,
+    });
+
+    swabPlan.totalItems = totalItems;
+
+    swabPlan = await this.swabPlanCrudService.save(swabPlan, { transaction });
+
+    const runningNumber = await this.runningNumberService.findOneByOrFail({
+      key: `swab-plan-${swabPlan.swabPlanDate}`,
+    });
+
+    runningNumber.latestRunningNumber = totalItems;
+
+    await this.runningNumberService.save(runningNumber, { transaction });
+
+    return swabPlan;
+  }
+
+  async commandSyncOrderSwabPlan(
+    swabPlan: SwabPlan,
+    dto: PayloadCommandSyncOrderSwabPlanDto,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<void> {
+    const { transaction } = options;
+
+    const where: FindOptionsWhere<SwabPlanItem> = { swabPlanId: swabPlan.id };
+
+    if (dto.after) {
+      where.order = MoreThan(dto.after);
+    }
+
+    const updatedSwabPlanItems = await this.swabPlanItemCrudService.find({
+      where,
+      order: { order: 'asc' },
+      transaction,
+    });
+
+    let counter = dto.after ?? 1;
+
+    updatedSwabPlanItems.map((updatedSwabPlanItem) => {
+      updatedSwabPlanItem.order = counter++;
+
+      return updatedSwabPlanItem;
+    });
+
+    await this.swabPlanItemCrudService.saveMany(updatedSwabPlanItems, {
       transaction,
     });
   }
