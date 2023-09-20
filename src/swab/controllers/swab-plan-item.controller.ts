@@ -1,4 +1,12 @@
-import { Controller, Post, Param, Body, Put, UseFilters } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  Body,
+  Put,
+  UseFilters,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BodyCommandAddSwabPlanItemDto } from '../dto/command-add-swab-plan-item.dto';
 import { SwabPlanItem } from '../entities/swab-plan-item.entity';
@@ -9,6 +17,7 @@ import {
   ParamCommandUpdateSwabPlanItemDto,
 } from '../dto/command-update-swab-plan-item.dto';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
+import { ParamCommandDeleteSwabPlanItemDto } from '../dto/command-delete-swab-plan-item.dto';
 
 @Controller('swab/plan/item')
 @ApiTags('Swab')
@@ -56,5 +65,18 @@ export class SwabPlanItemController {
     });
 
     return swabPlanItem;
+  }
+
+  @Delete(':id')
+  @UseFilters(PublishedSwabPlanExceptionFilter)
+  async delete(
+    @Param()
+    param: ParamCommandDeleteSwabPlanItemDto,
+  ): Promise<void> {
+    await this.transaction.execute(async () => {
+      await this.swabPlannerService.commandDeleteSwabPlanItem(param.id, {
+        transaction: false,
+      });
+    });
   }
 }
