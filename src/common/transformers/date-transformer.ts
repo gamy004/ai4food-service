@@ -12,8 +12,9 @@ export const DATE_ONLY_FORMAT = 'yyyy-MM-dd';
 
 @Injectable()
 export class DateTransformer {
-  public toObject(dateString, timeObject = null) {
-    const dateObject = new Date(parseISO(dateString));
+  public toObject(date, timeObject = null) {
+    const dateObject =
+      typeof date === 'string' ? new Date(parseISO(date)) : date;
 
     dateObject.setMinutes(0, 0, 0);
 
