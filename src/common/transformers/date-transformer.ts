@@ -8,6 +8,12 @@ export interface DateRangeToSqlOptions {
   dateOnly?: boolean;
 }
 
+export interface DateToSqlOptions {
+  day?: string | number | null;
+  month?: string | number | null;
+  year?: string | number | null;
+}
+
 export const DATE_ONLY_FORMAT = 'yyyy-MM-dd';
 
 @Injectable()
@@ -142,8 +148,27 @@ export class DateTransformer {
       }
     }
 
-    console.log(expression);
-
     return expression;
+  }
+
+  public dateToSql(
+    field,
+    { day = null, month = null, year = null }: DateToSqlOptions = {},
+  ) {
+    const conditions = [];
+
+    if (day) {
+      conditions.push(`DAY(${field}) = '${day}'`);
+    }
+
+    if (month) {
+      conditions.push(`MONTH(${field}) = '${month}'`);
+    }
+
+    if (year) {
+      conditions.push(`YEAR(${field}) = '${year}'`);
+    }
+
+    return conditions.join(' AND ');
   }
 }

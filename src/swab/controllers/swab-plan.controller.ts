@@ -6,6 +6,8 @@ import {
   Put,
   Delete,
   UseFilters,
+  Query,
+  Get,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SwabPlannerService } from '../services/swab-planner.service';
@@ -17,14 +19,22 @@ import {
 } from '../dto/command-update-swab-plan.dto';
 import { ParamCommandDeleteSwabPlanDto } from '../dto/command-delete-swab-plan.dto';
 import { PublishedSwabPlanExceptionFilter } from '../filters/published-swab-plan-exception.filter';
+import { PayloadCommandGetSwabPlanDto } from '../dto/command-get-swab-plan.dto';
 
 @Controller('swab/plan')
 @ApiTags('Swab')
 export class SwabPlanController {
   constructor(private readonly swabPlannerService: SwabPlannerService) {}
 
+  @Get()
+  async get(
+    @Query() payload: PayloadCommandGetSwabPlanDto,
+  ): Promise<SwabPlan[]> {
+    return this.swabPlannerService.commandGetSwabPlan(payload);
+  }
+
   @Post()
-  async createDraft(
+  async create(
     @Body() body: BodyCommandCreateDraftSwabPlanDto,
   ): Promise<SwabPlan> {
     const { payload } = body;
