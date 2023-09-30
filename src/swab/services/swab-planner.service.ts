@@ -16,6 +16,7 @@ import {
   ServiceOptions,
 } from '~/common/interface/service-options.interface';
 import { PayloadCommandSyncOrderSwabPlanDto } from '../dto/command-sync-order-swab-plan.dto';
+import { PayloadCommandGetSwabPlanDto } from '../dto/command-get-swab-plan.dto';
 
 @Injectable()
 export class SwabPlannerService {
@@ -25,6 +26,17 @@ export class SwabPlannerService {
     private readonly runningNumberService: RunningNumberService,
     private readonly dateTransformer: DateTransformer,
   ) {}
+
+  async commandGetSwabPlan(
+    dto: PayloadCommandGetSwabPlanDto,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<SwabPlan[]> {
+    const { transaction } = options;
+
+    const where = this.swabPlanCrudService.toFilter(dto);
+
+    return await this.swabPlanCrudService.find({ where, transaction });
+  }
 
   async commandCreateDraftSwabPlan(
     dto: PayloadCreateDraftSwabPlanDto,
