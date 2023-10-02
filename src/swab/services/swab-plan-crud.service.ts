@@ -20,7 +20,11 @@ export class SwabPlanCrudService extends CrudService<SwabPlan> {
   toFilter(dto: FilterSwabPlanDto): FindOptionsWhere<SwabPlan> {
     const where: FindOptionsWhere<SwabPlan> = {};
 
-    const { shift, swabPeriodId, month, year } = dto;
+    const { id, shift, swabPeriodId, month, year } = dto;
+
+    if (id) {
+      where.id = id;
+    }
 
     if (shift) {
       where.shift = shift;

@@ -19,7 +19,8 @@ import {
 } from '../dto/command-update-swab-plan.dto';
 import { ParamCommandDeleteSwabPlanDto } from '../dto/command-delete-swab-plan.dto';
 import { PublishedSwabPlanExceptionFilter } from '../filters/published-swab-plan-exception.filter';
-import { PayloadCommandGetSwabPlanDto } from '../dto/command-get-swab-plan.dto';
+import { PayloadCommandFindSwabPlanDto } from '../dto/command-find-swab-plan.dto';
+import { ParamCommandFindOneSwabPlanDto } from '../dto/command-find-one-swab-plan.dto';
 
 @Controller('swab/plan')
 @ApiTags('Swab')
@@ -27,10 +28,17 @@ export class SwabPlanController {
   constructor(private readonly swabPlannerService: SwabPlannerService) {}
 
   @Get()
-  async get(
-    @Query() payload: PayloadCommandGetSwabPlanDto,
+  async find(
+    @Query() payload: PayloadCommandFindSwabPlanDto,
   ): Promise<SwabPlan[]> {
-    return this.swabPlannerService.commandGetSwabPlan(payload);
+    return this.swabPlannerService.commandFindSwabPlan(payload);
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param() param: ParamCommandFindOneSwabPlanDto,
+  ): Promise<SwabPlan> {
+    return this.swabPlannerService.commandFindOneSwabPlan(param.id);
   }
 
   @Post()

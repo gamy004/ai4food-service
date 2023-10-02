@@ -1,14 +1,16 @@
 import { Type } from 'class-transformer';
-import { IsOptional, ValidateNested } from 'class-validator';
+import { IsOptional, IsUUID, Validate, ValidateNested } from 'class-validator';
 import { ConnectSwabAreaDto } from './connect-swab-area.dto';
 import { ConnectFacilityItemDto } from '~/facility/dto/connect-facility-item.dto';
-import { ConnectSwabPlanDto } from './connect-swab-plan.dto';
+import { SwabPlanExistsRule } from '../validators/swab-plan-exists-validator';
+
+export class ParamCommandAddSwabPlanItemDto {
+  @IsUUID()
+  @Validate(SwabPlanExistsRule)
+  swabPlanId: string;
+}
 
 export class PayloadAddSwabPlanItemDto {
-  @ValidateNested()
-  @Type(() => ConnectSwabPlanDto)
-  swabPlan!: ConnectSwabPlanDto;
-
   @ValidateNested()
   @Type(() => ConnectSwabAreaDto)
   swabArea!: ConnectSwabAreaDto;

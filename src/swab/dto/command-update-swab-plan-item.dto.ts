@@ -7,11 +7,16 @@ import { RelationField } from '~/common/validators/relation-field-validator';
 import { SwabArea } from '../entities/swab-area.entity';
 import { FindOptionsWhere, IsNull } from 'typeorm';
 import { FacilityItem } from '~/facility/entities/facility-item.entity';
+import { SwabPlanExistsRule } from '../validators/swab-plan-exists-validator';
 
 export class ParamCommandUpdateSwabPlanItemDto {
   @IsUUID()
+  @Validate(SwabPlanExistsRule)
+  swabPlanId: string;
+
+  @IsUUID()
   @Validate(SwabPlanItemExistsRule)
-  id: string;
+  swabPlanItemId: string;
 }
 
 export class PayloadUpdateSwabPlanItemDto extends PickType(

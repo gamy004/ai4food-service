@@ -16,7 +16,7 @@ import {
   ServiceOptions,
 } from '~/common/interface/service-options.interface';
 import { PayloadCommandSyncOrderSwabPlanDto } from '../dto/command-sync-order-swab-plan.dto';
-import { PayloadCommandGetSwabPlanDto } from '../dto/command-get-swab-plan.dto';
+import { PayloadCommandFindSwabPlanDto } from '../dto/command-find-swab-plan.dto';
 
 @Injectable()
 export class SwabPlannerService {
@@ -27,8 +27,8 @@ export class SwabPlannerService {
     private readonly dateTransformer: DateTransformer,
   ) {}
 
-  async commandGetSwabPlan(
-    dto: PayloadCommandGetSwabPlanDto,
+  async commandFindSwabPlan(
+    dto: PayloadCommandFindSwabPlanDto,
     options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
   ): Promise<SwabPlan[]> {
     const { transaction } = options;
@@ -36,6 +36,18 @@ export class SwabPlannerService {
     const where = this.swabPlanCrudService.toFilter(dto);
 
     return await this.swabPlanCrudService.find({ where, transaction });
+  }
+
+  async commandFindOneSwabPlan(
+    id: string,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<SwabPlan> {
+    const { transaction } = options;
+
+    return await this.swabPlanCrudService.findOneOrFail({
+      where: { id },
+      transaction,
+    });
   }
 
   async commandCreateDraftSwabPlan(
@@ -113,12 +125,30 @@ export class SwabPlannerService {
     await this.swabPlanCrudService.removeOne(swabPlan, { transaction });
   }
 
+  async commandFindSwabPlanItem(
+    swabPlanId: string,
+    options: ServiceOptions = DEFAULT_SERVICE_OPTIONS,
+  ): Promise<SwabPlanItem[]> {
+    const { transaction } = options;
+
+    const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
+      id: swabPlanId,
+    });
+
+    return await this.swabPlanItemCrudService.find({
+      where: { swabPlanId: swabPlan.id },
+      order: { order: 'asc' },
+      transaction,
+    });
+  }
+
   async commandAddSwabPlanItem(
+    swabPlanId: string,
     dto: PayloadAddSwabPlanItemDto,
     queryManager: EntityManager,
   ): Promise<SwabPlanItem> {
     const swabPlan = await this.swabPlanCrudService.findOneByOrFail({
-      id: dto.swabPlan.id,
+      id: swabPlanId,
     });
 
     if (swabPlan.publish) {
