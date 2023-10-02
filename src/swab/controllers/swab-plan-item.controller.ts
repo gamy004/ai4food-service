@@ -6,9 +6,13 @@ import {
   Put,
   UseFilters,
   Delete,
+  Get,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { BodyCommandAddSwabPlanItemDto } from '../dto/command-add-swab-plan-item.dto';
+import {
+  BodyCommandAddSwabPlanItemDto,
+  ParamCommandAddSwabPlanItemDto,
+} from '../dto/command-add-swab-plan-item.dto';
 import { SwabPlanItem } from '../entities/swab-plan-item.entity';
 import { SwabPlannerService } from '../services/swab-planner.service';
 import { PublishedSwabPlanExceptionFilter } from '../filters/published-swab-plan-exception.filter';
@@ -18,8 +22,9 @@ import {
 } from '../dto/command-update-swab-plan-item.dto';
 import { TransactionDatasource } from '~/common/datasource/transaction.datasource';
 import { ParamCommandDeleteSwabPlanItemDto } from '../dto/command-delete-swab-plan-item.dto';
+import { ParamCommandFindSwabPlanItemDto } from '../dto/command-find-swab-plan-item.dto';
 
-@Controller('swab/plan/item')
+@Controller('swab/plan/:swabPlanId/item')
 @ApiTags('Swab')
 export class SwabPlanItemController {
   constructor(
@@ -27,8 +32,16 @@ export class SwabPlanItemController {
     private readonly swabPlannerService: SwabPlannerService,
   ) {}
 
+  @Get()
+  async find(
+    @Param() param: ParamCommandFindSwabPlanItemDto,
+  ): Promise<SwabPlanItem[]> {
+    return this.swabPlannerService.commandFindSwabPlanItem(param.swabPlanId);
+  }
+
   @Post()
   async create(
+    @Param() param: ParamCommandAddSwabPlanItemDto,
     @Body() body: BodyCommandAddSwabPlanItemDto,
   ): Promise<SwabPlanItem> {
     const { payload } = body;
@@ -37,6 +50,7 @@ export class SwabPlanItemController {
 
     await this.transaction.execute(async (queryManager) => {
       swabPlanItem = await this.swabPlannerService.commandAddSwabPlanItem(
+        param.swabPlanId,
         payload,
         queryManager,
       );
@@ -45,7 +59,7 @@ export class SwabPlanItemController {
     return swabPlanItem;
   }
 
-  @Put(':id')
+  @Put(':swabPlanItemId')
   @UseFilters(PublishedSwabPlanExceptionFilter)
   async update(
     @Param()
@@ -58,7 +72,7 @@ export class SwabPlanItemController {
 
     await this.transaction.execute(async () => {
       swabPlanItem = await this.swabPlannerService.commandUpdateSwabPlanItem(
-        param.id,
+        param.swabPlanItemId,
         payload,
         { transaction: false },
       );
@@ -67,16 +81,19 @@ export class SwabPlanItemController {
     return swabPlanItem;
   }
 
-  @Delete(':id')
+  @Delete(':swabPlanItemId')
   @UseFilters(PublishedSwabPlanExceptionFilter)
   async delete(
     @Param()
     param: ParamCommandDeleteSwabPlanItemDto,
   ): Promise<void> {
     await this.transaction.execute(async () => {
-      await this.swabPlannerService.commandDeleteSwabPlanItem(param.id, {
-        transaction: false,
-      });
+      await this.swabPlannerService.commandDeleteSwabPlanItem(
+        param.swabPlanItemId,
+        {
+          transaction: false,
+        },
+      );
     });
   }
 }
