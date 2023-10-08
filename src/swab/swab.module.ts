@@ -68,6 +68,7 @@ import { SwabPlanItem } from './entities/swab-plan-item.entity';
 import { SwabPlanItemCrudService } from './services/swab-plan-item-crud.service';
 import { SwabPlanItemController } from './controllers/swab-plan-item.controller';
 import { SwabPlanItemExistsRule } from './validators/swab-plan-item-exists-validator';
+import { SwabPlanSwabPeriodExistsRule } from './validators/swab-plan-swab-period-exists-validator';
 
 @Module({
   imports: [
@@ -148,6 +149,7 @@ import { SwabPlanItemExistsRule } from './validators/swab-plan-item-exists-valid
     SwabPlanExistsRule,
     SwabPlanItemCrudService,
     SwabPlanItemExistsRule,
+    SwabPlanSwabPeriodExistsRule,
   ],
 })
 export class SwabModule {}
