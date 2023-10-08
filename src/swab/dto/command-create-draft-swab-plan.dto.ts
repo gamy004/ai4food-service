@@ -12,6 +12,7 @@ import { ConnectSwabPeriodDto } from './connect-swab-period.dto';
 import { IsNull } from 'typeorm';
 import { SwabPlan } from '../entities/swab-plan.entity';
 import { Unique } from '~/common/validators/unique-validator';
+import { SwabPlanSwabPeriodExistsRule } from '../validators/swab-plan-swab-period-exists-validator';
 
 export class PayloadCreateDraftSwabPlanDto {
   @IsNotEmpty()
@@ -43,6 +44,13 @@ export class BodyCommandCreateDraftSwabPlanDto {
       shift: payload.shift,
       swabPeriodId: payload.swabPeriod.id,
       deletedAt: IsNull(),
+    }),
+  ])
+  @Validate(SwabPlanSwabPeriodExistsRule, [
+    ['ก่อน Super Big Cleaning', 'หลัง Super Big Cleaning'],
+    ({ object: { payload } }: { object: any }) => ({
+      swabPlanDate: payload.swabPlanDate,
+      swabPeriodId: payload.swabPeriod.id,
     }),
   ])
   payload!: PayloadCreateDraftSwabPlanDto;
