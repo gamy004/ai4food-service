@@ -4,7 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { DataSource, In, IsNull, Raw } from 'typeorm';
+import { DataSource, FindOptionsWhere, In, IsNull, Raw } from 'typeorm';
 import { SwabPlan } from '../entities/swab-plan.entity';
 import { SwabPeriod } from '../entities/swab-period.entity';
 
@@ -18,20 +18,10 @@ export type ValidSwabPeriodName =
   | 'ก่อนล้างท้ายกะ'
   | 'หลังล้างท้ายกะ';
 
-interface CheckSwabPlanSwabPeriodConstraint {
-  swabPlanDate: string;
-  swabPeriodId: string;
-}
-
 interface SwabPlanSwabPeriodValidationArguments<E> extends ValidationArguments {
   constraints: [
     ValidSwabPeriodName[],
-    (
-      | ((
-          validationArguments: ValidationArguments,
-        ) => CheckSwabPlanSwabPeriodConstraint)
-      | keyof E
-    ),
+    (validationArguments: ValidationArguments) => FindOptionsWhere<SwabPlan>,
   ];
 }
 
@@ -40,9 +30,6 @@ interface SwabPlanSwabPeriodValidationArguments<E> extends ValidationArguments {
 export class SwabPlanSwabPeriodExistsRule
   implements ValidatorConstraintInterface
 {
-  protected validatedDate: string;
-  protected validatedSwabPeriodName: string;
-
   constructor(protected readonly dataSource: DataSource) {}
 
   public async validate(
@@ -50,8 +37,7 @@ export class SwabPlanSwabPeriodExistsRule
     args: SwabPlanSwabPeriodValidationArguments<SwabPlan>,
   ) {
     let valid = true;
-    const [swabPeriodConstraints, findCondition = args.property] =
-      args.constraints;
+    const [swabPeriodConstraints, findCondition] = args.constraints;
 
     const swabPlanRepository = this.dataSource.getRepository(SwabPlan);
     const swabPeriodRepository = this.dataSource.getRepository(SwabPeriod);
@@ -71,25 +57,15 @@ export class SwabPlanSwabPeriodExistsRule
       (swabPeriod) => swabPeriod.id,
     );
 
-    const conditions =
-      typeof findCondition === 'function'
-        ? findCondition(args)
-        : {
-            [findCondition || args.property]: value,
-          };
+    const conditions = findCondition(args);
 
-    if (targetSwabPeriodIds.includes(conditions.swabPeriodId)) {
-      this.validatedDate = conditions.swabPlanDate;
-      this.validatedSwabPeriodName = targetSwabPeriods.find(
-        ({ id }) => id == conditions.swabPeriodId,
-      ).swabPeriodName;
-
+    if (targetSwabPeriodIds.includes(conditions.swabPeriodId as string)) {
       const queryResult = await swabPlanRepository.count({
         where: {
+          ...conditions,
           swabPlanDate: Raw(
             (field) => `MONTH(${field}) = MONTH('${conditions.swabPlanDate}')`,
           ),
-          swabPeriodId: conditions.swabPeriodId,
         },
       });
 
@@ -99,7 +75,12 @@ export class SwabPlanSwabPeriodExistsRule
     return valid;
   }
 
-  defaultMessage() {
-    return `swab period '${this.validatedSwabPeriodName}' already exists in the same month of ${this.validatedDate}, allow only once per month.`;
+  defaultMessage(args: SwabPlanSwabPeriodValidationArguments<SwabPlan>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, findCondition] = args.constraints;
+
+    const conditions = findCondition(args);
+
+    return `swab period '${conditions.swabPeriodId}' already exists in the same month of ${conditions.swabPlanDate}, allow only once per month.`;
   }
 }
