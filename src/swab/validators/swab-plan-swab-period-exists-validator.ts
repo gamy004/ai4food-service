@@ -21,7 +21,7 @@ export type ValidSwabPeriodName =
 interface SwabPlanSwabPeriodValidationArguments<E> extends ValidationArguments {
   constraints: [
     ValidSwabPeriodName[],
-    (validationArguments: ValidationArguments) => FindOptionsWhere<SwabPlan>,
+    (validationArguments: ValidationArguments) => FindOptionsWhere<E>,
   ];
 }
 
