@@ -61,6 +61,7 @@ export class SwabPlannerService {
       swabPeriodId: dto.swabPeriod.id,
       swabPlanCode: dto.swabPlanCode?.trim() ?? null,
       swabPlanNote: dto.swabPlanNote ?? null,
+      shift: dto.shift,
       totalItems: 0,
       publish: false,
     });
