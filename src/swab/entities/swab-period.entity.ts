@@ -14,6 +14,9 @@ export class SwabPeriod extends BaseSoftDeletableEntity {
   @Column({ default: false })
   requiredValidateCleaning!: boolean;
 
+  @Column({ nullable: true })
+  swabPeriodOrder: number;
+
   @OneToMany(() => SwabAreaHistory, (entity) => entity.swabPeriod)
   swabAreaHistories: SwabAreaHistory[];
 

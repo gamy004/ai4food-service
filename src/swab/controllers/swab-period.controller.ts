@@ -19,6 +19,6 @@ export class SwabPeriodController {
 
   @Get()
   findAll() {
-    return this.swabPeriodService.find();
+    return this.swabPeriodService.find({ order: { swabPeriodOrder: 'asc' } });
   }
 }
